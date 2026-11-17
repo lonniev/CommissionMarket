@@ -2,25 +2,25 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, CircleAlert, FileSignature, Plus, RefreshCw, Search, X } from "lucide-react";
-import { commissionHref, Person, shortNpub } from "../components/Person";
-import Sats from "../components/Sats";
+import { CalendarDays, FolderOpen, Plus, RefreshCw, Search, X } from "lucide-react";
+import CommissionRow from "../components/CommissionRow";
+import { Person, shortNpub } from "../components/Person";
 import StandingBadge from "../components/StandingBadge";
 import Waiting from "../components/Waiting";
-import { say, useT } from "../i18n";
+import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
 import { grouped, matches, type Order } from "../lib/browse";
-import { isFinished, laneOf, standingKey, type Standing } from "../lib/moves";
-import { topSats } from "../lib/rubric";
+import { isFinished, standingKey, type Standing } from "../lib/moves";
 import { listTasks, type Task } from "../lib/tasks";
-import { dueText } from "../lib/when";
+import { useProjectNames } from "../lib/useProjectNames";
 
-type Tab = "open" | "posted" | "working" | "finished";
+type Tab = "open" | "posted" | "working" | "orgs" | "finished";
 
 const TABS: { tab: Tab; label: MessageKey }[] = [
   { tab: "open", label: "list.open" },
   { tab: "posted", label: "list.posted" },
   { tab: "working", label: "list.working" },
+  { tab: "orgs", label: "list.orgs" },
   { tab: "finished", label: "list.finished" },
 ];
 
@@ -28,6 +28,7 @@ const ORDERS: { order: Order; label: MessageKey }[] = [
   { order: "due", label: "browse.byDue" },
   { order: "person", label: "browse.byPerson" },
   { order: "state", label: "browse.byState" },
+  { order: "project", label: "browse.byProject" },
 ];
 
 /** Search and ordering appear once a tab holds enough commissions to need them. */
@@ -38,33 +39,9 @@ function inTab(task: Task, tab: Tab): boolean {
   if (isFinished(task)) return false;
   if (tab === "posted") return task.your_roles.includes("purchaser");
   if (tab === "working") return task.your_roles.includes("performer");
+  // Filed in one of your Organizations, with no part of your own in it.
+  if (tab === "orgs") return task.your_roles.length > 0 && task.your_roles.every((r) => r === "member");
   return task.your_roles.includes("audience") && !task.performer;
-}
-
-function Card({ task, now }: { task: Task; now: number }) {
-  const t = useT();
-  const yours = laneOf(task) === "yours";
-  return (
-    <li>
-      <Link to={commissionHref(task.task_id)} className={yours ? "row-card row-yours" : "row-card"}>
-        <div className="grid gap-1 min-w-0">
-          <span className="row-title">{task.title}</span>
-          <span className="row-meta muted">
-            <StandingBadge standing={task.standing} />
-            <span>{t("list.due", { when: say(t, dueText(task.needed_by, now)) })}</span>
-            {task.cover && (
-              <span className="inline-flex items-center gap-1">
-                <FileSignature size={14} aria-hidden />
-                {task.agreement.purchaser_signed ? t("list.clientSigned") : t("list.clientNotSigned")}
-              </span>
-            )}
-            {yours && <span className="needs-you"><CircleAlert size={14} aria-hidden />{t("list.needsYou")}</span>}
-          </span>
-        </div>
-        <Sats sats={topSats(task.rubric)} />
-      </Link>
-    </li>
-  );
 }
 
 export default function Commissions() {
@@ -93,9 +70,13 @@ export default function Commissions() {
   const [order, setOrder] = useState<Order>("due");
   const inThisTab = (tasks ?? []).filter((x) => inTab(x, tab));
   const said = (s: Standing) => t(standingKey(s));
-  const shown = inThisTab.filter((x) => matches(x, query, shortNpub, said));
-  const groups = grouped(shown, order, order === "person" ? shortNpub : (k) => said(k as Standing));
-  const list = (rows: Task[]) => <ul className="row-list">{rows.map((task) => <Card key={task.task_id} task={task} now={now} />)}</ul>;
+  const projectNames = useProjectNames(tasks);
+  const [project, setProject] = useState("");
+  const projectLabel = (id: string) => (id ? projectNames.get(id) ?? t("browse.otherProject") : t("browse.noProject"));
+  const filedIn = [...new Set(inThisTab.map((x) => x.project_id).filter(Boolean))];
+  const shown = inThisTab.filter((x) => matches(x, query, shortNpub, said) && (!project || x.project_id === project));
+  const groups = grouped(shown, order, order === "person" ? shortNpub : order === "project" ? projectLabel : (k) => said(k as Standing));
+  const list = (rows: Task[]) => <ul className="row-list">{rows.map((task) => <CommissionRow key={task.task_id} task={task} now={now} project={projectNames.get(task.project_id)} />)}</ul>;
 
   return (
     <div className="page grid gap-3">
@@ -110,14 +91,14 @@ export default function Commissions() {
       </div>
 
       <div className="tabs" role="tablist">
-        {TABS.map(({ tab: k, label }) => (
+        {TABS.filter(({ tab: k }) => k !== "orgs" || counts.orgs > 0 || tab === "orgs").map(({ tab: k, label }) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "chip chip-on" : "chip"} onClick={() => setTab(k)}>
             {t(label)} <span className="num muted">({counts[k] ?? 0})</span>
           </button>
         ))}
       </div>
 
-      {(inThisTab.length >= BROWSE_FROM || query) && (
+      {(inThisTab.length >= BROWSE_FROM || query || inThisTab.some((x) => x.project_id)) && (
         <div className="browse">
           <label className="browse-search">
             <Search size={18} aria-hidden />
@@ -136,6 +117,18 @@ export default function Commissions() {
             </div>
             <Link to="/calendar" className="chip"><CalendarDays size={16} aria-hidden />{t("nav.calendar")}</Link>
           </div>
+          {filedIn.length > 0 && (
+            <div className="flex flex-wrap gap-1.5" role="group" aria-label={t("browse.project")}>
+              <button type="button" className={project === "" ? "chip chip-on" : "chip"} aria-pressed={project === ""} onClick={() => setProject("")}>
+                {t("browse.allProjects")}
+              </button>
+              {filedIn.map((id) => (
+                <button key={id} type="button" className={project === id ? "chip chip-on" : "chip"} aria-pressed={project === id} onClick={() => setProject(id)}>
+                  <FolderOpen size={14} aria-hidden />{projectLabel(id)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -148,7 +141,9 @@ export default function Commissions() {
         {order !== "due" && groups.map((g) => (
           <div key={g.key} className="grid gap-1">
             <h2 className="group-title">
-              {order === "person" ? <Person npub={g.key} /> : <StandingBadge standing={g.key as Standing} />}
+              {order === "person" ? <Person npub={g.key} />
+                : order === "project" ? <span className="inline-flex items-center gap-1.5"><FolderOpen size={16} aria-hidden />{projectLabel(g.key)}</span>
+                : <StandingBadge standing={g.key as Standing} />}
               <span className="muted num">({g.rows.length})</span>
             </h2>
             {list(g.rows)}

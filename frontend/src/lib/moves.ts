@@ -11,7 +11,7 @@ export type Standing =
   | "posted" | "expired" | "claimed" | "done" | "assessed"
   | "appealed" | "owed" | "paid" | "rejected" | "withdrawn" | "missed";
 
-export type Role = "purchaser" | "audience" | "performer" | "assessor" | "tie_breaker";
+export type Role = "purchaser" | "audience" | "performer" | "assessor" | "tie_breaker" | "member";
 
 export type Move =
   | "claim" | "release" | "withdraw" | "mark_done" | "grade" | "reject"

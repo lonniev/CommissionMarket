@@ -78,6 +78,9 @@ export interface Task {
   standing: Standing;
   final: boolean;
   your_roles: Role[];
+  /** The Organization and Project it is filed under, or empty. */
+  org_id: string;
+  project_id: string;
   needed_by: number;
   every_days: number;
   assessment?: Assessment | null;
@@ -149,7 +152,9 @@ export interface Terms {
   cover: CoverInput;
 }
 
-export const postTask = async (terms: Terms) => (await ask<{ task: Task }>("post_task", { ...terms })).task;
+/** Post a commission; filed under an Organization's Project when both ids are given. */
+export const postTask = async (terms: Terms & { org_id?: string; project_id?: string }) =>
+  (await ask<{ task: Task }>("post_task", { ...terms })).task;
 
 /** Change an open commission's terms. Give only what changes. */
 export const editTask = async (taskId: string, changes: Partial<Terms>) =>
