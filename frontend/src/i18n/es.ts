@@ -275,6 +275,7 @@ const es: Translation = {
   "home.lead": "Encargue un retrato, una traducción, un estudio o una pieza a los profesionales que usted invite. Acuerde una sola oferta firmada y pague cada etapa directamente de su billetera a la suya.",
   "home.start": "Iniciar sesión con su npub",
   "home.howItWorks": "Cómo funciona",
+  "home.artAlt": "El patio de un gremio donde trabajan un pintor, un ebanista, una costurera, una tejedora, un pastelero, un herrero y un tallista.",
   "home.readTerms": "Leer las Condiciones generales",
   "home.card.signed.title": "Una sola oferta firmada",
   "home.card.signed.says": "Ambas partes firman las mismas condiciones, y cualquiera puede comprobar las firmas.",

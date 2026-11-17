@@ -275,6 +275,7 @@ const fr: Translation = {
   "home.lead": "Commande un portrait, une traduction, une étude ou une pièce à des prestataires que tu invites. Signe avec eux une seule offre, et paie chaque étape directement de ton portefeuille au leur.",
   "home.start": "Se connecter avec ton npub",
   "home.howItWorks": "Comment ça fonctionne",
+  "home.artAlt": "La cour d’une guilde où un peintre, un menuisier, une couturière, une tisserande, un pâtissier, un forgeron et un sculpteur sont au travail.",
   "home.readTerms": "Lire les Conditions générales",
   "home.card.signed.title": "Une seule offre signée",
   "home.card.signed.says": "Les deux parties signent les mêmes conditions, et chacun peut vérifier les signatures.",

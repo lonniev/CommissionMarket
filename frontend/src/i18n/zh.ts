@@ -275,6 +275,7 @@ const zh: Translation = {
   "home.lead": "向您邀请的专业人士委托一幅肖像、一份译文、一项研究或一个零件。双方约定一份签署的要约，每个阶段的款项都直接从您的钱包付到对方的钱包。",
   "home.start": "使用 npub 登录",
   "home.howItWorks": "运作方式",
+  "home.artAlt": "一座行会庭院，画家、木匠、裁缝、织工、糕点师、铁匠和雕刻师正在工作。",
   "home.readTerms": "阅读标准条款",
   "home.card.signed.title": "一份签署的要约",
   "home.card.signed.says": "双方签署同一份条款，任何人都可以核验签名。",

@@ -1,0 +1,1 @@
+- Home's hero stands over a guild courtyard, and shared links show it as their preview image.

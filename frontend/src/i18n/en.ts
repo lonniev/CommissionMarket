@@ -277,6 +277,7 @@ export const en = {
   "home.lead": "Commission a portrait, a translation, a study or a part from professionals you invite. Agree one signed offer, and pay each stage straight from your wallet to theirs.",
   "home.start": "Sign in with your npub",
   "home.howItWorks": "How it works",
+  "home.artAlt": "A guild courtyard where a painter, a woodworker, a seamstress, a weaver, a baker, a smith and a carver are at work.",
   "home.readTerms": "Read the Standard Terms",
   "home.card.signed.title": "One signed offer",
   "home.card.signed.says": "Both of you sign the same terms, and anyone can check the signatures.",
