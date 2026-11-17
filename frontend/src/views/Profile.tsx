@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { getMyProperties, setMyProperty } from "@tollbooth-dpyc/web";
 import { AccountPage, LanguageChooser, useAppShell } from "@tollbooth-dpyc/web/react";
+import CalendarFeed from "../components/CalendarFeed";
 import { useT } from "../i18n";
 import { FIATS, useFiat } from "../lib/FiatContext";
 
@@ -102,7 +103,7 @@ export default function Profile() {
       <AccountPage
         npub={session.npub}
         heading={null}
-        before={<><PayoutAddress /><Currency /><LanguageChoice /></>}
+        before={<><PayoutAddress /><Currency /><LanguageChoice /><CalendarFeed /></>}
         usage={{ classNames: USAGE }}
         theme={{ classNames: { chip: "chip", active: "chip chip-on" } }}
         timezone={{ classNames: { select: "field" } }}

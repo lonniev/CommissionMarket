@@ -19,3 +19,14 @@ CommissionMarket is a page over the Task Booth Operator; an agent uses Task Boot
 A professional with no `payout_address` passes their own BOLT11 invoice for the exact amount as `invoice`.
 `taskbooth_standard_terms` returns the Standard Terms text and its hash, free.
 Every other tool acts for the calling npub, and the connection must prove that npub.
+
+## An example
+
+"Paint a portrait of Murray Rothbard for the new Library": top grade "Accepted" at 100,000 sats, "Accepted with changes" at 80,000, "Not accepted" at 0.
+`deposit_pct` 10; milestones "Sketch approved" at 20% and "Underpainting" at 30%; the deliverables are one oil portrait, 24 × 30 in, and a framed print; IP assigned to the client; deemed "Accepted" after 14 days.
+The client pays 10,000 sats on claim and 20,000 and 30,000 on the milestone days; graded "Accepted", 40,000 sats are still owed.
+
+## Also on the site
+
+`taskbooth_calendar_publish` makes a private iCalendar link of the caller's commissions, served at `/calendar/<token>.ics`; `taskbooth_calendar_list` and `taskbooth_calendar_revoke` manage it.
+The Learn pages explain sats, keys, signatures, the signed offer, payments ahead, grading, IP and appeals.

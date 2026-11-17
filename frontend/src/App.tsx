@@ -1,23 +1,30 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { BriefcaseBusiness, Landmark, ScrollText, Wallet as WalletIcon } from "lucide-react";
+import { BookOpen, BriefcaseBusiness, CalendarDays, Compass, ScrollText, Wallet as WalletIcon } from "lucide-react";
 import { AppShell, SiteNav, Wallet, matchesPath, useAppShell } from "@tollbooth-dpyc/web/react";
 import Waiting from "./components/Waiting";
 import { useT } from "./i18n";
 import { FiatProvider } from "./lib/FiatContext";
+import { decorateTileWith } from "./lib/tiles";
 
 // Each page is its own chunk, fetched the first time it opens.
+const Calendar = lazy(() => import("./views/Calendar"));
 const Commission = lazy(() => import("./views/Commission"));
 const Commissions = lazy(() => import("./views/Commissions"));
 const EditCommission = lazy(() => import("./views/EditCommission"));
+const Guide = lazy(() => import("./views/Guide"));
 const Home = lazy(() => import("./views/Home"));
+const Learn = lazy(() => import("./views/Learn"));
+const LessonPage = lazy(() => import("./views/LessonPage"));
 const NewCommission = lazy(() => import("./views/NewCommission"));
 const Profile = lazy(() => import("./views/Profile"));
 const Terms = lazy(() => import("./views/Terms"));
 
 const PAGES = [
   { href: "/commissions", label: "nav.commissions", icon: <ScrollText size={18} aria-hidden /> },
-  { href: "/terms", label: "nav.terms", icon: <Landmark size={18} aria-hidden /> },
+  { href: "/calendar", label: "nav.calendar", icon: <CalendarDays size={18} aria-hidden /> },
+  { href: "/learn", label: "nav.learn", icon: <BookOpen size={18} aria-hidden /> },
+  { href: "/guide", label: "nav.guide", icon: <Compass size={18} aria-hidden /> },
   { href: "/wallet", label: "nav.wallet", icon: <WalletIcon size={18} aria-hidden /> },
 ] as const;
 
@@ -59,7 +66,10 @@ function Nav() {
     return (
       <header className="site-bar flex flex-wrap items-center gap-2 px-4 py-2.5">
         <Brand />
-        <Link to="/terms" className="chip ml-auto">{t("nav.terms")}</Link>
+        <span className="ml-auto flex flex-wrap items-center gap-2">
+          <Link to="/guide" className="chip">{t("nav.guide")}</Link>
+          <Link to="/learn" className="chip">{t("nav.learn")}</Link>
+        </span>
         <Link to="/signin" className="chip chip-accent">{t("nav.signIn")}</Link>
       </header>
     );
@@ -71,7 +81,7 @@ function Nav() {
         items={PAGES.map((p) => ({ ...p, label: t(p.label) }))}
         isActive={(href) => matchesPath(pathname, href)}
         renderLink={({ href, ...p }) => <Link to={href} {...p} />}
-        account={{ npub: session.npub, links: [{ href: "/profile", label: t("nav.profile") }], onSignOut: session.signOut }}
+        account={{ npub: session.npub, links: [{ href: "/profile", label: t("nav.profile") }, { href: "/terms", label: t("nav.terms") }], onSignOut: session.signOut }}
         classNames={NAV_CLASSES}
       />
     </header>
@@ -111,7 +121,7 @@ function WalletPage() {
         <p>{t("wallet.holds")}</p>
         <p className="muted">{t("wallet.notCommissions")}</p>
       </section>
-      <Wallet />
+      <Wallet decorateTile={decorateTileWith(t)} />
     </div>
   );
 }
@@ -132,9 +142,13 @@ function Site() {
               <Route path="commissions/new" element={<SignedIn><NewCommission /></SignedIn>} />
               <Route path="commissions/:taskId" element={<SignedIn><Commission /></SignedIn>} />
               <Route path="commissions/:taskId/edit" element={<SignedIn><EditCommission /></SignedIn>} />
+              <Route path="calendar" element={<SignedIn><Calendar /></SignedIn>} />
               <Route path="wallet" element={<SignedIn><WalletPage /></SignedIn>} />
               <Route path="profile" element={<SignedIn><Profile /></SignedIn>} />
               <Route path="terms" element={<Terms />} />
+              <Route path="guide" element={<Guide />} />
+              <Route path="learn" element={<Learn />} />
+              <Route path="learn/:slug" element={<LessonPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

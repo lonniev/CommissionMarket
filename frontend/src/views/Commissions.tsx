@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CircleAlert, FileSignature, Plus, RefreshCw } from "lucide-react";
-import { commissionHref } from "../components/Person";
+import { CalendarDays, CircleAlert, FileSignature, Plus, RefreshCw, Search, X } from "lucide-react";
+import { commissionHref, Person, shortNpub } from "../components/Person";
 import Sats from "../components/Sats";
 import StandingBadge from "../components/StandingBadge";
 import Waiting from "../components/Waiting";
 import { say, useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
-import { isFinished, laneOf } from "../lib/moves";
+import { grouped, matches, type Order } from "../lib/browse";
+import { isFinished, laneOf, standingKey, type Standing } from "../lib/moves";
 import { topSats } from "../lib/rubric";
 import { listTasks, type Task } from "../lib/tasks";
 import { dueText } from "../lib/when";
@@ -22,6 +23,15 @@ const TABS: { tab: Tab; label: MessageKey }[] = [
   { tab: "working", label: "list.working" },
   { tab: "finished", label: "list.finished" },
 ];
+
+const ORDERS: { order: Order; label: MessageKey }[] = [
+  { order: "due", label: "browse.byDue" },
+  { order: "person", label: "browse.byPerson" },
+  { order: "state", label: "browse.byState" },
+];
+
+/** Search and ordering appear once a tab holds enough commissions to need them. */
+const BROWSE_FROM = 4;
 
 function inTab(task: Task, tab: Tab): boolean {
   if (tab === "finished") return isFinished(task);
@@ -79,7 +89,13 @@ export default function Commissions() {
     () => Object.fromEntries(TABS.map(({ tab: k }) => [k, (tasks ?? []).filter((x) => inTab(x, k)).length])) as Record<Tab, number>,
     [tasks],
   );
-  const shown = (tasks ?? []).filter((x) => inTab(x, tab));
+  const [query, setQuery] = useState("");
+  const [order, setOrder] = useState<Order>("due");
+  const inThisTab = (tasks ?? []).filter((x) => inTab(x, tab));
+  const said = (s: Standing) => t(standingKey(s));
+  const shown = inThisTab.filter((x) => matches(x, query, shortNpub, said));
+  const groups = grouped(shown, order, order === "person" ? shortNpub : (k) => said(k as Standing));
+  const list = (rows: Task[]) => <ul className="row-list">{rows.map((task) => <Card key={task.task_id} task={task} now={now} />)}</ul>;
 
   return (
     <div className="page grid gap-3">
@@ -101,11 +117,43 @@ export default function Commissions() {
         ))}
       </div>
 
-      <section className="card panel">
+      {(inThisTab.length >= BROWSE_FROM || query) && (
+        <div className="browse">
+          <label className="browse-search">
+            <Search size={18} aria-hidden />
+            <input className="field" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("browse.find")} aria-label={t("browse.find")} />
+            {query && (
+              <button type="button" className="icon-btn" onClick={() => setQuery("")} aria-label={t("browse.clear")} title={t("browse.clear")}><X size={18} aria-hidden /></button>
+            )}
+          </label>
+          <div className="browse-picks">
+            <div className="flex flex-wrap gap-1.5" role="group" aria-label={t("browse.order")}>
+              {ORDERS.map((o) => (
+                <button key={o.order} type="button" className={order === o.order ? "chip chip-on" : "chip"} aria-pressed={order === o.order} onClick={() => setOrder(o.order)}>
+                  {t(o.label)}
+                </button>
+              ))}
+            </div>
+            <Link to="/calendar" className="chip"><CalendarDays size={16} aria-hidden />{t("nav.calendar")}</Link>
+          </div>
+        </div>
+      )}
+
+      <section className="card panel grid gap-3">
         {problem && <p className="error">{problem}</p>}
         {!tasks && !problem && <Waiting heading={t("waiting.fetchingList")} />}
-        {tasks && !shown.length && <p className="muted">{t(`list.empty.${tab}`)}</p>}
-        {shown.length > 0 && <ul className="row-list">{shown.map((task) => <Card key={task.task_id} task={task} now={now} />)}</ul>}
+        {tasks && !inThisTab.length && <p className="muted">{t(`list.empty.${tab}`)}</p>}
+        {query && inThisTab.length > 0 && !shown.length && <p className="muted">{t("browse.noMatch", { query })}</p>}
+        {order === "due" && shown.length > 0 && list(shown.sort((a, b) => a.needed_by - b.needed_by))}
+        {order !== "due" && groups.map((g) => (
+          <div key={g.key} className="grid gap-1">
+            <h2 className="group-title">
+              {order === "person" ? <Person npub={g.key} /> : <StandingBadge standing={g.key as Standing} />}
+              <span className="muted num">({g.rows.length})</span>
+            </h2>
+            {list(g.rows)}
+          </div>
+        ))}
       </section>
     </div>
   );

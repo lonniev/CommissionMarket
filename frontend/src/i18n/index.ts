@@ -7,20 +7,32 @@
 
 import { registerNamespace, type Vars } from "@tollbooth-dpyc/web";
 import { useT as useWords } from "@tollbooth-dpyc/web/react";
+import englishContent from "../content/en/index.ts";
 import en, { type MessageKey } from "./en.ts";
 
 /** CommissionMarket's words, for `useT` and `<Tx ns={WORDS} …/>`. */
 export const WORDS = "commission";
+/** CommissionMarket's lessons, for `useContent`. */
+export const CONTENT = "commission-content";
 
 /** Hand the English to the package, and say where each translation is fetched from. Once, before render. */
 export function registerCommission(): Promise<unknown> {
-  return registerNamespace(WORDS, en, {
-    fr: () => import("./fr.ts"),
-    es: () => import("./es.ts"),
-    ja: () => import("./ja.ts"),
-    zh: () => import("./zh.ts"),
-    hi: () => import("./hi.ts"),
-  });
+  return Promise.all([
+    registerNamespace(WORDS, en, {
+      fr: () => import("./fr.ts"),
+      es: () => import("./es.ts"),
+      ja: () => import("./ja.ts"),
+      zh: () => import("./zh.ts"),
+      hi: () => import("./hi.ts"),
+    }),
+    registerNamespace(CONTENT, englishContent, {
+      fr: () => import("../content/fr/index.ts"),
+      es: () => import("../content/es/index.ts"),
+      ja: () => import("../content/ja/index.ts"),
+      zh: () => import("../content/zh/index.ts"),
+      hi: () => import("../content/hi/index.ts"),
+    }),
+  ]);
 }
 
 export type Translate = (key: MessageKey, vars?: Vars) => string;
