@@ -275,6 +275,7 @@ const ja: Translation = {
   "home.lead": "肖像画、翻訳、調査、部品などの制作を、招待した受注者に依頼できます。署名つきのオファー1通に合意し、各段階の支払いをあなたのウォレットから相手のウォレットへ直接送ります。",
   "home.start": "npubでサインイン",
   "home.howItWorks": "ご利用の流れ",
+  "home.artAlt": "画家、木工職人、仕立て職人、織り手、菓子職人、鍛冶屋、彫刻師が働くギルドの中庭。",
   "home.readTerms": "標準約款を読む",
   "home.card.signed.title": "署名つきのオファー1通",
   "home.card.signed.says": "双方が同じ条件に署名し、その署名は誰でも検証できます。",
