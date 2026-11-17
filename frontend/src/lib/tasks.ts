@@ -225,6 +225,25 @@ export async function confirmArrived(taskId: string, what: Payment): Promise<Tas
   return move(taskId, "confirm_paid");
 }
 
+// ── The calendar feed ────────────────────────────────────────────────────────
+
+/** A private calendar link: the token is its whole credential. */
+export interface Feed {
+  token: string;
+  name: string;
+  zone: string;
+  created_at: number;
+  fetches: number;
+  last_fetch: number | null;
+}
+
+export const listFeeds = async () => (await ask<{ feeds: Feed[] }>("calendar_list")).feeds;
+
+export const publishFeed = async (name: string, timeZone: string) =>
+  (await ask<{ feed: Feed }>("calendar_publish", { name, time_zone: timeZone })).feed;
+
+export const revokeFeed = async (token: string) => { await ask("calendar_revoke", { token }); };
+
 // ── Free reading ────────────────────────────────────────────────────────────
 
 export interface StandardTerms {

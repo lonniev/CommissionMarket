@@ -17,7 +17,7 @@ import { byReward } from "../lib/rubric";
 import { getTask, taskHistory, type Invoice, type Task, type TaskEvent } from "../lib/tasks";
 import { dueText, lateRuleText, lateText } from "../lib/when";
 
-const MarkdownText = lazy(() => import("../components/MarkdownText"));
+const MarkdownText = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownText })));
 
 function History({ taskId }: { taskId: string }) {
   const t = useT();

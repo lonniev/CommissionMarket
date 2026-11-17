@@ -1,54 +1,43 @@
-/** For a guest: what CommissionMarket is, how a commission runs, and the way in. */
+/** For a guest: what CommissionMarket is in a line, three reasons, and the way in. */
 
 import { Link } from "react-router-dom";
-import { BadgeCheck, FilePen, FileSignature, Hand, Landmark, PackageCheck, Scale, Zap, type LucideIcon } from "lucide-react";
+import { ArrowRight, FileSignature, Landmark, Users, Zap, type LucideIcon } from "lucide-react";
 import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
 
-const STEPS: { icon: LucideIcon; key: MessageKey }[] = [
-  { icon: FilePen, key: "home.step.post" },
-  { icon: FileSignature, key: "home.step.sign" },
-  { icon: Hand, key: "home.step.claim" },
-  { icon: Zap, key: "home.step.ahead" },
-  { icon: PackageCheck, key: "home.step.deliver" },
-  { icon: Scale, key: "home.step.grade" },
-  { icon: BadgeCheck, key: "home.step.paid" },
+const CARDS: { icon: LucideIcon; title: MessageKey; says: MessageKey }[] = [
+  { icon: FileSignature, title: "home.card.signed.title", says: "home.card.signed.says" },
+  { icon: Zap, title: "home.card.ahead.title", says: "home.card.ahead.says" },
+  { icon: Users, title: "home.card.circle.title", says: "home.card.circle.says" },
 ];
 
 export default function Home() {
   const t = useT();
   return (
     <div className="page grid gap-4">
-      <section className="hero card panel grid gap-3">
+      <section className="hero card grid gap-3">
         <h1 className="hero-title">{t("app.tagline")}</h1>
         <p className="hero-lines">{t("home.lead")}</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
+          <Link to="/guide" className="btn btn-quiet">{t("home.howItWorks")}<ArrowRight size={18} aria-hidden /></Link>
           <Link to="/signin" className="btn btn-go">{t("home.start")}</Link>
-          <Link to="/terms" className="btn btn-quiet"><Landmark size={18} aria-hidden />{t("home.readTerms")}</Link>
         </div>
       </section>
 
-      <section className="card panel grid gap-3">
-        <h2 className="section-title">{t("home.howTitle")}</h2>
-        <ol className="steps">
-          {STEPS.map(({ icon: Icon, key }, i) => (
-            <li key={key} className="step">
-              <span className="step-mark"><span className="num">{i + 1}</span><Icon size={18} aria-hidden /></span>
-              <span>{t(key)}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <ul className="home-cards">
+        {CARDS.map(({ icon: Icon, title, says }) => (
+          <li key={title} className="card panel home-card">
+            <Icon size={26} aria-hidden className="home-card-mark" />
+            <h2 className="panel-title">{t(title)}</h2>
+            <p className="muted">{t(says)}</p>
+          </li>
+        ))}
+      </ul>
 
-      <section className="card panel grid gap-2">
-        <h2 className="section-title">{t("home.whyTitle")}</h2>
-        <ul className="points">
-          <li>{t("home.why.direct")}</li>
-          <li>{t("home.why.signed")}</li>
-          <li>{t("home.why.ahead")}</li>
-          <li>{t("home.why.circle")}</li>
-        </ul>
-      </section>
+      <p className="flex flex-wrap justify-end gap-x-4 gap-y-2">
+        <Link to="/learn" className="ent">{t("nav.learn")}</Link>
+        <Link to="/terms" className="ent inline-flex items-center gap-1"><Landmark size={16} aria-hidden />{t("home.readTerms")}</Link>
+      </p>
     </div>
   );
 }

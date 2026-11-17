@@ -4,9 +4,9 @@
  * the cover page under the Standard Terms.
  */
 
-import { useState, type ReactNode } from "react";
+import { lazy, Suspense, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Trash2, UserPlus } from "lucide-react";
+import { Maximize2, Plus, Trash2, UserPlus } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { useAppShell } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
@@ -17,6 +17,9 @@ import { editTask, postTask, type IpOption, type Task } from "../lib/tasks";
 import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
 import { commissionHref } from "./Person";
 import Sats from "./Sats";
+
+const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
+const BRIEF_MAX = 4000;
 
 const LATE_KINDS: LateKind[] = ["full", "discount", "cancel"];
 const satsOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
@@ -40,6 +43,7 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
 
   const [title, setTitle] = useState(editing?.title ?? "");
   const [description, setDescription] = useState(editing?.description ?? "");
+  const [big, setBig] = useState(false);
   const [audience, setAudience] = useState((editing?.audience ?? []).join("\n"));
   const [due, setDue] = useState(editing && editing.needed_by > now ? dayKeyOf(editing.needed_by) : dayFrom(now, 30));
   const [rows, setRows] = useState<GradeRow[]>(() => editing
@@ -107,12 +111,21 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
             <span className="label">{t("form.title")}</span>
             <input className="field" value={title} maxLength={190} onChange={(e) => setTitle(e.target.value)} placeholder={t("form.titlePlaceholder")} />
           </label>
-          <label className="grid gap-1">
-            <span className="label">{t("form.description")}</span>
-            <textarea className="field" rows={8} maxLength={4000} value={description} onChange={(e) => setDescription(e.target.value)}
+          <div className="grid gap-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label htmlFor="brief" className="label">{t("form.description")}</label>
+              <button type="button" className="chip" onClick={() => setBig(true)}><Maximize2 size={16} aria-hidden />{t("form.bigEditor")}</button>
+            </div>
+            <textarea id="brief" className="field" rows={8} maxLength={BRIEF_MAX} value={description} onChange={(e) => setDescription(e.target.value)}
               placeholder={t("form.descriptionPlaceholder")} />
             <span className="muted text-sm">{t("form.markdown")}</span>
-          </label>
+            {big && (
+              <Suspense fallback={null}>
+                <MarkdownEditor value={description} maxLength={BRIEF_MAX} title={t("form.brief")} label={t("form.description")}
+                  placeholder={t("form.descriptionPlaceholder")} onDone={(text) => { setDescription(text); setBig(false); }} />
+              </Suspense>
+            )}
+          </div>
         </Section>
 
         <Section title={t("form.audience")} help={t("form.audienceHelp")}>
