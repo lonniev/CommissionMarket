@@ -48,7 +48,8 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState("");
   const due = mySignatureDue(task);
-  const { purchaser_signed, performer_signed } = task.agreement;
+  const { purchaser_signed, performer_signed, arbiter_signed } = task.agreement;
+  const arbiter = task.cover?.arbiter_npub ?? "";
 
   const load = useCallback(async () => {
     try {
@@ -58,7 +59,7 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
     }
   }, [task.task_id]);
 
-  useEffect(() => { void load(); }, [load, purchaser_signed, performer_signed]);
+  useEffect(() => { void load(); }, [load, purchaser_signed, performer_signed, arbiter_signed]);
 
   async function ask() {
     setBusy(true);
@@ -118,6 +119,14 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
           {task.performer ? <Person npub={task.performer} /> : <span className="muted">{t("offer.notClaimed")}</span>}
           <span className="muted text-sm">{sig?.performer ? t("offer.signedAt", { when: when(sig.performer.signed_at) }) : task.performer ? t("offer.notSigned") : ""}</span>
         </li>
+        {arbiter && (
+          <li>
+            {arbiter_signed ? <CircleCheck size={18} aria-hidden className="ok" /> : <CircleDashed size={18} aria-hidden className="muted" />}
+            <span>{t("offer.arbiter")}</span>
+            <Person npub={arbiter} />
+            <span className="muted text-sm">{sig?.arbiter ? t("offer.signedAt", { when: when(sig.arbiter.signed_at) }) : t("offer.notSigned")}</span>
+          </li>
+        )}
       </ul>
 
       {offer && (
@@ -130,7 +139,7 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
 
       {due && !asked && (
         <div className="grid gap-2">
-          <p>{due === "purchaser" ? t("offer.youSignFirst") : t("offer.youSignToDeliver")}</p>
+          <p>{due === "purchaser" ? t("offer.youSignFirst") : due === "arbiter" ? t("offer.youSignAsArbiter") : t("offer.youSignToDeliver")}</p>
           <div className="actions-row">
             <button type="button" className="btn btn-go" disabled={busy} onClick={() => void ask()}>
               <Send size={18} aria-hidden />{t("offer.sendDm")}

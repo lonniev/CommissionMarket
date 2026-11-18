@@ -57,3 +57,25 @@ test("a cover page reads back into the form unchanged", () => {
   const again = coverFrom(rowsOf(made.cover), ["Done"]);
   assert.deepEqual(again, made);
 });
+
+test("escrow needs an arbiter, a deemed grade, a mint and a refund date past any appeal", () => {
+  const grades = ["Good"];
+  const base = { ...blankCover(), deliverables: "A portrait", deemedGrade: "Good", deemedDays: "7" };
+  const arbiter = npub();
+  const mint = "https://testnut.cashu.space";
+  const held = (over: object) => coverFrom({ ...base, escrow: true, arbiter, mint, refundDays: "28", ...over }, grades);
+  assert.deepEqual(coverFrom({ ...base, arbiter: "bob" }, grades), { problem: { key: "form.badArbiter" } });
+  assert.deepEqual(held({ arbiter: "" }), { problem: { key: "form.escrowNeedsArbiter" } });
+  assert.deepEqual(held({ deemedGrade: "" }), { problem: { key: "form.escrowNeedsDeemed" } });
+  assert.deepEqual(held({ mint: "" }), { problem: { key: "form.escrowNeedsMint" } });
+  assert.deepEqual(held({ refundDays: "27" }), { problem: { key: "form.badRefundDays", vars: { least: 28, most: 90 } } });
+  const ok = held({});
+  assert.ok("cover" in ok);
+  assert.deepEqual(
+    { a: ok.cover.arbiter_npub, e: ok.cover.escrow, m: ok.cover.escrow_mint, r: ok.cover.refund_days },
+    { a: arbiter, e: true, m: mint, r: 28 },
+  );
+  assert.deepEqual(rowsOf({ ...ok.cover, terms_version: "v1", terms_hash: "" }).refundDays, "28");
+  const plain = coverFrom({ ...base, arbiter, mint }, grades);
+  assert.ok("cover" in plain && plain.cover.escrow === false && plain.cover.escrow_mint === "" && plain.cover.refund_days === 0);
+});

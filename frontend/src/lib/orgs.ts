@@ -42,6 +42,7 @@ export interface Defaults {
   third_party_allowed?: boolean;
   governing_law?: string;
   venue?: string;
+  arbiter_npub?: string;
 }
 
 export interface Totals {
@@ -117,6 +118,7 @@ export function coverFromDefaults(blank: CoverRows, d: Defaults): CoverRows {
     thirdParty: d.third_party_allowed ?? blank.thirdParty,
     law: d.governing_law ?? blank.law,
     venue: d.venue ?? blank.venue,
+    arbiter: d.arbiter_npub ?? blank.arbiter,
   };
 }
 
@@ -132,6 +134,7 @@ export function defaultsFromCover(rows: CoverRows, blank: CoverRows): Defaults {
   if (rows.thirdParty) d.third_party_allowed = true;
   if (rows.law.trim()) d.governing_law = rows.law.trim();
   if (rows.venue.trim()) d.venue = rows.venue.trim();
+  if (rows.arbiter.trim()) d.arbiter_npub = rows.arbiter.trim();
   return d;
 }
 

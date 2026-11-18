@@ -1,6 +1,6 @@
 /** Task Booth's tools, as CommissionMarket calls them. A commission is a Task Booth task. */
 
-import { callTool } from "@tollbooth-dpyc/web";
+import { callTool, type EscrowSignable } from "@tollbooth-dpyc/web";
 import type { Ahead } from "./money.ts";
 import type { Role, Standing } from "./moves.ts";
 import type { Rubric } from "./rubric.ts";
@@ -43,6 +43,13 @@ export interface Cover {
   third_party_allowed: boolean;
   governing_law: string;
   venue: string;
+  /** Someone both parties trust: signs the offer, decides an appeal, holds the third escrow key. */
+  arbiter_npub: string;
+  /** The Balance is held at a Cashu mint until two of the three agree how it divides (terms 6). */
+  escrow: boolean;
+  escrow_mint: string;
+  /** Days after the needed-by date when the client alone may take the escrow back (terms 6.6). */
+  refund_days: number;
 }
 
 /** A cover page as posted: Task Booth stamps the terms version and hash itself. */
@@ -95,8 +102,37 @@ export interface Task {
   deposit?: Deposit;
   milestones: Milestone[];
   cover: Cover | null;
-  agreement: { purchaser_signed: boolean; performer_signed: boolean };
+  agreement: { purchaser_signed: boolean; performer_signed: boolean; arbiter_signed?: boolean };
+  /** Where the escrow stands, once its invoice is asked for. */
+  escrow?: Escrow | null;
 }
+
+export type EscrowRole = "purchaser" | "performer" | "arbiter";
+
+/** A commission's escrow as anyone on it reads it: no proofs, no blinding factors. */
+export interface Escrow {
+  state: "invoiced" | "funded" | "proposed" | "split" | "settled";
+  mint: string;
+  sats: number;
+  parties: Record<EscrowRole, string>;
+  refund_at: number;
+  refund_open: boolean;
+  invoice?: { invoice: string; expires_at: number };
+  funded_at?: number;
+  held_sats?: number;
+  proposal?: { to_performer: number; to_purchaser: number; by: EscrowRole; at: number; signed_by: EscrowRole[] };
+  to_collect?: Partial<Record<EscrowRole, number>>;
+  paid?: Partial<Record<EscrowRole, number>>;
+}
+
+/** Something waiting on the signed-in person's signature, with the parts to rebuild it from. */
+export type EscrowPending = EscrowSignable & {
+  role: EscrowRole;
+  sats?: number;
+  fee_reserve?: number;
+  to_performer?: number;
+  to_purchaser?: number;
+};
 
 /** An invoice Task Booth hands over: the award, the deposit or a milestone. */
 export interface Invoice {
@@ -196,7 +232,7 @@ export const appeal = async (taskId: string, reasons: string) =>
 export interface Offer {
   statement: string;
   statement_hash: string;
-  signatures: Partial<Record<"purchaser" | "performer", { signer: string; signed_at: number; method: string }>>;
+  signatures: Partial<Record<EscrowRole, { signer: string; signed_at: number; method: string }>>;
 }
 
 export const offerTerms = (taskId: string) => ask<Offer>("offer_terms", { task_id: taskId });
@@ -232,6 +268,51 @@ export async function confirmArrived(taskId: string, what: Payment): Promise<Tas
   }
   return move(taskId, "confirm_paid");
 }
+
+// ── Escrow at a Cashu mint ───────────────────────────────────────────────────
+
+export interface EscrowReading {
+  escrow: Escrow | null;
+  for_you?: EscrowPending[];
+  /** Before the invoice: whether the cover asks for escrow, and the Balance it would hold. */
+  offered?: boolean;
+  sats?: number;
+}
+
+export const escrowStatus = (taskId: string) => ask<EscrowReading>("escrow_status", { task_id: taskId });
+
+/** The invoice that funds the escrow; the client pays it, then signs to lock the sats. */
+export const escrowInvoice = async (taskId: string) =>
+  (await ask<{ escrow: { invoice: string; sats: number; expires_at: number; mint: string; refund_at: number } }>(
+    "escrow_invoice", { task_id: taskId })).escrow;
+
+/** Propose a split; with no share, the award of a final grade. */
+export const escrowPropose = (taskId: string, toPerformer?: number) =>
+  ask<{ proposal: NonNullable<Escrow["proposal"]> }>("escrow_propose", toPerformer === undefined ? { task_id: taskId } : { task_id: taskId, to_performer: toPerformer });
+
+/** Ready the signed-in person's share for their payout address. */
+export const escrowCollect = (taskId: string) =>
+  ask<{ sats: number; fee_reserve: number; address: string }>("escrow_collect", { task_id: taskId });
+
+export const escrowSign = (taskId: string, signature: string) =>
+  ask<{ escrow: Escrow; split?: boolean; paid?: number }>("escrow_sign", { task_id: taskId, signature });
+
+interface PropertyRow {
+  name: string;
+  value: unknown;
+  suggestions?: string[];
+}
+
+/** The mints the owner offers for escrow, read from the Operator's public properties. */
+export async function escrowMints(): Promise<string[]> {
+  const r = await callTool<{ success?: boolean; properties?: PropertyRow[] }>("get_operator_properties", {});
+  const row = (r.properties ?? []).find((p) => p.name === "escrow_mints");
+  const value = typeof row?.value === "string" ? row.value : "";
+  return [...new Set(value.split(/[\s,]+/).map((w) => w.trim()).filter((w) => w.startsWith("https://")))];
+}
+
+/** A test mint: its sats are not real. */
+export const isTestMint = (url: string) => /^https:\/\/([a-z0-9-]+\.)*testnut\.cashu\.space(\/|$)/i.test(url);
 
 // ── The calendar feed ────────────────────────────────────────────────────────
 

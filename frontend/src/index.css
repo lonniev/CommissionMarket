@@ -415,3 +415,10 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 .clk-verdict { font-weight: 600; }
 .clk-verdict-ok { color: var(--tb-ok); }
 .clk-verdict-bad { color: var(--bad); }
+
+/* Escrow: the steps it moves through, and each thing waiting on a signature. */
+.escrow-steps { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.escrow-steps li { flex: 1 1 6rem; padding: 0.375rem 0.5rem; border-radius: 0.5rem; background: var(--tb-surface-2); color: var(--tb-muted); text-align: center; font-size: 0.875rem; }
+.escrow-steps li.done { color: var(--tb-ink); }
+.escrow-steps li.now { background: var(--tb-accent); color: var(--tb-on-accent); font-weight: 600; }
+.sign-box { padding: 0.75rem; border: 1px solid var(--tb-line); border-radius: 0.75rem; }
