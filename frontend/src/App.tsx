@@ -141,7 +141,7 @@ function Site() {
           <Suspense fallback={<div className="page"><div className="card panel"><Waiting heading={t("waiting.openingPage")} /></div></div>}>
             <Routes>
               <Route index element={session.signedIn ? <Navigate to="/commissions" replace /> : <Home />} />
-              <Route path="signin" element={session.signedIn ? <Navigate to="/commissions" replace /> : <div className="page"><div className="card mx-auto max-w-3xl p-6">{gate}</div></div>} />
+              <Route path="signin" element={session.signedIn ? <Navigate to="/commissions" replace /> : <div className="page"><div className="card p-6">{gate}</div></div>} />
               <Route path="commissions" element={<SignedIn><Commissions /></SignedIn>} />
               <Route path="commissions/new" element={<SignedIn><NewCommission /></SignedIn>} />
               <Route path="commissions/:taskId" element={<SignedIn><Commission /></SignedIn>} />

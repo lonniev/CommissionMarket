@@ -1,0 +1,1 @@
+- Text now uses the width the screen gives it: the page grows to 90rem (it stopped at 60rem), and the Home hero, the Standard Terms and the commission and sign-in forms no longer stop their text partway across.
