@@ -1,7 +1,10 @@
 /** A Project's brief, budget, circle and default terms, as its Organization's owner sets them. */
 
 import { useState } from "react";
-import { blankCover, type CoverRows, audienceFrom, isNpub } from "../lib/cover";
+import { blankCover, type CoverRows, audienceFrom, MAX_AUDIENCE } from "../lib/cover";
+import { NpubField, NpubListField } from "@tollbooth-dpyc/web/react";
+
+const LOOK = { inputClassName: "field font-mono text-sm", buttonClassName: "chip" };
 import { defaultsFromCover, coverFromDefaults, saveProject, satsFrom, type Project } from "../lib/orgs";
 import { useT } from "../i18n";
 import TermsFields from "./TermsFields";
@@ -16,7 +19,7 @@ export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
   const [name, setName] = useState(editing?.name ?? "");
   const [brief, setBrief] = useState(editing?.brief ?? "");
   const [budget, setBudget] = useState(editing?.budget_sats ? String(editing.budget_sats) : "");
-  const [circle, setCircle] = useState((editing?.circle ?? []).join("\n"));
+  const [circle, setCircle] = useState<string[]>(() => [...(editing?.circle ?? [])]);
   const [cover, setCover] = useState<CoverRows>(() => coverFromDefaults(blankCover(), editing?.defaults ?? {}));
   const [days, setDays] = useState(editing?.defaults.deemed_acceptance_days ? String(editing.defaults.deemed_acceptance_days) : "");
   const [busy, setBusy] = useState(false);
@@ -28,11 +31,10 @@ export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
     if (!name.trim()) return setProblem(t("project.needName"));
     const sats = budget.trim() ? satsFrom(budget) : 0;
     if (Number.isNaN(sats)) return setProblem(t("project.badBudget"));
-    const people = circle.trim() ? audienceFrom(circle) : { audience: [] };
+    const people = circle.length ? audienceFrom(circle.join("\n")) : { audience: [] };
     if ("problem" in people) return setProblem(t(people.problem.key, people.problem.vars));
     const deemed = days.trim() ? satsFrom(days) : 0;
     if (Number.isNaN(deemed) || deemed > 60) return setProblem(t("form.badDeemedDays", { max: 60 }));
-    if (cover.arbiter.trim() && !isNpub(cover.arbiter.trim())) return setProblem(t("form.badArbiter"));
     const defaults = defaultsFromCover({ ...cover, deemedDays: deemed ? String(deemed) : blankCover().deemedDays }, blankCover());
     if (deemed) defaults.deemed_acceptance_days = deemed;
     setBusy(true);
@@ -61,21 +63,19 @@ export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
         <input className="field num text-right" inputMode="numeric" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="500000" />
         <span className="muted text-sm">{t("project.budgetHelp")}</span>
       </label>
-      <label className="grid gap-1">
+      <div className="grid gap-1">
         <span className="label">{t("project.circle")}</span>
-        <textarea className="field font-mono text-sm" rows={3} value={circle} onChange={(e) => setCircle(e.target.value)} placeholder="npub1…"
-          autoCapitalize="none" spellCheck={false} />
+        <NpubListField value={circle} onChange={setCircle} label={t("project.circle")} max={MAX_AUDIENCE} look={LOOK} />
         <span className="muted text-sm">{t("project.circleHelp")}</span>
-      </label>
+      </div>
       <fieldset className="form-section">
         <legend className="section-title">{t("project.defaults")}</legend>
         <p className="muted text-sm">{t("project.defaultsHelp")}</p>
-        <label className="grid gap-1">
+        <div className="grid gap-1">
           <span className="label">{t("cover.arbiter")}</span>
-          <input className="field font-mono text-sm" value={cover.arbiter} onChange={(e) => set("arbiter", e.target.value.trim())}
-            placeholder="npub1…" autoCapitalize="none" spellCheck={false} />
+          <NpubField value={cover.arbiter} onChange={(n) => set("arbiter", n)} label={t("cover.arbiter")} look={LOOK} />
           <span className="muted text-sm">{t("project.arbiterHelp")}</span>
-        </label>
+        </div>
         <TermsFields cover={cover} set={set} />
         <label className="grid gap-1 w-fit">
           <span className="label">{t("cover.deemedDays")}</span>
