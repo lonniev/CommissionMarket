@@ -1,0 +1,1 @@
+- The Operator settings on Profile sit in a card like the panels beside them, and their field takes the card's width.
