@@ -278,6 +278,8 @@ const es: Translation = {
   "terms.title": "Condiciones generales",
   "terms.says": "La portada de cada encargo indica una versión de estas condiciones y su sha256. El texto se conserva en inglés, tal como se calcula su hash.",
   "terms.version": "Versión",
+  "terms.contents": "Índice",
+  "terms.exact": "El texto exacto, tal como se calcula su hash",
 
   "home.lead": "Encargue un retrato, una traducción, un estudio o una pieza a los profesionales que usted invite. Acuerde una sola oferta firmada y pague cada etapa directamente de su billetera a la suya.",
   "home.start": "Iniciar sesión con su npub",

@@ -278,6 +278,8 @@ const fr: Translation = {
   "terms.title": "Conditions générales",
   "terms.says": "La page de garde de chaque commande nomme une version de ces conditions et leur sha256. Le texte est conservé en anglais, exactement tel qu'il est haché.",
   "terms.version": "Version",
+  "terms.contents": "Sommaire",
+  "terms.exact": "Le texte exact, tel qu'il est haché",
 
   "home.lead": "Commande un portrait, une traduction, une étude ou une pièce à des prestataires que tu invites. Signe avec eux une seule offre, et paie chaque étape directement de ton portefeuille au leur.",
   "home.start": "Se connecter avec ton npub",
