@@ -8,6 +8,7 @@
 import { createContext, useContext, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { usePlayByPlay } from "../lib/content";
+import Clock from "./Clock";
 import { clauseHref, storyPieces, type Word } from "../lib/playByPlay";
 
 const Open = createContext<{ open: string; setOpen: (id: string) => void }>({ open: "", setOpen: () => {} });
@@ -123,6 +124,8 @@ export default function PlayByPlay() {
             </dl>
           </div>
         </div>
+
+        <Clock />
 
         <div className="pbp-grid">
           {story.endings.map((e, c) => (

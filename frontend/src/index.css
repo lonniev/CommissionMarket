@@ -387,3 +387,32 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
   .pbp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pbp-cell { order: 0; grid-column: var(--c); grid-row: var(--r); }
 }
+
+/* The clock: short and wide, one lane per thread, the refund date in gold. */
+.clk-scroll { overflow-x: auto; }
+.clk { display: block; width: 100%; min-width: 46rem; height: auto; font-family: var(--font-sans); }
+.clk-lane { fill: var(--tb-muted); font-size: 14px; font-weight: 700; }
+.clk-label { fill: var(--tb-ink); font-size: 14px; }
+.clk-tick { fill: var(--tb-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.clk-rule { stroke: var(--tb-line); stroke-width: 1; }
+.clk-bar { fill: var(--tb-accent); }
+.clk-work { fill: color-mix(in srgb, var(--tb-muted) 35%, transparent); }
+.clk-grace { fill: none; stroke: var(--tb-muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.clk-grade { fill: var(--tb-accent); }
+.clk-appeal { fill: color-mix(in srgb, var(--tb-accent) 55%, var(--gold)); }
+.clk-arbiter { fill: var(--tb-ok); }
+.clk-locked { fill: color-mix(in srgb, var(--tb-accent) 30%, transparent); }
+.clk-alone { fill: color-mix(in srgb, var(--gold) 45%, transparent); }
+.clk-dot { fill: var(--gold); }
+.clk-late { fill: var(--bad); }
+.clk-date { stroke: var(--tb-muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.clk-date-label { fill: var(--tb-muted); font-size: 13px; font-weight: 600; }
+.clk-refund { stroke: var(--gold); stroke-width: 3; }
+.clk-refund-label { fill: var(--gold); font-size: 13px; font-weight: 800; }
+.clk-exposed { fill: color-mix(in srgb, var(--bad) 22%, transparent); stroke: var(--bad); stroke-width: 1.5; stroke-dasharray: 6 3; }
+.clk-exposed-label { fill: var(--bad); font-size: 13px; font-weight: 800; }
+.clk-controls { display: grid; gap: 0.375rem; justify-items: end; text-align: right; }
+.clk-controls input { width: min(100%, 22rem); accent-color: var(--gold); }
+.clk-verdict { font-weight: 600; }
+.clk-verdict-ok { color: var(--tb-ok); }
+.clk-verdict-bad { color: var(--bad); }

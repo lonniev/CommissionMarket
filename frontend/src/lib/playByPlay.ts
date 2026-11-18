@@ -26,6 +26,31 @@ export interface Ending {
   aside: string[];
 }
 
+/** The words on the timeline: lane names, labels, and the sentences under the slider ({n} is a number). */
+export interface ClockText {
+  title: string;
+  caption: string;
+  lanes: [string, string, string, string];
+  deposit: string;
+  milestone: string;
+  painting: string;
+  grace: string;
+  late: string;
+  grade: string;
+  appeal: string;
+  arbiter: string;
+  locked: string;
+  alone: string;
+  exposed: string;
+  deliveryDate: string;
+  refund: string;
+  day: string;
+  slider: string;
+  roomy: string;
+  same: string;
+  tight: string;
+}
+
 export interface PlayByPlayText {
   title: string;
   intro: string[];
@@ -33,6 +58,7 @@ export interface PlayByPlayText {
   setup: string[];
   coverTitle: string;
   cover: [string, string][];
+  clock: ClockText;
   phases: string[];
   tallyTitle: string;
   asideTitle: string;
