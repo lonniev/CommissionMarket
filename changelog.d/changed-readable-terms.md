@@ -1,1 +1,0 @@
-- The Standard Terms page lays the terms out for reading: a contents list, numbered sections with their clauses in a gutter, defined terms in bold, and section references as links. Every clause has its own link (`/terms#t-6-16`). The words are unchanged, and the exact hashed text is one tap away.

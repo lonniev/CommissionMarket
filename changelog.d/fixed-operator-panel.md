@@ -1,1 +1,0 @@
-- The Task Booth operator now sees the Operator panel on Profile, with Escrow mints (web 3.11.1).

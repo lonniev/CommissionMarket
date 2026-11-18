@@ -1,7 +1,0 @@
-- A Guide in seven step cards, and a lighter Home: a line, two ways in, three reasons.
-- Learn: nine lessons for clients and professionals (sats, keys, signatures, the signed offer, payments ahead, grading, IP, disagreements, price), a glossary and a bookshelf, in all six languages.
-- A Calendar of every commission's events, with a private link for your own calendar app on Profile.
-- Search and ordering (by date, person or state) on the commission list.
-- The brief opens in the shared Markdown editor from `@tollbooth-dpyc/web`.
-- The Wallet's top-up tiles are marked Sketch, Study, Commission, Gallery and Library.
-- The running example is now "Paint a portrait of Murray Rothbard for the new Library".
