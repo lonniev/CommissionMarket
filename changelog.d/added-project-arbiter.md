@@ -1,1 +1,0 @@
-- A Project names a default arbiter, who fills in on each new commission filed under it.
