@@ -1,7 +1,7 @@
 /**
  * The clock a commission in escrow runs on, under the Standard Terms v1,
- * drawn for its tightest case: the professional delivers on the delivery
- * date, and the client grades on the last day allowed. The question it
+ * drawn for its tightest case: the professional delivers on the last day of
+ * grace after the delivery date, and the client grades on the last day allowed. The question it
  * answers is whether the arbiter has time to settle an appeal before the
  * refund date lets the client take the escrow back alone (§6.6).
  */
@@ -23,12 +23,12 @@ export interface Dates {
   deposit: number;
   milestone: number;
   deliveryDate: number;
+  /** The latest delivery that still avoids returning the deposit (§14.3). */
+  delivered: number;
   /** The last day to grade; after it the deemed grade applies (§4.5). */
   graded: number;
   /** The last day to appeal that grade. */
   appealed: number;
-  /** From this day a late professional owes the deposit back (§14.3). */
-  late: number;
   refund: number;
   /** Days the arbiter has between the last appeal and the refund date; below zero, the client can act first. */
   arbiterDays: number;
@@ -36,24 +36,28 @@ export interface Dates {
   end: number;
 }
 
-export const STORY_CLOCK: Clock = { milestoneDay: 10, deliveryDay: 30, deemedDays: 7, appealDays: 7, graceDays: 7, refundDays: 21 };
+export const STORY_CLOCK: Clock = { milestoneDay: 10, deliveryDay: 30, deemedDays: 7, appealDays: 7, graceDays: 7, refundDays: 28 };
 
 export function datesOf(c: Clock): Dates {
-  const graded = c.deliveryDay + c.deemedDays;
+  const delivered = c.deliveryDay + c.graceDays;
+  const graded = delivered + c.deemedDays;
   const appealed = graded + c.appealDays;
   const refund = c.deliveryDay + c.refundDays;
   return {
     deposit: 0,
     milestone: c.milestoneDay,
     deliveryDate: c.deliveryDay,
+    delivered,
     graded,
     appealed,
-    late: c.deliveryDay + c.graceDays + 1,
     refund,
     arbiterDays: refund - appealed,
     end: Math.max(refund, appealed) + 14,
   };
 }
+
+/** Task Booth's floor for the refund period (taskbooth store.least_refund_days): grace, grading, appeal, a week to decide. */
+export const leastRefundDays = (c: Clock) => c.graceDays + c.deemedDays + c.appealDays + 7;
 
 /** Fill `{n}` in a phrase. */
 export const fill = (phrase: string, n: number) => phrase.replaceAll("{n}", String(n));

@@ -69,10 +69,10 @@ export default function Clock() {
           {dot(0, d.milestone, words.milestone)}
 
           {bar(1, 0, d.deliveryDate, "work", words.painting)}
-          {bar(1, d.deliveryDate, d.late - 1, "grace", words.grace)}
-          {dot(1, d.late, words.late, "late")}
+          {bar(1, d.deliveryDate, d.delivered, "grace", words.grace)}
+          {dot(1, d.delivered, words.delivered)}
 
-          {bar(2, d.deliveryDate, d.graded, "grade", words.grade)}
+          {bar(2, d.delivered, d.graded, "grade", words.grade)}
           {bar(2, d.graded, d.appealed, "appeal", words.appeal)}
           {d.arbiterDays > 0 && bar(2, d.appealed, d.refund, "arbiter", words.arbiter)}
 
@@ -95,7 +95,7 @@ export default function Clock() {
       </div>
       <div className="clk-controls">
         <label htmlFor={sliderId}>{fill(words.slider, refundDays)}</label>
-        <input id={sliderId} type="range" min={1} max={30} value={refundDays} onChange={(e) => setRefundDays(Number(e.target.value))} />
+        <input id={sliderId} type="range" min={1} max={40} value={refundDays} onChange={(e) => setRefundDays(Number(e.target.value))} />
         <p className={exposed ? "clk-verdict clk-verdict-bad" : "clk-verdict clk-verdict-ok"} aria-live="polite">
           {verdict}
         </p>
