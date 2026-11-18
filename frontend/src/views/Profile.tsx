@@ -13,6 +13,12 @@ const BUILD = {
   label: "muted", value: "font-mono text-xs leading-5", link: "underline",
 };
 
+/** The operator's settings, as a card like the panels beside it; the field takes the row's width. */
+const OPERATOR = {
+  root: "card panel grid gap-2", heading: "panel-title", row: "flex flex-wrap items-center gap-2 py-1",
+  label: "muted", control: "field min-w-0 flex-1", error: "error",
+};
+
 const USAGE = {
   root: "card panel", header: "flex flex-wrap items-center justify-between gap-2", heading: "panel-title", chip: "chip",
   figures: "mt-3 flex flex-wrap gap-x-8 gap-y-2", value: "block num text-2xl text-[var(--tb-accent)]", label: "muted text-xs",
@@ -104,6 +110,7 @@ export default function Profile() {
         npub={session.npub}
         heading={null}
         before={<><PayoutAddress /><Currency /><LanguageChoice /><CalendarFeed /></>}
+        operator={{ classNames: OPERATOR }}
         usage={{ classNames: USAGE }}
         theme={{ classNames: { chip: "chip", active: "chip chip-on" } }}
         timezone={{ classNames: { select: "field" } }}
