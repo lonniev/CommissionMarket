@@ -18,6 +18,7 @@ import { byReward } from "../lib/rubric";
 import { getTask, taskHistory, type Invoice, type Task, type TaskEvent } from "../lib/tasks";
 import { dueText, lateRuleText, lateText } from "../lib/when";
 
+const EscrowPanel = lazy(() => import("../components/EscrowPanel"));
 const MarkdownText = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownText })));
 
 function History({ taskId }: { taskId: string }) {
@@ -74,6 +75,8 @@ function CoverFacts({ task }: { task: Task }) {
         <dt>{t("cover.thirdPartyShort")}</dt><dd>{c.third_party_allowed ? t("cover.allowed") : t("cover.notAllowed")}</dd>
         {c.governing_law && <><dt>{t("cover.law")}</dt><dd>{c.governing_law}</dd></>}
         {c.venue && <><dt>{t("cover.venue")}</dt><dd>{c.venue}</dd></>}
+        {c.arbiter_npub && <><dt>{t("cover.arbiter")}</dt><dd><Person npub={c.arbiter_npub} /></dd></>}
+        {c.escrow && <><dt>{t("cover.escrowShort")}</dt><dd>{t("cover.escrowFact", { mint: c.escrow_mint, days: c.refund_days })}</dd></>}
         <dt>{t("nav.terms")}</dt>
         <dd><Link to={`/terms?version=${encodeURIComponent(c.terms_version)}`} className="ent">{c.terms_version}</Link> · <code className="hash">{c.terms_hash.slice(0, 12)}…</code></dd>
       </dl>
@@ -157,6 +160,11 @@ export default function Commission() {
       </section>
 
       {task.cover && <OfferPanel task={task} onChanged={setTask} />}
+      {task.cover?.escrow && (
+        <Suspense fallback={null}>
+          <EscrowPanel task={task} now={now} onChanged={() => void load()} />
+        </Suspense>
+      )}
       <MoneyPanel task={task} payout={payout} now={now} onChanged={(next) => { setTask(next); void load(); }} />
 
       <section className="card panel">

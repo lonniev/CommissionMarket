@@ -18,6 +18,7 @@ import { editTask, postTask, type Task } from "../lib/tasks";
 import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
 import { commissionHref, projectHref } from "./Person";
 import Sats from "./Sats";
+import EscrowFields from "./EscrowFields";
 import TermsFields from "./TermsFields";
 
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
@@ -270,6 +271,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             )}
           </div>
           <p className="muted text-sm">{t("cover.deemedHelp")}</p>
+          <EscrowFields cover={cover} set={setCoverField} />
           <TermsFields cover={cover} set={setCoverField} />
           <p className="muted text-sm">{t("cover.underTerms")} <Link to="/terms" className="ent">{t("nav.terms")}</Link></p>
         </Section>

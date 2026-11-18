@@ -11,7 +11,7 @@ export type Standing =
   | "posted" | "expired" | "claimed" | "done" | "assessed"
   | "appealed" | "owed" | "paid" | "rejected" | "withdrawn" | "missed";
 
-export type Role = "purchaser" | "audience" | "performer" | "assessor" | "tie_breaker" | "member";
+export type Role = "purchaser" | "audience" | "performer" | "assessor" | "tie_breaker" | "member" | "arbiter";
 
 export type Move =
   | "claim" | "release" | "withdraw" | "mark_done" | "grade" | "reject"
@@ -24,7 +24,8 @@ export interface Stands {
   your_roles: Role[];
   /** Present when the commission has a cover page, so both parties must sign its offer. */
   cover?: unknown;
-  agreement?: { purchaser_signed: boolean; performer_signed: boolean };
+  agreement?: { purchaser_signed: boolean; performer_signed: boolean; arbiter_signed?: boolean };
+  escrow?: { state: string } | null;
 }
 
 const OPEN: Partial<Record<Standing, [Move, Role[]][]>> = {
@@ -56,13 +57,20 @@ export function waitsOnSignature(task: Stands, move: Move): MessageKey | null {
   if (!task.cover || !task.agreement) return null;
   if (move === "claim" && !task.agreement.purchaser_signed) return "gate.clientSignsFirst";
   if (move === "mark_done" && !task.agreement.performer_signed) return "gate.signBeforeDelivering";
+  if (move === "mark_done" && (task.cover as { arbiter_npub?: string }).arbiter_npub && !task.agreement.arbiter_signed) {
+    return "gate.arbiterSignsFirst";
+  }
+  const held = task.escrow && task.escrow.state !== "invoiced";
+  if (move === "mark_done" && (task.cover as { escrow?: boolean }).escrow && !held) return "gate.escrowFirst";
   return null;
 }
 
 /** Whose signature the offer still lacks that this person can give, or null. */
-export function mySignatureDue(task: Stands): "purchaser" | "performer" | null {
+export function mySignatureDue(task: Stands): "purchaser" | "performer" | "arbiter" | null {
   if (!task.cover || !task.agreement) return null;
   const roles = task.your_roles;
+  const open = task.standing === "posted" || task.standing === "expired" || task.standing === "claimed";
+  if (open && roles.includes("arbiter") && !task.agreement.arbiter_signed) return "arbiter";
   if ((task.standing === "posted" || task.standing === "expired") && roles.includes("purchaser") && !task.agreement.purchaser_signed) {
     return "purchaser";
   }

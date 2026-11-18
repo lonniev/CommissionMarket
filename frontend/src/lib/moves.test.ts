@@ -45,3 +45,22 @@ test("finished commissions leave every lane but the last", () => {
   assert.equal(laneOf(at({ standing: "paid", your_roles: ["purchaser"] })), "finished");
   assert.equal(laneOf(at({ standing: "done", your_roles: ["performer"] })), "waiting");
 });
+
+test("the arbiter and the escrow", async (t) => {
+  const cover = { arbiter_npub: "npub1arbiter", escrow: true };
+  const signed = { purchaser_signed: true, performer_signed: true, arbiter_signed: true };
+
+  await t.test("asks a named arbiter for their signature while the offer is open", () => {
+    const task = { standing: "claimed" as const, final: false, your_roles: ["arbiter" as const], cover, agreement: { ...signed, arbiter_signed: false } };
+    assert.equal(mySignatureDue(task), "arbiter");
+    assert.equal(mySignatureDue({ ...task, agreement: signed }), null);
+  });
+
+  await t.test("holds delivery until the arbiter has signed and the escrow is funded", () => {
+    const task = { standing: "claimed" as const, final: false, your_roles: ["performer" as const], cover, agreement: { ...signed, arbiter_signed: false } };
+    assert.equal(waitsOnSignature(task, "mark_done"), "gate.arbiterSignsFirst");
+    assert.equal(waitsOnSignature({ ...task, agreement: signed }, "mark_done"), "gate.escrowFirst");
+    assert.equal(waitsOnSignature({ ...task, agreement: signed, escrow: { state: "invoiced" } }, "mark_done"), "gate.escrowFirst");
+    assert.equal(waitsOnSignature({ ...task, agreement: signed, escrow: { state: "funded" } }, "mark_done"), null);
+  });
+});

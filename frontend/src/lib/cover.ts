@@ -14,6 +14,22 @@ export const IP_OPTIONS: IpOption[] = ["assign", "license", "worker_keeps", "cus
 export const MAX_DELIVERABLES = 20;
 export const MAX_DEEMED_DAYS = 60;
 export const MAX_AUDIENCE = 500;
+export const MAX_REFUND_DAYS = 90;
+/** Days the Standard Terms give a late delivery (14.3), an appeal (4.6) and the arbiter to decide it. */
+const GRACE_DAYS = 7;
+const APPEAL_DAYS = 7;
+const ARBITER_DAYS = 7;
+
+/** The shortest refund period that cannot cut an appeal short, as Task Booth enforces it. */
+export const leastRefundDays = (deemedDays: number) => GRACE_DAYS + deemedDays + APPEAL_DAYS + ARBITER_DAYS;
+
+const isNpub = (text: string) => {
+  try {
+    return nip19.decode(text).type === "npub";
+  } catch {
+    return false;
+  }
+};
 
 const whole = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : NaN);
 
@@ -79,11 +95,16 @@ export interface CoverRows {
   thirdParty: boolean;
   law: string;
   venue: string;
+  arbiter: string;
+  escrow: boolean;
+  mint: string;
+  refundDays: string;
 }
 
 export const blankCover = (): CoverRows => ({
   deliverables: "", specUrl: "", specHash: "", deemedGrade: "", deemedDays: "14", ip: "assign", ipCustom: "",
   confidential: false, consumer: false, thirdParty: false, law: "", venue: "",
+  arbiter: "", escrow: false, mint: "", refundDays: "",
 });
 
 /** The cover page as Task Booth takes it, or what to fix. `grades` are the rubric's names. */
@@ -104,6 +125,19 @@ export function coverFrom(rows: CoverRows, grades: string[]): { cover: CoverInpu
     if (Number.isNaN(days) || days < 1 || days > MAX_DEEMED_DAYS) return { problem: { key: "form.badDeemedDays", vars: { max: MAX_DEEMED_DAYS } } };
   }
   if (rows.ip === "custom" && !rows.ipCustom.trim()) return { problem: { key: "form.needIpCustom" } };
+  const arbiter = rows.arbiter.trim();
+  if (arbiter && !isNpub(arbiter)) return { problem: { key: "form.badArbiter" } };
+  let refund = 0;
+  if (rows.escrow) {
+    if (!arbiter) return { problem: { key: "form.escrowNeedsArbiter" } };
+    if (!deemed) return { problem: { key: "form.escrowNeedsDeemed" } };
+    if (!rows.mint) return { problem: { key: "form.escrowNeedsMint" } };
+    const least = leastRefundDays(days);
+    refund = whole(rows.refundDays);
+    if (Number.isNaN(refund) || refund < least || refund > MAX_REFUND_DAYS) {
+      return { problem: { key: "form.badRefundDays", vars: { least, most: MAX_REFUND_DAYS } } };
+    }
+  }
   return {
     cover: {
       deliverables,
@@ -118,6 +152,10 @@ export function coverFrom(rows: CoverRows, grades: string[]): { cover: CoverInpu
       third_party_allowed: rows.thirdParty,
       governing_law: rows.law.trim().slice(0, 200),
       venue: rows.venue.trim().slice(0, 200),
+      arbiter_npub: arbiter,
+      escrow: rows.escrow,
+      escrow_mint: rows.escrow ? rows.mint : "",
+      refund_days: refund,
     },
   };
 }
@@ -130,5 +168,7 @@ export function rowsOf(cover: CoverInput | null): CoverRows {
     deemedGrade: cover.deemed_grade, deemedDays: cover.deemed_acceptance_days ? String(cover.deemed_acceptance_days) : "14",
     ip: cover.ip_option, ipCustom: cover.ip_custom_text, confidential: cover.confidential, consumer: cover.client_is_consumer,
     thirdParty: cover.third_party_allowed, law: cover.governing_law, venue: cover.venue,
+    arbiter: cover.arbiter_npub ?? "", escrow: Boolean(cover.escrow), mint: cover.escrow_mint ?? "",
+    refundDays: cover.refund_days ? String(cover.refund_days) : "",
   };
 }
