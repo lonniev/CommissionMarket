@@ -16,6 +16,11 @@ export type BlockId = (typeof BLOCKS)[number];
 
 export const blockTitle = (id: BlockId) => `block.${id}` as const satisfies MessageKey;
 
+/** Each block's picture, so its place in the contract is remembered at a glance. */
+export const BLOCK_ICON: Record<BlockId, string> = {
+  spec: "📝", people: "👥", grades: "🏅", schedule: "📅", payments: "💰", conclusion: "⚖️", legal: "📜",
+};
+
 const BY_KEY: [RegExp, BlockId][] = [
   [/^form\.(needTitle|needDeliverable|deliverablesTooMany|deliverableLong|badSpecUrl|badSpecHash)$/, "spec"],
   [/^form\.(needAudience|audienceTooMany|notAnNpub|badArbiter|escrowNeedsArbiter)$/, "people"],

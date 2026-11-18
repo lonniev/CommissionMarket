@@ -431,6 +431,7 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 }
 .form-block > summary::-webkit-details-marker { display: none; }
 .form-block-title { font-size: 1.1875rem; font-weight: 700; }
+.form-block-icon { margin-inline-end: 0.5rem; }
 .form-block-summary { color: var(--tb-muted); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .form-block-chevron { align-self: center; color: var(--tb-muted); transition: transform 0.15s; }
 .form-block[open] > summary .form-block-chevron { transform: rotate(180deg); }
