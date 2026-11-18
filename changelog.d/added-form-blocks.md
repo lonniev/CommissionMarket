@@ -1,3 +1,0 @@
-- The commission form reads as seven collapsible blocks — Commission specification, Who takes part, Grades and price, Schedule, Payment stages, Conclusion protocol, Legal terms — each with a one-line summary while closed. A refused Post opens the block holding the problem; escrow's missing pieces link to the blocks that set them. A posted commission's page shows the same seven blocks, read-only.
-- Every npub asked for (who may claim, arbiter, Project circle and arbiter, Organization members) is an npub field: checked as typed, shown as a chiclet with the person's Nostr name, picture and NIP-05, with Remove.
-- Deemed acceptance reads "If the client doesn't grade in time", with choices like "Count it as Good".
