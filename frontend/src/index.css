@@ -304,3 +304,26 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 .shelf li { display: flex; gap: 0.75rem; align-items: flex-start; }
 .shelf-mark { color: var(--tb-accent); flex: none; margin-top: 0.2rem; }
 .shelf-title { font-weight: 700; color: var(--tb-accent); }
+
+/* Organizations and Projects. */
+.card-list { display: grid; gap: 0.5rem; }
+.org-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem; }
+.org-card:hover { border-color: var(--tb-accent); }
+.org-mark { color: var(--tb-accent); }
+.is-archived { opacity: 0.6; }
+.member-list { display: grid; }
+.member-list li { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; }
+.member-list li + li { border-top: 1px solid var(--tb-line); }
+.member-add { display: grid; gap: 0.5rem; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; }
+@media (max-width: 40rem) { .member-add { grid-template-columns: 1fr; } }
+.budget-bar { position: relative; height: 0.75rem; border-radius: 999px; background: var(--tb-surface-2); border: 1px solid var(--tb-line); overflow: hidden; }
+.budget-bar > span { position: absolute; inset: 0 auto 0 0; }
+.budget-committed { background: color-mix(in srgb, var(--gold) 45%, transparent); }
+.budget-paid { background: var(--gold); }
+.budget-over { border-color: var(--bad); }
+.budget-facts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem 1.25rem; font-size: 0.9375rem; }
+.budget-facts div { display: flex; align-items: baseline; gap: 0.375rem; }
+.budget-facts dt { color: var(--tb-muted); }
+.filing { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; font-size: 0.9375rem; color: var(--tb-accent); }
+.crumb { display: inline-flex; align-items: center; gap: 0.375rem; width: fit-content; font-size: 0.875rem; font-weight: 600; color: var(--tb-accent); }
+.crumb:hover { text-decoration: underline; }

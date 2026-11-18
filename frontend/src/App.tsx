@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { BookOpen, BriefcaseBusiness, CalendarDays, Compass, ScrollText, Wallet as WalletIcon } from "lucide-react";
+import { BookOpen, BriefcaseBusiness, Building2, CalendarDays, Compass, ScrollText, Wallet as WalletIcon } from "lucide-react";
 import { AppShell, SiteNav, Wallet, matchesPath, useAppShell } from "@tollbooth-dpyc/web/react";
 import Waiting from "./components/Waiting";
 import { useT } from "./i18n";
@@ -17,11 +17,15 @@ const Home = lazy(() => import("./views/Home"));
 const Learn = lazy(() => import("./views/Learn"));
 const LessonPage = lazy(() => import("./views/LessonPage"));
 const NewCommission = lazy(() => import("./views/NewCommission"));
+const Org = lazy(() => import("./views/Org"));
+const Orgs = lazy(() => import("./views/Orgs"));
+const Project = lazy(() => import("./views/Project"));
 const Profile = lazy(() => import("./views/Profile"));
 const Terms = lazy(() => import("./views/Terms"));
 
 const PAGES = [
   { href: "/commissions", label: "nav.commissions", icon: <ScrollText size={18} aria-hidden /> },
+  { href: "/orgs", label: "nav.orgs", icon: <Building2 size={18} aria-hidden /> },
   { href: "/calendar", label: "nav.calendar", icon: <CalendarDays size={18} aria-hidden /> },
   { href: "/learn", label: "nav.learn", icon: <BookOpen size={18} aria-hidden /> },
   { href: "/guide", label: "nav.guide", icon: <Compass size={18} aria-hidden /> },
@@ -142,6 +146,9 @@ function Site() {
               <Route path="commissions/new" element={<SignedIn><NewCommission /></SignedIn>} />
               <Route path="commissions/:taskId" element={<SignedIn><Commission /></SignedIn>} />
               <Route path="commissions/:taskId/edit" element={<SignedIn><EditCommission /></SignedIn>} />
+              <Route path="orgs" element={<SignedIn><Orgs /></SignedIn>} />
+              <Route path="orgs/:orgId" element={<SignedIn><Org /></SignedIn>} />
+              <Route path="orgs/:orgId/projects/:projectId" element={<SignedIn><Project /></SignedIn>} />
               <Route path="calendar" element={<SignedIn><Calendar /></SignedIn>} />
               <Route path="wallet" element={<SignedIn><WalletPage /></SignedIn>} />
               <Route path="profile" element={<SignedIn><Profile /></SignedIn>} />

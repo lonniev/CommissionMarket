@@ -26,6 +26,14 @@ Every other tool acts for the calling npub, and the connection must prove that n
 `deposit_pct` 10; milestones "Sketch approved" at 20% and "Underpainting" at 30%; the deliverables are one oil portrait, 24 × 30 in, and a framed print; IP assigned to the client; deemed "Accepted" after 14 days.
 The client pays 10,000 sats on claim and 20,000 and 30,000 on the milestone days; graded "Accepted", 40,000 sats are still owed.
 
+## Organizations and Projects
+
+`taskbooth_save_organization(name, about)` makes an Organization you own; `taskbooth_save_member(org_id, member, label)` adds a colleague's npub.
+Members see its Projects and every commission filed in them, and may post into them; only the owner changes the Organization, its members or its Projects.
+`taskbooth_save_project(org_id, name, brief, budget_sats, circle, defaults)` makes a Project: its circle and default cover terms are what a new commission in it starts from.
+File a commission in a Project by passing `org_id` and `project_id` to `taskbooth_post_task`.
+`taskbooth_get_project(project_id)` returns the Project with `totals.committed_sats` and `totals.paid_sats`.
+
 ## Also on the site
 
 `taskbooth_calendar_publish` makes a private iCalendar link of the caller's commissions, served at `/calendar/<token>.ics`; `taskbooth_calendar_list` and `taskbooth_calendar_revoke` manage it.

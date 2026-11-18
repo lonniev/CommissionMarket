@@ -9,6 +9,9 @@ import { useAppShell } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
 
 export const commissionHref = (taskId: string) => `/commissions/${encodeURIComponent(taskId)}`;
+export const orgHref = (orgId: string) => `/orgs/${encodeURIComponent(orgId)}`;
+export const projectHref = (p: { org_id: string; project_id: string }) =>
+  `${orgHref(p.org_id)}/projects/${encodeURIComponent(p.project_id)}`;
 
 export const shortNpub = (npub: string) => (npub.length > 20 ? `${npub.slice(0, 10)}…${npub.slice(-6)}` : npub);
 

@@ -9,6 +9,7 @@ import MoneyPanel from "../components/MoneyPanel";
 import OfferPanel from "../components/OfferPanel";
 import { commissionHref, People, Person } from "../components/Person";
 import Sats from "../components/Sats";
+import ProjectCrumb from "../components/ProjectCrumb";
 import StandingBadge from "../components/StandingBadge";
 import Waiting from "../components/Waiting";
 import { say, useT } from "../i18n";
@@ -129,6 +130,7 @@ export default function Commission() {
       </div>
 
       <section className="card panel grid gap-3">
+        <ProjectCrumb task={task} />
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="page-title">{task.title}</h1>
           <StandingBadge standing={task.standing} />

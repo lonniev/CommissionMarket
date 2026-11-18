@@ -6,17 +6,19 @@
 
 import { lazy, Suspense, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Maximize2, Plus, Trash2, UserPlus } from "lucide-react";
+import { FolderOpen, Maximize2, Plus, Trash2, UserPlus } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { useAppShell } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { aheadFrom, audienceFrom, coverFrom, IP_OPTIONS, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
+import { aheadFrom, audienceFrom, blankCover, coverFrom, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
 import { aheadPct, MAX_AHEAD_PCT, MAX_MILESTONES, shareOf } from "../lib/money";
 import { lateFrom, MAX_GRADES, rubricFrom, starterRows, type GradeRow, type LateKind } from "../lib/rubric";
-import { editTask, postTask, type IpOption, type Task } from "../lib/tasks";
+import { budgetLeft, coverFromDefaults, type Project } from "../lib/orgs";
+import { editTask, postTask, type Task } from "../lib/tasks";
 import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
-import { commissionHref } from "./Person";
+import { commissionHref, projectHref } from "./Person";
 import Sats from "./Sats";
+import TermsFields from "./TermsFields";
 
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
 const BRIEF_MAX = 4000;
@@ -35,7 +37,12 @@ function Section({ title, help, children }: { title: string; help?: string; chil
   );
 }
 
-export default function CommissionForm({ editing }: { editing?: Task }) {
+/** Where a new commission is filed, and what its Project suggests it starts from. */
+export interface Filing {
+  project: Project;
+}
+
+export default function CommissionForm({ editing, filing }: { editing?: Task; filing?: Filing }) {
   const { session } = useAppShell();
   const go = useNavigate();
   const t = useT();
@@ -44,7 +51,7 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
   const [title, setTitle] = useState(editing?.title ?? "");
   const [description, setDescription] = useState(editing?.description ?? "");
   const [big, setBig] = useState(false);
-  const [audience, setAudience] = useState((editing?.audience ?? []).join("\n"));
+  const [audience, setAudience] = useState((editing?.audience ?? filing?.project.circle ?? []).join("\n"));
   const [due, setDue] = useState(editing && editing.needed_by > now ? dayKeyOf(editing.needed_by) : dayFrom(now, 30));
   const [rows, setRows] = useState<GradeRow[]>(() => editing
     ? editing.rubric.grades.map((g) => ({ name: g.name, sats: String(g.sats), criteria: g.criteria }))
@@ -55,7 +62,8 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
   const [milestones, setMilestones] = useState<MilestoneRow[]>(
     () => (editing?.milestones ?? []).map((m) => ({ name: m.name, day: dayKeyOf(m.due_at), pct: String(m.pct) })),
   );
-  const [cover, setCover] = useState<CoverRows>(() => rowsOf(editing?.cover ?? null));
+  const [cover, setCover] = useState<CoverRows>(() => (editing || !filing ? rowsOf(editing?.cover ?? null)
+    : coverFromDefaults(blankCover(), filing.project.defaults)));
   const [problem, setProblem] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -92,7 +100,8 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
     };
     setBusy(true);
     try {
-      const task = editing ? await editTask(editing.task_id, terms) : await postTask(terms);
+      const task = editing ? await editTask(editing.task_id, terms)
+        : await postTask(filing ? { ...terms, org_id: filing.project.org_id, project_id: filing.project.project_id } : terms);
       go(commissionHref(task.task_id));
     } catch (e) {
       setProblem((e as Error).message);
@@ -105,6 +114,15 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
       <form className="card panel mx-auto grid max-w-3xl gap-6" onSubmit={(e) => { e.preventDefault(); void save(); }}>
         <h1 className="page-title">{editing ? t("form.editTitle") : t("form.newTitle")}</h1>
         {editing?.agreement.purchaser_signed && <p className="gate">{t("form.editClearsSignature")}</p>}
+        {filing && (
+          <p className="filing">
+            <FolderOpen size={16} aria-hidden />
+            <span>{t("form.filedIn")} <Link to={projectHref(filing.project)} className="ent">{filing.project.name}</Link></span>
+            {budgetLeft(filing.project.budget_sats, filing.project.totals) !== null && (
+              <span className="muted">· {t("form.budgetLeft")} <Sats sats={budgetLeft(filing.project.budget_sats, filing.project.totals) ?? 0} /></span>
+            )}
+          </p>
+        )}
 
         <Section title={t("form.brief")}>
           <label className="grid gap-1">
@@ -252,38 +270,7 @@ export default function CommissionForm({ editing }: { editing?: Task }) {
             )}
           </div>
           <p className="muted text-sm">{t("cover.deemedHelp")}</p>
-          <div className="grid gap-2">
-            <span className="label">{t("cover.ip")}</span>
-            <div className="flex flex-wrap gap-2">
-              {IP_OPTIONS.map((ip: IpOption) => (
-                <button key={ip} type="button" className={cover.ip === ip ? "chip chip-on" : "chip"} aria-pressed={cover.ip === ip} onClick={() => setCoverField("ip", ip)}>
-                  {t(`cover.ip.${ip}`)}
-                </button>
-              ))}
-            </div>
-            <p className="muted text-sm">{t(`cover.ipHelp.${cover.ip}`)}</p>
-            {cover.ip === "custom" && (
-              <textarea className="field" rows={3} value={cover.ipCustom} onChange={(e) => setCoverField("ipCustom", e.target.value)} placeholder={t("cover.ipCustom")} />
-            )}
-          </div>
-          <div className="grid gap-1">
-            {(["confidential", "consumer", "thirdParty"] as const).map((flag) => (
-              <label key={flag} className="check">
-                <input type="checkbox" checked={cover[flag]} onChange={(e) => setCoverField(flag, e.target.checked)} />
-                <span>{t(`cover.${flag}`)}</span>
-              </label>
-            ))}
-          </div>
-          <div className="two-up">
-            <label className="grid gap-1">
-              <span className="label">{t("cover.law")}</span>
-              <input className="field" value={cover.law} maxLength={200} onChange={(e) => setCoverField("law", e.target.value)} placeholder={t("cover.lawPlaceholder")} />
-            </label>
-            <label className="grid gap-1">
-              <span className="label">{t("cover.venue")}</span>
-              <input className="field" value={cover.venue} maxLength={200} onChange={(e) => setCoverField("venue", e.target.value)} placeholder={t("cover.venuePlaceholder")} />
-            </label>
-          </div>
+          <TermsFields cover={cover} set={setCoverField} />
           <p className="muted text-sm">{t("cover.underTerms")} <Link to="/terms" className="ent">{t("nav.terms")}</Link></p>
         </Section>
 

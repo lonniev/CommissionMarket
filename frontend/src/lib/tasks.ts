@@ -78,6 +78,9 @@ export interface Task {
   standing: Standing;
   final: boolean;
   your_roles: Role[];
+  /** The Organization and Project it is filed under, or empty. */
+  org_id: string;
+  project_id: string;
   needed_by: number;
   every_days: number;
   assessment?: Assessment | null;
@@ -124,13 +127,16 @@ interface Answer {
 }
 
 /** A Task Booth answer, or its refusal raised as the sentence Task Booth gave. */
+/** This site's name on the tasks it posts. Task Booth serves several sites; each lists its own tasks and every unstamped one. */
+const SITE = "commissionmarket";
+
 async function ask<T>(tool: string, args: Record<string, unknown> = {}): Promise<T> {
   const r = await callTool<T & Answer>(tool, args);
   if (r.ok !== true) throw new Error(r.error ?? `${tool} did not answer.`);
   return r;
 }
 
-export const listTasks = async () => (await ask<{ tasks: Task[] }>("list_tasks")).tasks;
+export const listTasks = async () => (await ask<{ tasks: Task[] }>("list_tasks", { site: SITE })).tasks;
 
 export const getTask = (taskId: string) => ask<{ task: Task; payout?: Invoice }>("get_task", { task_id: taskId });
 
@@ -149,7 +155,9 @@ export interface Terms {
   cover: CoverInput;
 }
 
-export const postTask = async (terms: Terms) => (await ask<{ task: Task }>("post_task", { ...terms })).task;
+/** Post a commission; filed under an Organization's Project when both ids are given. */
+export const postTask = async (terms: Terms & { org_id?: string; project_id?: string }) =>
+  (await ask<{ task: Task }>("post_task", { ...terms, site: SITE })).task;
 
 /** Change an open commission's terms. Give only what changes. */
 export const editTask = async (taskId: string, changes: Partial<Terms>) =>
@@ -240,7 +248,7 @@ export interface Feed {
 export const listFeeds = async () => (await ask<{ feeds: Feed[] }>("calendar_list")).feeds;
 
 export const publishFeed = async (name: string, timeZone: string) =>
-  (await ask<{ feed: Feed }>("calendar_publish", { name, time_zone: timeZone })).feed;
+  (await ask<{ feed: Feed }>("calendar_publish", { name, time_zone: timeZone, site: SITE })).feed;
 
 export const revokeFeed = async (token: string) => { await ask("calendar_revoke", { token }); };
 
