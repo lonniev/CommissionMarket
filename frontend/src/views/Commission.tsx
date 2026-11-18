@@ -5,16 +5,15 @@ import { Link, useParams } from "react-router-dom";
 import { AlarmClock, ArrowLeft, Pencil, RefreshCw } from "lucide-react";
 import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import Actions from "../components/Actions";
+import ContractBlocks from "../components/ContractBlocks";
 import MoneyPanel from "../components/MoneyPanel";
 import OfferPanel from "../components/OfferPanel";
 import { commissionHref, People, Person } from "../components/Person";
-import Sats from "../components/Sats";
 import ProjectCrumb from "../components/ProjectCrumb";
 import StandingBadge from "../components/StandingBadge";
 import Waiting from "../components/Waiting";
 import { say, useT } from "../i18n";
 import { isFinished, mayEdit } from "../lib/moves";
-import { byReward } from "../lib/rubric";
 import { getTask, taskHistory, type Invoice, type Task, type TaskEvent } from "../lib/tasks";
 import { dueText, lateRuleText, lateText } from "../lib/when";
 
@@ -52,35 +51,6 @@ function History({ taskId }: { taskId: string }) {
         </ul>
       )}
     </details>
-  );
-}
-
-function CoverFacts({ task }: { task: Task }) {
-  const t = useT();
-  const c = task.cover;
-  if (!c) return null;
-  return (
-    <section className="card panel grid gap-2">
-      <h2 className="panel-title">{t("cover.title")}</h2>
-      <dl className="facts">
-        <dt>{t("cover.deliverables")}</dt>
-        <dd><ul className="deliverables">{c.deliverables.map((d) => <li key={d}>{d}</li>)}</ul></dd>
-        {c.spec_url && <><dt>{t("cover.specUrl")}</dt><dd><a href={c.spec_url} target="_blank" rel="noopener noreferrer nofollow" className="ent">{c.spec_url}</a></dd></>}
-        {c.spec_hash && <><dt>{t("cover.specHash")}</dt><dd><code className="hash">{c.spec_hash}</code></dd></>}
-        <dt>{t("cover.deemedGrade")}</dt>
-        <dd>{c.deemed_grade ? t("cover.deemedAfter", { grade: c.deemed_grade, days: c.deemed_acceptance_days }) : t("cover.noDeemed")}</dd>
-        <dt>{t("cover.ip")}</dt><dd>{t(`cover.ip.${c.ip_option}`)}{c.ip_custom_text && ` · ${c.ip_custom_text}`}</dd>
-        {c.confidential && <><dt>{t("cover.confidentialShort")}</dt><dd>✓</dd></>}
-        {c.client_is_consumer && <><dt>{t("cover.consumerShort")}</dt><dd>✓</dd></>}
-        <dt>{t("cover.thirdPartyShort")}</dt><dd>{c.third_party_allowed ? t("cover.allowed") : t("cover.notAllowed")}</dd>
-        {c.governing_law && <><dt>{t("cover.law")}</dt><dd>{c.governing_law}</dd></>}
-        {c.venue && <><dt>{t("cover.venue")}</dt><dd>{c.venue}</dd></>}
-        {c.arbiter_npub && <><dt>{t("cover.arbiter")}</dt><dd><Person npub={c.arbiter_npub} /></dd></>}
-        {c.escrow && <><dt>{t("cover.escrowShort")}</dt><dd>{t("cover.escrowFact", { mint: c.escrow_mint, days: c.refund_days })}</dd></>}
-        <dt>{t("nav.terms")}</dt>
-        <dd><Link to={`/terms?version=${encodeURIComponent(c.terms_version)}`} className="ent">{c.terms_version}</Link> · <code className="hash">{c.terms_hash.slice(0, 12)}…</code></dd>
-      </dl>
-    </section>
   );
 }
 
@@ -167,22 +137,7 @@ export default function Commission() {
       )}
       <MoneyPanel task={task} payout={payout} now={now} onChanged={(next) => { setTask(next); void load(); }} />
 
-      <section className="card panel">
-        <h2 className="panel-title mb-1">{t("commission.grades")}</h2>
-        <table className="ledger">
-          <tbody>
-            {byReward(task.rubric.grades).map((g) => (
-              <tr key={g.name} className={graded?.grade === g.name ? "grade-given" : undefined}>
-                <td className="font-medium">{g.name}</td>
-                <td className="muted">{g.criteria}</td>
-                <td className="text-right"><Sats sats={g.sats} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <CoverFacts task={task} />
+      <ContractBlocks task={task} />
       {task.your_roles.some((r) => r !== "audience") && <History taskId={task.task_id} />}
     </div>
   );

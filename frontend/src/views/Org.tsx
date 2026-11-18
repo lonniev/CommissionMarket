@@ -7,8 +7,8 @@ import { Person, projectHref } from "../components/Person";
 import ProjectForm from "../components/ProjectForm";
 import Sats from "../components/Sats";
 import Waiting from "../components/Waiting";
+import { NpubField } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { audienceFrom } from "../lib/cover";
 import { getOrg, removeMember, saveMember, saveOrg, type OrgDetail } from "../lib/orgs";
 
 function About({ org, onChanged }: { org: OrgDetail; onChanged: () => void }) {
@@ -73,10 +73,9 @@ function Members({ org, onChanged }: { org: OrgDetail; onChanged: () => void }) 
 
   async function add() {
     setProblem("");
-    const who = audienceFrom(npub);
-    if ("problem" in who || who.audience.length !== 1) return setProblem(t("org.oneNpub"));
+    if (!npub) return setProblem(t("org.oneNpub"));
     try {
-      await saveMember(org.org_id, who.audience[0], label.trim());
+      await saveMember(org.org_id, npub, label.trim());
       setNpub("");
       setLabel("");
       onChanged();
@@ -120,8 +119,7 @@ function Members({ org, onChanged }: { org: OrgDetail; onChanged: () => void }) 
       )}
       {owner && (
         <div className="member-add">
-          <input className="field font-mono text-sm" value={npub} onChange={(e) => setNpub(e.target.value)} placeholder="npub1…" aria-label={t("org.memberNpub")}
-            autoCapitalize="none" spellCheck={false} />
+          <NpubField value={npub} onChange={setNpub} label={t("org.memberNpub")} look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
           <input className="field" value={label} maxLength={80} onChange={(e) => setLabel(e.target.value)} placeholder={t("org.labelPlaceholder")} aria-label={t("org.label")} />
           <button type="button" className="btn btn-go" onClick={() => void add()}><UserPlus size={18} aria-hidden />{t("org.add")}</button>
         </div>

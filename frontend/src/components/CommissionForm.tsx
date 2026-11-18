@@ -6,11 +6,12 @@
 
 import { lazy, Suspense, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FolderOpen, Maximize2, Plus, Trash2, UserPlus } from "lucide-react";
+import { FolderOpen, Maximize2, Plus, Trash2 } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
-import { useAppShell } from "@tollbooth-dpyc/web/react";
+import { NpubField, NpubListField, useAppShell } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { aheadFrom, audienceFrom, blankCover, coverFrom, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
+import { BLOCKS, blockOf, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
+import { aheadFrom, audienceFrom, blankCover, coverFrom, MAX_AUDIENCE, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
 import { aheadPct, MAX_AHEAD_PCT, MAX_MILESTONES, shareOf } from "../lib/money";
 import { lateFrom, MAX_GRADES, rubricFrom, starterRows, type GradeRow, type LateKind } from "../lib/rubric";
 import { budgetLeft, coverFromDefaults, type Project } from "../lib/orgs";
@@ -19,6 +20,7 @@ import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
 import { commissionHref, projectHref } from "./Person";
 import Sats from "./Sats";
 import EscrowFields from "./EscrowFields";
+import FormBlock, { blockAnchor } from "./FormBlock";
 import TermsFields from "./TermsFields";
 
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
@@ -27,16 +29,6 @@ const BRIEF_MAX = 4000;
 const LATE_KINDS: LateKind[] = ["full", "discount", "cancel"];
 const satsOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
 const pctOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
-
-function Section({ title, help, children }: { title: string; help?: string; children: ReactNode }) {
-  return (
-    <fieldset className="form-section">
-      <legend className="section-title">{title}</legend>
-      {help && <p className="muted text-sm">{help}</p>}
-      {children}
-    </fieldset>
-  );
-}
 
 /** Where a new commission is filed, and what its Project suggests it starts from. */
 export interface Filing {
@@ -52,7 +44,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
   const [title, setTitle] = useState(editing?.title ?? "");
   const [description, setDescription] = useState(editing?.description ?? "");
   const [big, setBig] = useState(false);
-  const [audience, setAudience] = useState((editing?.audience ?? filing?.project.circle ?? []).join("\n"));
+  const [audience, setAudience] = useState<string[]>(() => [...(editing?.audience ?? filing?.project.circle ?? [])]);
   const [due, setDue] = useState(editing && editing.needed_by > now ? dayKeyOf(editing.needed_by) : dayFrom(now, 30));
   const [rows, setRows] = useState<GradeRow[]>(() => editing
     ? editing.rubric.grades.map((g) => ({ name: g.name, sats: String(g.sats), criteria: g.criteria }))
@@ -67,6 +59,23 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     : coverFromDefaults(blankCover(), filing.project.defaults)));
   const [problem, setProblem] = useState("");
   const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState<Set<BlockId>>(() => new Set(editing ? [] : ["spec"]));
+  const toggle = (id: BlockId, on: boolean) => setOpen((o) => {
+    const next = new Set(o);
+    if (on) next.add(id);
+    else next.delete(id);
+    return next;
+  });
+  /** Open a block and bring it into view. */
+  function show(id: BlockId) {
+    toggle(id, true);
+    requestAnimationFrame(() => document.getElementById(blockAnchor(id))?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+  /** Say what to fix, and open the block that holds it. */
+  function refuse(key: string, text: string) {
+    setProblem(text);
+    show(blockOf(key));
+  }
 
   const top = Math.max(0, ...rows.map((r) => satsOf(r.sats)));
   const ahead = aheadPct(pctOf(deposit), milestones.map((m) => pctOf(m.pct)));
@@ -76,25 +85,21 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     setMilestones((list) => list.map((m, j) => (j === i ? { ...m, ...change } : m)));
   const setCoverField = <K extends keyof CoverRows>(key: K, value: CoverRows[K]) => setCover((c) => ({ ...c, [key]: value }));
 
-  function addMe() {
-    if (session.signedIn && !audience.includes(session.npub)) setAudience((a) => (a.trim() ? `${a.trim()}\n${session.npub}` : session.npub));
-  }
-
   async function save() {
     setProblem("");
-    if (!title.trim()) return setProblem(t("form.needTitle"));
-    const who = audienceFrom(audience);
-    if ("problem" in who) return setProblem(t(who.problem.key, who.problem.vars));
+    if (!title.trim()) return refuse("form.needTitle", t("form.needTitle"));
+    const who = audienceFrom(audience.join("\n"));
+    if ("problem" in who) return refuse(who.problem.key, t(who.problem.key, who.problem.vars));
     const neededBy = endOfDay(due);
-    if (neededBy === null || neededBy < now) return setProblem(t("form.needDay"));
+    if (neededBy === null || neededBy < now) return refuse("form.needDay", t("form.needDay"));
     const made = rubricFrom(rows);
-    if ("problem" in made) return setProblem(t(made.problem.key, made.problem.vars));
+    if ("problem" in made) return refuse(made.problem.key, t(made.problem.key, made.problem.vars));
     const late = lateFrom(lateKind, latePct);
-    if ("problem" in late) return setProblem(t(late.problem.key, late.problem.vars));
+    if ("problem" in late) return refuse(late.problem.key, t(late.problem.key, late.problem.vars));
     const paid = aheadFrom(deposit, milestones, neededBy, now);
-    if ("problem" in paid) return setProblem(t(paid.problem.key, paid.problem.vars));
+    if ("problem" in paid) return refuse(paid.problem.key, t(paid.problem.key, paid.problem.vars));
     const page = coverFrom(cover, made.rubric.grades.map((g) => g.name));
-    if ("problem" in page) return setProblem(t(page.problem.key, page.problem.vars));
+    if ("problem" in page) return refuse(page.problem.key, t(page.problem.key, page.problem.vars));
     const terms = {
       title: title.trim(), description: description.trim(), rubric: made.rubric, audience: who.audience,
       needed_by: neededBy, late: late.late, deposit_pct: paid.deposit_pct, milestones: paid.milestones, cover: page.cover,
@@ -110,22 +115,22 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     }
   }
 
-  return (
-    <div className="page">
-      <form className="card panel grid gap-6" onSubmit={(e) => { e.preventDefault(); void save(); }}>
-        <h1 className="page-title">{editing ? t("form.editTitle") : t("form.newTitle")}</h1>
-        {editing?.agreement.purchaser_signed && <p className="gate">{t("form.editClearsSignature")}</p>}
-        {filing && (
-          <p className="filing">
-            <FolderOpen size={16} aria-hidden />
-            <span>{t("form.filedIn")} <Link to={projectHref(filing.project)} className="ent">{filing.project.name}</Link></span>
-            {budgetLeft(filing.project.budget_sats, filing.project.totals) !== null && (
-              <span className="muted">· {t("form.budgetLeft")} <Sats sats={budgetLeft(filing.project.budget_sats, filing.project.totals) ?? 0} /></span>
-            )}
-          </p>
-        )}
-
-        <Section title={t("form.brief")}>
+  const shape: Shape = {
+    title, deliverables: cover.deliverables.split("\n").filter((d) => d.trim()).length, invited: audience.length,
+    arbiter: cover.arbiter, grades: gradeNames.length, topSats: top,
+    neededBy: due ? new Date(`${due}T12:00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" }) : "—",
+    late: lateKind, depositPct: pctOf(deposit), milestones: milestones.length,
+    escrowMint: cover.escrow ? cover.mint : "", deemedGrade: cover.deemedGrade,
+    deemedDays: Number(cover.deemedDays) || 0, ip: cover.ip, law: cover.law,
+  };
+  const HELP: Partial<Record<BlockId, string>> = {
+    grades: t("form.gradesHelp"),
+    payments: t("form.aheadHelp", { max: MAX_AHEAD_PCT }),
+    legal: t("cover.help"),
+  };
+  const body: Record<BlockId, ReactNode> = {
+    spec: (
+      <>
           <label className="grid gap-1">
             <span className="label">{t("form.title")}</span>
             <input className="field" value={title} maxLength={190} onChange={(e) => setTitle(e.target.value)} placeholder={t("form.titlePlaceholder")} />
@@ -145,17 +150,41 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
               </Suspense>
             )}
           </div>
-        </Section>
-
-        <Section title={t("form.audience")} help={t("form.audienceHelp")}>
-          <textarea className="field font-mono text-sm" rows={3} value={audience} onChange={(e) => setAudience(e.target.value)}
-            placeholder="npub1…" aria-label={t("form.audience")} autoCapitalize="none" spellCheck={false} />
-          <div className="flex justify-end">
-            <button type="button" className="chip" onClick={addMe}><UserPlus size={16} aria-hidden />{t("form.addMe")}</button>
+          <label className="grid gap-1">
+            <span className="label">{t("cover.deliverables")}</span>
+            <textarea className="field" rows={3} value={cover.deliverables} onChange={(e) => setCoverField("deliverables", e.target.value)}
+              placeholder={t("cover.deliverablesPlaceholder")} />
+          </label>
+          <div className="two-up">
+            <label className="grid gap-1">
+              <span className="label">{t("cover.specUrl")}</span>
+              <input className="field" value={cover.specUrl} onChange={(e) => setCoverField("specUrl", e.target.value)} placeholder="https://…" inputMode="url" autoCapitalize="none" />
+            </label>
+            <label className="grid gap-1">
+              <span className="label">{t("cover.specHash")}</span>
+              <input className="field font-mono text-sm" value={cover.specHash} onChange={(e) => setCoverField("specHash", e.target.value)} placeholder="sha256" autoCapitalize="none" spellCheck={false} />
+            </label>
           </div>
-        </Section>
-
-        <Section title={t("form.grades")} help={t("form.gradesHelp")}>
+      </>
+    ),
+    people: (
+      <>
+          <div className="grid gap-1">
+            <span className="label">{t("form.audience")}</span>
+            <NpubListField value={audience} onChange={setAudience} label={t("form.audience")} max={MAX_AUDIENCE}
+              ownNpub={session.signedIn ? session.npub : undefined} look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
+            <span className="muted text-sm">{t("form.audienceHelp")}</span>
+          </div>
+          <div className="grid gap-1">
+            <span className="label">{t("cover.arbiter")}</span>
+            <NpubField value={cover.arbiter} onChange={(n) => setCoverField("arbiter", n)} label={t("cover.arbiter")}
+              look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
+            <span className="muted text-sm">{t("cover.arbiterHelp")}</span>
+          </div>
+      </>
+    ),
+    grades: (
+      <>
           {rows.map((row, i) => (
             <div key={i} className="grade-card">
               <div className="grade-card-head">
@@ -180,9 +209,10 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
               </button>
             )}
           </div>
-        </Section>
-
-        <Section title={t("form.when")}>
+      </>
+    ),
+    schedule: (
+      <>
           <label className="grid gap-1 w-fit">
             <span className="label">{t("form.neededBy")}</span>
             <input type="date" className="field" value={due} min={dayFrom(now, 1)} onChange={(e) => setDue(e.target.value)} />
@@ -202,9 +232,10 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             </label>
           )}
           <p className="muted text-sm">{t(`late.pickHelp.${lateKind}`)}</p>
-        </Section>
-
-        <Section title={t("form.ahead")} help={t("form.aheadHelp", { max: MAX_AHEAD_PCT })}>
+      </>
+    ),
+    payments: (
+      <>
           <label className="inline-pct">
             <span className="label">{t("form.deposit")}</span>
             <input className="field num text-right" inputMode="numeric" value={deposit} maxLength={2} onChange={(e) => setDeposit(e.target.value)} aria-label={t("form.deposit")} />
@@ -237,30 +268,17 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
               </button>
             )}
           </div>
-        </Section>
-
-        <Section title={t("cover.title")} help={t("cover.help")}>
-          <label className="grid gap-1">
-            <span className="label">{t("cover.deliverables")}</span>
-            <textarea className="field" rows={3} value={cover.deliverables} onChange={(e) => setCoverField("deliverables", e.target.value)}
-              placeholder={t("cover.deliverablesPlaceholder")} />
-          </label>
-          <div className="two-up">
-            <label className="grid gap-1">
-              <span className="label">{t("cover.specUrl")}</span>
-              <input className="field" value={cover.specUrl} onChange={(e) => setCoverField("specUrl", e.target.value)} placeholder="https://…" inputMode="url" autoCapitalize="none" />
-            </label>
-            <label className="grid gap-1">
-              <span className="label">{t("cover.specHash")}</span>
-              <input className="field font-mono text-sm" value={cover.specHash} onChange={(e) => setCoverField("specHash", e.target.value)} placeholder="sha256" autoCapitalize="none" spellCheck={false} />
-            </label>
-          </div>
+          <EscrowFields cover={cover} set={setCoverField} onOpen={show} />
+      </>
+    ),
+    conclusion: (
+      <>
           <div className="two-up">
             <label className="grid gap-1">
               <span className="label">{t("cover.deemedGrade")}</span>
               <select className="field" value={cover.deemedGrade} onChange={(e) => setCoverField("deemedGrade", e.target.value)}>
                 <option value="">{t("cover.noDeemed")}</option>
-                {gradeNames.map((g) => <option key={g} value={g}>{g}</option>)}
+                {gradeNames.map((g) => <option key={g} value={g}>{t("cover.countAs", { grade: g })}</option>)}
               </select>
             </label>
             {cover.deemedGrade && (
@@ -271,10 +289,38 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             )}
           </div>
           <p className="muted text-sm">{t("cover.deemedHelp")}</p>
-          <EscrowFields cover={cover} set={setCoverField} />
+          <p className="muted text-sm">{t("block.conclusionRules")} <Link to="/terms?version=v1#t-4-6" className="ent">§4.6</Link></p>
+      </>
+    ),
+    legal: (
+      <>
           <TermsFields cover={cover} set={setCoverField} />
           <p className="muted text-sm">{t("cover.underTerms")} <Link to="/terms" className="ent">{t("nav.terms")}</Link></p>
-        </Section>
+      </>
+    ),
+  };
+
+  return (
+    <div className="page">
+      <form className="card panel grid gap-6" onSubmit={(e) => { e.preventDefault(); void save(); }}>
+        <h1 className="page-title">{editing ? t("form.editTitle") : t("form.newTitle")}</h1>
+        {editing?.agreement.purchaser_signed && <p className="gate">{t("form.editClearsSignature")}</p>}
+        {filing && (
+          <p className="filing">
+            <FolderOpen size={16} aria-hidden />
+            <span>{t("form.filedIn")} <Link to={projectHref(filing.project)} className="ent">{filing.project.name}</Link></span>
+            {budgetLeft(filing.project.budget_sats, filing.project.totals) !== null && (
+              <span className="muted">· {t("form.budgetLeft")} <Sats sats={budgetLeft(filing.project.budget_sats, filing.project.totals) ?? 0} /></span>
+            )}
+          </p>
+        )}
+
+        {BLOCKS.map((id) => (
+          <FormBlock key={id} id={id} summary={summaryOf(id, shape)} open={open.has(id)} onToggle={(on) => toggle(id, on)}
+            help={HELP[id]}>
+            {body[id]}
+          </FormBlock>
+        ))}
 
         {problem && <p className="error text-right">{problem}</p>}
         <div className="flex flex-wrap items-center justify-end gap-2">
