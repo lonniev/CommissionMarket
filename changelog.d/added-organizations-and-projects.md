@@ -1,3 +1,0 @@
-- Organizations and Projects: make an Organization, add colleagues by npub, and keep Projects in it, each with a brief, a budget, a default circle and default terms. Post a commission into a Project and it starts from those; the Project page shows its budget against what its commissions committed and paid.
-- The commission list filters and orders by Project, and a commission names its Project. Members see an Organization's commissions under "In my Organizations".
-- The site names itself to Task Booth, so its lists and calendar show only CommissionMarket commissions (and any posted with no site).

@@ -1,1 +1,0 @@
-- The clock's tightest case now delivers on the last day of grace, and the story's refund date is Task Booth's floor: 28 days after delivery (day 58), so Ada always has her week.

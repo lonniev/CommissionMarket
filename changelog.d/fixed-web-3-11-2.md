@@ -1,1 +1,0 @@
-- Web 3.11.2: the sign-in box uses the page's width, and an empty setting shows its example (Escrow mints shows the test mint's address) instead of "null".
