@@ -1,10 +1,11 @@
-/** How a commission runs, in seven steps, then the wallet you need and what is good to know. */
+/** Commissions, play by play: the seven steps, one portrait ending three ways, then the wallet you need and what is good to know. */
 
 import { Link } from "react-router-dom";
 import { BadgeCheck, FilePen, FileSignature, Hand, Landmark, PackageCheck, Scale, Zap, type LucideIcon } from "lucide-react";
 import { Tx, WalletChooser } from "@tollbooth-dpyc/web/react";
 import { useT, WORDS } from "../i18n";
 import type { MessageKey } from "../i18n/en";
+import PlayByPlay from "../components/PlayByPlay";
 
 const STEPS: { icon: LucideIcon; title: MessageKey; says: MessageKey }[] = [
   { icon: FilePen, title: "guide.step.post.title", says: "guide.step.post.says" },
@@ -21,6 +22,7 @@ export default function Guide() {
   return (
     <div className="page grid gap-4">
       <h1 className="page-title">{t("guide.title")}</h1>
+      <h2 className="section-title">{t("guide.steps")}</h2>
       <ol className="step-cards">
         {STEPS.map(({ icon: Icon, title, says }, i) => (
           <li key={title} className="card panel step-card">
@@ -32,6 +34,8 @@ export default function Guide() {
           </li>
         ))}
       </ol>
+
+      <PlayByPlay />
 
       <section className="card panel grid gap-2" id="wallet">
         <h2 className="panel-title"><span aria-hidden>👛</span> {t("guide.wallet.title")}</h2>

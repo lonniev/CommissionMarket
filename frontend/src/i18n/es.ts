@@ -293,7 +293,8 @@ const es: Translation = {
   "home.card.circle.title": "Su propio círculo",
   "home.card.circle.says": "Solo los npub que usted invita ven su encargo y pueden aceptarlo.",
 
-  "guide.title": "Cómo se desarrolla un encargo",
+  "guide.title": "Encargos, jugada a jugada",
+  "guide.steps": "Cómo se desarrolla un encargo",
   "guide.step.post.title": "Publicar",
   "guide.step.post.says": "El cliente redacta la descripción general, las calificaciones y sus precios, el anticipo y los hitos.",
   "guide.step.sign.title": "Firmar",

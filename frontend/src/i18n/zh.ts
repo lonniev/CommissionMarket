@@ -293,7 +293,8 @@ const zh: Translation = {
   "home.card.circle.title": "您自己的圈子",
   "home.card.circle.says": "只有您邀请的 npub 能看到并承接您的委托。",
 
-  "guide.title": "一项委托如何进行",
+  "guide.title": "委托实况",
+  "guide.steps": "一项委托如何进行",
   "guide.step.post.title": "发布",
   "guide.step.post.says": "委托方填写委托简介、各评级及其价格、定金和里程碑。",
   "guide.step.sign.title": "签署",

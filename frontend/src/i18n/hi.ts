@@ -293,7 +293,8 @@ const hi: Translation = {
   "home.card.circle.title": "आपका अपना दायरा",
   "home.card.circle.says": "केवल आपके आमंत्रित npub ही आपका कमीशन देख और स्वीकार कर सकते हैं।",
 
-  "guide.title": "कमीशन कैसे आगे बढ़ता है",
+  "guide.title": "कमीशन, क़दम-दर-क़दम",
+  "guide.steps": "कमीशन कैसे आगे बढ़ता है",
   "guide.step.post.title": "पोस्ट करें",
   "guide.step.post.says": "क्लाइंट ब्रीफ़, ग्रेड और उनकी कीमतें, अग्रिम राशि और माइलस्टोन लिखता है।",
   "guide.step.sign.title": "हस्ताक्षर करें",

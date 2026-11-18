@@ -295,7 +295,8 @@ export const en = {
   "home.card.circle.title": "Your own circle",
   "home.card.circle.says": "Only the npubs you invite see your commission and may claim it.",
 
-  "guide.title": "How a commission runs",
+  "guide.title": "Commissions, Play by Play",
+  "guide.steps": "How a commission runs",
   "guide.step.post.title": "Post",
   "guide.step.post.says": "The client writes the brief, the grades and their prices, the deposit and the milestones.",
   "guide.step.sign.title": "Sign",

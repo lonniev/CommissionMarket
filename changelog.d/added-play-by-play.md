@@ -1,0 +1,1 @@
+- The Guide is now "Commissions, Play by Play": after the seven steps, one portrait commission ends three ways side by side (it goes well, the painter vanishes, the client won't pay), each told against the Standard Terms v1 with a TL;DR, who ends up with what, and what would have gone otherwise. Key words show their meaning on hover or tap, and every § number links its clause.
