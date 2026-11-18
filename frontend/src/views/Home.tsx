@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <div className="page grid gap-4">
       <section className="hero hero-art card">
-        <img className="hero-img" src={guildWide} srcSet={`${guildNarrow} 760w, ${guildWide} 1264w`} sizes="(max-width: 60rem) 100vw, 60rem"
+        <img className="hero-img" src={guildWide} srcSet={`${guildNarrow} 760w, ${guildWide} 1264w`} sizes="(max-width: 90rem) 100vw, 90rem"
           alt={t("home.artAlt")} width={1264} height={848} fetchPriority="high" />
         <div className="hero-words grid gap-3">
         <h1 className="hero-title">{t("app.tagline")}</h1>

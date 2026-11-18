@@ -111,7 +111,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
 
   return (
     <div className="page">
-      <form className="card panel mx-auto grid max-w-3xl gap-6" onSubmit={(e) => { e.preventDefault(); void save(); }}>
+      <form className="card panel grid gap-6" onSubmit={(e) => { e.preventDefault(); void save(); }}>
         <h1 className="page-title">{editing ? t("form.editTitle") : t("form.newTitle")}</h1>
         {editing?.agreement.purchaser_signed && <p className="gate">{t("form.editClearsSignature")}</p>}
         {filing && (
