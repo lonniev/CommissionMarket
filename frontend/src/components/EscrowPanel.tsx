@@ -215,6 +215,10 @@ export default function EscrowPanel({ task, now, onChanged }: { task: Task; now:
         ))}
       </dl>
 
+      {task.escrow_due_to === "client" && divisible && (
+        <p className="gate">{t("escrow.dueToClient")} <Link to="/terms?version=v1#t-14-10" className="ent">§14.10</Link></p>
+      )}
+
       {escrow?.proposal && (
         <div className="grid gap-1">
           <p className="font-medium">{t("escrow.proposal", { by: roleName(escrow.proposal.by) })}</p>

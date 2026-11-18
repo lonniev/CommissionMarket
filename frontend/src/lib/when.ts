@@ -1,6 +1,8 @@
 /** Times as people say them. Task Booth speaks Unix seconds. */
 
 import type { Said } from "../i18n/index.ts";
+import { stepSaid } from "./late.ts";
+import type { LateRule } from "./tasks.ts";
 
 const DAY = 86_400;
 
@@ -41,11 +43,12 @@ export function lateText(daysLate: number): Said | null {
   return daysLate > 0 ? { key: "late.days", vars: { count: daysLate } } : null;
 }
 
-/** What happens if the work is late, as the commission's page says it. */
-export function lateRuleText(rule: { kind: string; pct_per_day?: number } | undefined): Said {
-  if (rule?.kind === "discount") return { key: "late.rule.discount", vars: { pct: rule.pct_per_day ?? 0 } };
-  if (rule?.kind === "cancel") return { key: "late.rule.cancel" };
-  return { key: "late.rule.full" };
+/** What happens if the work is late, as the commission's page says it: one phrase, or one per step. */
+export function lateRuleText(rule: LateRule | undefined): Said[] {
+  if (rule?.kind === "discount") return [{ key: "late.rule.discount", vars: { pct: rule.pct_per_day } }];
+  if (rule?.kind === "steps") return rule.steps.map(stepSaid);
+  if (rule?.kind === "cancel") return [{ key: "late.rule.cancel" }];
+  return [{ key: "late.rule.full" }];
 }
 
 /** The local `YYYY-MM-DD` a time falls on, for a date field. */

@@ -2,6 +2,7 @@
 
 import type { MessageKey } from "../i18n/en.ts";
 import type { Said } from "../i18n/index.ts";
+import { stepsFrom, type LateStep, type StepRow } from "./late.ts";
 
 export interface Grade {
   name: string;
@@ -66,10 +67,16 @@ export function rubricFrom(rows: GradeRow[]): { rubric: Rubric } | { problem: Sa
 }
 
 /** The late choice as the form holds it: a kind, and the percent as typed. */
-export type LateKind = "full" | "discount" | "cancel";
+export type LateKind = "full" | "discount" | "steps" | "cancel";
+
+export type LateChoice = { kind: "full" } | { kind: "discount"; pct_per_day: number } | { kind: "steps"; steps: LateStep[] } | { kind: "cancel" };
 
 /** The form's late choice as Task Booth takes it, or the message that says what to fix. */
-export function lateFrom(kind: LateKind, pct: string): { late: { kind: "full" } | { kind: "discount"; pct_per_day: number } | { kind: "cancel" } } | { problem: Said } {
+export function lateFrom(kind: LateKind, pct: string, steps: StepRow[] = []): { late: LateChoice } | { problem: Said } {
+  if (kind === "steps") {
+    const made = stepsFrom(steps);
+    return "problem" in made ? made : { late: { kind: "steps", steps: made.steps } };
+  }
   if (kind !== "discount") return { late: { kind } };
   const n = Number(pct.trim());
   if (!/^\d+$/.test(pct.trim()) || n < 1 || n > 100) return { problem: { key: "late.needPct" } };

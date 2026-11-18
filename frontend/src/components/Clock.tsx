@@ -69,7 +69,7 @@ export default function Clock() {
           {dot(0, d.milestone, words.milestone)}
 
           {bar(1, 0, d.deliveryDate, "work", words.painting)}
-          {bar(1, d.deliveryDate, d.delivered, "grace", words.grace)}
+          {bar(1, d.deliveryDate, d.delivered, "grace", words.failure)}
           {dot(1, d.delivered, words.delivered)}
 
           {bar(2, d.delivered, d.graded, "grade", words.grade)}

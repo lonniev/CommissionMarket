@@ -51,8 +51,11 @@ test("lateness is said in days, and on time says nothing", () => {
 });
 
 test("a commission says what lateness costs", () => {
-  assert.equal(say(t, lateRuleText({ kind: "full" })), "Late work is paid in full.");
-  assert.equal(say(t, lateRuleText({ kind: "discount", pct_per_day: 10 })), "Each day late takes 10% off.");
-  assert.equal(say(t, lateRuleText({ kind: "cancel" })), "Cancelled if not delivered by the needed-by day.");
-  assert.equal(say(t, lateRuleText(undefined)), "Late work is paid in full.");
+  const rule = (r: Parameters<typeof lateRuleText>[0]) => lateRuleText(r).map((x) => say(t, x)).join(" ");
+  assert.equal(rule({ kind: "full" }), "Late work is paid in full.");
+  assert.equal(rule({ kind: "discount", pct_per_day: 10 }), "Each day late takes 10% off.");
+  assert.equal(rule({ kind: "cancel" }), "Cancelled if not delivered by the needed-by day.");
+  assert.equal(rule(undefined), "Late work is paid in full.");
+  assert.equal(rule({ kind: "steps", steps: [{ after_hours: 0, pct_off: 10 }, { after_hours: 72, pct_off: 25 }, { after_hours: 100, pct_off: 50 }] }),
+    "10% off once late. 25% off after 3 days late. 50% off after 100 hours late.");
 });

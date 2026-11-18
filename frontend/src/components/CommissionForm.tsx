@@ -11,9 +11,10 @@ import { formatSats } from "@tollbooth-dpyc/web";
 import { NpubField, NpubListField, useAppShell } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
 import { BLOCKS, blockOf, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
-import { aheadFrom, audienceFrom, blankCover, coverFrom, MAX_AUDIENCE, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
+import { aheadFrom, audienceFrom, blankCover, coverFrom, failHoursOf, MAX_AUDIENCE, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
 import { aheadPct, MAX_AHEAD_PCT, MAX_MILESTONES, shareOf } from "../lib/money";
 import { lateFrom, MAX_GRADES, rubricFrom, starterRows, type GradeRow, type LateKind } from "../lib/rubric";
+import { MAX_LATE_STEPS, starterSteps, stepRowsOf, type StepRow, type Unit } from "../lib/late";
 import { budgetLeft, coverFromDefaults, type Project } from "../lib/orgs";
 import { editTask, postTask, type Task } from "../lib/tasks";
 import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
@@ -26,7 +27,8 @@ import TermsFields from "./TermsFields";
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
 const BRIEF_MAX = 4000;
 
-const LATE_KINDS: LateKind[] = ["full", "discount", "cancel"];
+const LATE_KINDS: LateKind[] = ["full", "discount", "steps", "cancel"];
+const UNITS: Unit[] = ["hours", "days"];
 const satsOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
 const pctOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
 
@@ -51,6 +53,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     : starterRows(t));
   const [lateKind, setLateKind] = useState<LateKind>(editing?.late.kind ?? "full");
   const [latePct, setLatePct] = useState(editing?.late.kind === "discount" ? String(editing.late.pct_per_day) : "5");
+  const [steps, setSteps] = useState<StepRow[]>(() => (editing?.late.kind === "steps" ? stepRowsOf(editing.late.steps) : starterSteps()));
+  const setStep = (i: number, change: Partial<StepRow>) => setSteps((list) => list.map((s, j) => (j === i ? { ...s, ...change } : s)));
   const [deposit, setDeposit] = useState(editing ? String(editing.deposit_pct || "") : "10");
   const [milestones, setMilestones] = useState<MilestoneRow[]>(
     () => (editing?.milestones ?? []).map((m) => ({ name: m.name, day: dayKeyOf(m.due_at), pct: String(m.pct) })),
@@ -94,11 +98,11 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     if (neededBy === null || neededBy < now) return refuse("form.needDay", t("form.needDay"));
     const made = rubricFrom(rows);
     if ("problem" in made) return refuse(made.problem.key, t(made.problem.key, made.problem.vars));
-    const late = lateFrom(lateKind, latePct);
+    const late = lateFrom(lateKind, latePct, steps);
     if ("problem" in late) return refuse(late.problem.key, t(late.problem.key, late.problem.vars));
     const paid = aheadFrom(deposit, milestones, neededBy, now);
     if ("problem" in paid) return refuse(paid.problem.key, t(paid.problem.key, paid.problem.vars));
-    const page = coverFrom(cover, made.rubric.grades.map((g) => g.name));
+    const page = coverFrom(cover, made.rubric.grades.map((g) => g.name), late.late.kind === "steps" ? late.late.steps : []);
     if ("problem" in page) return refuse(page.problem.key, t(page.problem.key, page.problem.vars));
     const terms = {
       title: title.trim(), description: description.trim(), rubric: made.rubric, audience: who.audience,
@@ -119,7 +123,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     title, deliverables: cover.deliverables.split("\n").filter((d) => d.trim()).length, invited: audience.length,
     arbiter: cover.arbiter, grades: gradeNames.length, topSats: top,
     neededBy: due ? new Date(`${due}T12:00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" }) : "—",
-    late: lateKind, depositPct: pctOf(deposit), milestones: milestones.length,
+    late: lateKind, failHours: failHoursOf(cover), depositPct: pctOf(deposit), milestones: milestones.length,
     escrowMint: cover.escrow ? cover.mint : "", deemedGrade: cover.deemedGrade,
     deemedDays: Number(cover.deemedDays) || 0, ip: cover.ip, law: cover.law,
   };
@@ -231,7 +235,46 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
               <span>{t("late.pctAfter")}</span>
             </label>
           )}
+          {lateKind === "steps" && (
+            <div className="grid gap-2">
+              {steps.map((s, i) => (
+                <div key={i} className="step-row">
+                  <span>{t("late.stepMore")}</span>
+                  <input className="field num text-right" inputMode="numeric" value={s.after} maxLength={4} onChange={(e) => setStep(i, { after: e.target.value })}
+                    aria-label={t("late.stepAfter")} />
+                  <select className="field" value={s.unit} onChange={(e) => setStep(i, { unit: e.target.value as Unit })} aria-label={t("late.unitLabel")}>
+                    {UNITS.map((u) => <option key={u} value={u}>{t(`late.unit.${u}`)}</option>)}
+                  </select>
+                  <span>{t("late.stepLate")}</span>
+                  <input className="field num text-right" inputMode="numeric" value={s.pct} maxLength={3} onChange={(e) => setStep(i, { pct: e.target.value })}
+                    aria-label={t("late.stepPct")} />
+                  <span>{t("late.stepOff")}</span>
+                  {steps.length > 1 && (
+                    <button type="button" className="icon-btn" onClick={() => setSteps((list) => list.filter((_, j) => j !== i))}
+                      aria-label={t("late.removeStep")} title={t("late.removeStep")}>
+                      <Trash2 size={16} aria-hidden />
+                    </button>
+                  )}
+                </div>
+              ))}
+              {steps.length < MAX_LATE_STEPS && (
+                <button type="button" className="chip w-fit" onClick={() => setSteps((list) => [...list, { after: "", unit: list[list.length - 1]?.unit ?? "days", pct: "" }])}>
+                  <Plus size={16} aria-hidden />{t("late.addStep")}
+                </button>
+              )}
+            </div>
+          )}
           <p className="muted text-sm">{t(`late.pickHelp.${lateKind}`)}</p>
+          <div className="step-row">
+            <span className="label">{t("late.fail")}</span>
+            <input className="field num text-right" inputMode="numeric" value={cover.failAfter} maxLength={4}
+              onChange={(e) => setCoverField("failAfter", e.target.value)} aria-label={t("late.fail")} />
+            <select className="field" value={cover.failUnit} onChange={(e) => setCoverField("failUnit", e.target.value as Unit)} aria-label={t("late.unitLabel")}>
+              {UNITS.map((u) => <option key={u} value={u}>{t(`late.unit.${u}`)}</option>)}
+            </select>
+            <span>{t("late.failLate")}</span>
+          </div>
+          <p className="muted text-sm">{t("late.failHelp")} <Link to="/terms?version=v1#t-14-7" className="ent">§14</Link></p>
       </>
     ),
     payments: (

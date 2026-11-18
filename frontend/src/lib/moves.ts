@@ -15,7 +15,7 @@ export type Role = "purchaser" | "audience" | "performer" | "assessor" | "tie_br
 
 export type Move =
   | "claim" | "release" | "withdraw" | "mark_done" | "grade" | "reject"
-  | "accept" | "appeal" | "decide" | "pay" | "confirm_paid";
+  | "accept" | "appeal" | "decide" | "pay" | "confirm_paid" | "claim_cause" | "rule_cause";
 
 export interface Stands {
   standing: Standing;
@@ -26,6 +26,7 @@ export interface Stands {
   cover?: unknown;
   agreement?: { purchaser_signed: boolean; performer_signed: boolean; arbiter_signed?: boolean };
   escrow?: { state: string } | null;
+  failure?: { without_cause: boolean | null; cause: { ruling?: string } | null } | null;
 }
 
 const OPEN: Partial<Record<Standing, [Move, Role[]][]>> = {
@@ -41,9 +42,21 @@ const OPEN: Partial<Record<Standing, [Move, Role[]][]>> = {
 /** The moves open to this person, most likely first. */
 export function movesFor(task: Stands): Move[] {
   if (task.standing === "assessed" && task.final) return [];
+  if (task.standing === "missed") return causeMoves(task);
   return (OPEN[task.standing] ?? [])
     .filter(([, roles]) => roles.some((r) => task.your_roles.includes(r)))
     .map(([move]) => move);
+}
+
+/**
+ * After a failure to deliver: the professional may claim cause while the window is open
+ * (Task Booth says so with `without_cause: null` and no claim yet), and the arbiter rules on a claim.
+ */
+function causeMoves(task: Stands): Move[] {
+  const f = task.failure;
+  if (!f || f.without_cause !== null) return [];
+  if (!f.cause) return task.your_roles.includes("performer") ? ["claim_cause"] : [];
+  return !f.cause.ruling && task.your_roles.includes("arbiter") ? ["rule_cause"] : [];
 }
 
 /**

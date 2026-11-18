@@ -34,7 +34,7 @@ export interface ClockText {
   deposit: string;
   milestone: string;
   painting: string;
-  grace: string;
+  failure: string;
   delivered: string;
   grade: string;
   appeal: string;

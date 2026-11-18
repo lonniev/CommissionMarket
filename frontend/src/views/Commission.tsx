@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { AlarmClock, ArrowLeft, Pencil, RefreshCw } from "lucide-react";
 import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import Actions from "../components/Actions";
+import FailureNote from "../components/FailureNote";
 import ContractBlocks from "../components/ContractBlocks";
 import MoneyPanel from "../components/MoneyPanel";
 import OfferPanel from "../components/OfferPanel";
@@ -116,7 +117,7 @@ export default function Commission() {
         )}
         <dl className="facts">
           <dt>{t("commission.neededBy")}</dt><dd>{new Date(task.needed_by * 1000).toLocaleDateString()} · {say(t, dueText(task.needed_by, now))}</dd>
-          <dt>{t("commission.ifLate")}</dt><dd>{say(t, lateRuleText(task.late))}</dd>
+          <dt>{t("commission.ifLate")}</dt><dd>{lateRuleText(task.late).map((s) => say(t, s)).join(" ")}</dd>
           <dt>{t("commission.client")}</dt><dd><Person npub={task.purchaser} /></dd>
           {task.performer
             ? <><dt>{t("commission.professional")}</dt><dd><Person npub={task.performer} /></dd></>
@@ -126,6 +127,7 @@ export default function Commission() {
         {graded?.reasons && <blockquote className="quote">{graded.reasons}</blockquote>}
         {graded?.appeal?.reasons && <blockquote className="quote">{t("commission.appealQuote", { reasons: graded.appeal.reasons })}</blockquote>}
         {task.rejection?.reasons && <blockquote className="quote">{task.rejection.reasons}</blockquote>}
+        {task.failure && <FailureNote failure={task.failure} />}
         <Actions task={task} onChanged={setTask} />
       </section>
 

@@ -10,6 +10,7 @@
 import type { Said } from "../i18n/index.ts";
 import type { MessageKey } from "../i18n/en.ts";
 import type { LateKind } from "./rubric.ts";
+import { failSummary } from "./late.ts";
 
 export const BLOCKS = ["spec", "people", "grades", "schedule", "payments", "conclusion", "legal"] as const;
 export type BlockId = (typeof BLOCKS)[number];
@@ -41,6 +42,8 @@ export interface Shape {
   topSats: number;
   neededBy: string;
   late: LateKind;
+  /** The failure point in hours; 0 when none is set. */
+  failHours: number;
   depositPct: number;
   milestones: number;
   escrowMint: string;
@@ -70,7 +73,8 @@ export function summaryOf(id: BlockId, s: Shape): Said[] {
     case "grades":
       return [{ key: "block.sum.grades", vars: { count: s.grades, top: s.topSats.toLocaleString() } }];
     case "schedule":
-      return [{ key: "block.sum.neededBy", vars: { day: s.neededBy } }, { key: `late.pick.${s.late}` }];
+      return [{ key: "block.sum.neededBy", vars: { day: s.neededBy } }, { key: `late.pick.${s.late}` },
+        ...(s.failHours ? [failSummary(s.failHours)] : [])];
     case "payments": {
       const said: Said[] = [];
       if (s.depositPct) said.push({ key: "block.sum.deposit", vars: { pct: s.depositPct } });
