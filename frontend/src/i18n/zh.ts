@@ -278,6 +278,8 @@ const zh: Translation = {
   "terms.title": "标准条款",
   "terms.says": "每项委托的封面页都会注明这些条款的版本及其 sha256。条款文本保留英文原文，与计算哈希时完全一致。",
   "terms.version": "版本",
+  "terms.contents": "目录",
+  "terms.exact": "计算哈希时的原文",
 
   "home.lead": "向您邀请的专业人士委托一幅肖像、一份译文、一项研究或一个零件。双方约定一份签署的要约，每个阶段的款项都直接从您的钱包付到对方的钱包。",
   "home.start": "使用 npub 登录",

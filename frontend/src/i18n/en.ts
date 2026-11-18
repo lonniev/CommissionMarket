@@ -280,6 +280,8 @@ export const en = {
   "terms.title": "Standard Terms",
   "terms.says": "Every commission's cover page names a version of these terms and their sha256. The text is kept in English, exactly as it is hashed.",
   "terms.version": "Version",
+  "terms.contents": "Contents",
+  "terms.exact": "The exact text, as hashed",
 
   "home.lead": "Commission a portrait, a translation, a study or a part from professionals you invite. Agree one signed offer, and pay each stage straight from your wallet to theirs.",
   "home.start": "Sign in with your npub",
