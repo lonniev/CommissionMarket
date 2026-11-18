@@ -8,7 +8,8 @@
 
 import type { LanguageContent } from "../../lib/content.ts";
 import { lessons } from "./lessons.ts";
+import { playByPlay } from "./playByPlay.ts";
 
-const content: LanguageContent = { lessons };
+const content: LanguageContent = { lessons, playByPlay };
 
 export default content;

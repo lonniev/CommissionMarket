@@ -293,7 +293,8 @@ const fr: Translation = {
   "home.card.circle.title": "Ton propre cercle",
   "home.card.circle.says": "Seuls les npub que tu invites voient ta commande et peuvent la prendre en charge.",
 
-  "guide.title": "Le déroulement d'une commande",
+  "guide.title": "Les commandes, coup par coup",
+  "guide.steps": "Le déroulement d'une commande",
   "guide.step.post.title": "Publier",
   "guide.step.post.says": "Le client rédige le cahier des charges, les appréciations et leurs prix, l'acompte et les jalons.",
   "guide.step.sign.title": "Signer",

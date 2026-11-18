@@ -293,7 +293,8 @@ const ja: Translation = {
   "home.card.circle.title": "あなたが選ぶ仲間",
   "home.card.circle.says": "あなたが招待したnpubだけが、依頼を見て引き受けられます。",
 
-  "guide.title": "依頼の流れ",
+  "guide.title": "依頼の実況",
+  "guide.steps": "依頼の流れ",
   "guide.step.post.title": "投稿",
   "guide.step.post.says": "依頼者が依頼内容、評価とその報酬、着手金、マイルストーンを記入します。",
   "guide.step.sign.title": "署名",
