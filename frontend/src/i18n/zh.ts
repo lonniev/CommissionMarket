@@ -440,6 +440,7 @@ const zh: Translation = {
   "project.noCircle": "暂无成员。",
   "project.defaults": "默认条款",
   "project.defaultsHelp": "此项目中的新委托会以这些条款为起点；发布前仍可逐项修改。",
+  "project.arbiterHelp": "此项目中每个新委托所指定的仲裁人。托管需要一名仲裁人。",
   "project.paid": "已支付",
   "project.committed": "已承诺",
   "project.left": "余额",

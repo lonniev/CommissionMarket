@@ -442,6 +442,7 @@ export const en = {
   "project.noCircle": "No one yet.",
   "project.defaults": "Default terms",
   "project.defaultsHelp": "A new commission in this Project starts with these terms; each can still be changed before posting.",
+  "project.arbiterHelp": "The arbiter each new commission in this Project names. Escrow needs one.",
   "project.paid": "Paid",
   "project.committed": "Committed",
   "project.left": "Left",

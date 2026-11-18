@@ -440,6 +440,7 @@ const hi: Translation = {
   "project.noCircle": "अभी कोई नहीं।",
   "project.defaults": "डिफ़ॉल्ट शर्तें",
   "project.defaultsHelp": "इस प्रोजेक्ट का नया कमीशन इन्हीं शर्तों से शुरू होता है; पोस्ट करने से पहले हर शर्त बदली जा सकती है।",
+  "project.arbiterHelp": "इस प्रोजेक्ट का हर नया कमीशन इसी मध्यस्थ को नामित करता है। एस्क्रो के लिए एक मध्यस्थ चाहिए।",
   "project.paid": "चुकाया गया",
   "project.committed": "प्रतिबद्ध",
   "project.left": "शेष",

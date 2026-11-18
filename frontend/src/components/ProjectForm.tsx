@@ -1,7 +1,7 @@
 /** A Project's brief, budget, circle and default terms, as its Organization's owner sets them. */
 
 import { useState } from "react";
-import { blankCover, type CoverRows, audienceFrom } from "../lib/cover";
+import { blankCover, type CoverRows, audienceFrom, isNpub } from "../lib/cover";
 import { defaultsFromCover, coverFromDefaults, saveProject, satsFrom, type Project } from "../lib/orgs";
 import { useT } from "../i18n";
 import TermsFields from "./TermsFields";
@@ -32,6 +32,7 @@ export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
     if ("problem" in people) return setProblem(t(people.problem.key, people.problem.vars));
     const deemed = days.trim() ? satsFrom(days) : 0;
     if (Number.isNaN(deemed) || deemed > 60) return setProblem(t("form.badDeemedDays", { max: 60 }));
+    if (cover.arbiter.trim() && !isNpub(cover.arbiter.trim())) return setProblem(t("form.badArbiter"));
     const defaults = defaultsFromCover({ ...cover, deemedDays: deemed ? String(deemed) : blankCover().deemedDays }, blankCover());
     if (deemed) defaults.deemed_acceptance_days = deemed;
     setBusy(true);
@@ -69,6 +70,12 @@ export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
       <fieldset className="form-section">
         <legend className="section-title">{t("project.defaults")}</legend>
         <p className="muted text-sm">{t("project.defaultsHelp")}</p>
+        <label className="grid gap-1">
+          <span className="label">{t("cover.arbiter")}</span>
+          <input className="field font-mono text-sm" value={cover.arbiter} onChange={(e) => set("arbiter", e.target.value.trim())}
+            placeholder="npub1…" autoCapitalize="none" spellCheck={false} />
+          <span className="muted text-sm">{t("project.arbiterHelp")}</span>
+        </label>
         <TermsFields cover={cover} set={set} />
         <label className="grid gap-1 w-fit">
           <span className="label">{t("cover.deemedDays")}</span>

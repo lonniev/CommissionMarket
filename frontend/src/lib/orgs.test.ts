@@ -28,3 +28,11 @@ test("sats are whole numbers", () => {
   assert.ok(Number.isNaN(satsFrom("5e5")));
   assert.ok(Number.isNaN(satsFrom("-1")));
 });
+
+test("a Project's arbiter is kept as a default and fills each new commission", () => {
+  const arbiter = "npub1als8rt5rt8wjy5rse3ml67yehdchtxz3uclxv3qvqy8g4ldscrdql22drx";
+  const d = defaultsFromCover({ ...blankCover(), arbiter }, blankCover());
+  assert.equal(d.arbiter_npub, arbiter);
+  assert.equal(coverFromDefaults(blankCover(), d).arbiter, arbiter);
+  assert.equal(defaultsFromCover(blankCover(), blankCover()).arbiter_npub, undefined);
+});
