@@ -1,0 +1,1 @@
+- "Hold the Balance in escrow" ticks at any time, and says under it what is still missing (an arbiter, a deemed grade). Its refund days rise to the floor when escrow is ticked or the deemed days grow.

@@ -7,7 +7,7 @@
  * silent party can never hold it hostage.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { leastRefundDays, MAX_REFUND_DAYS, type CoverRows } from "../lib/cover";
 import { escrowMints, isTestMint } from "../lib/tasks";
@@ -33,9 +33,17 @@ export default function EscrowFields({ cover, set }: {
     if (cover.escrow && !cover.mint && mints?.length) set("mint", mints[0]);
   }, [cover.escrow, cover.mint, mints, set]);
 
+  // The refund date can never fall inside an appeal: as the deemed days grow, the floor does too.
+  // Applied when escrow is ticked or the floor moves, never while the days are typed.
+  const typed = useRef(cover.refundDays);
+  typed.current = cover.refundDays;
+  useEffect(() => {
+    const days = Number(typed.current);
+    if (cover.escrow && (!typed.current || (Number.isInteger(days) && days < least))) set("refundDays", String(least));
+  }, [cover.escrow, least]);
+
   function hold(on: boolean) {
     set("escrow", on);
-    if (on && !cover.refundDays) set("refundDays", String(least));
   }
 
   return (
@@ -48,13 +56,14 @@ export default function EscrowFields({ cover, set }: {
       <p className="muted text-sm">{t("cover.arbiterHelp")}</p>
 
       <label className="check">
-        <input type="checkbox" checked={cover.escrow} disabled={!ready && !cover.escrow} onChange={(e) => hold(e.target.checked)} />
+        <input type="checkbox" checked={cover.escrow} onChange={(e) => hold(e.target.checked)} />
         <span>{t("cover.escrow")}</span>
       </label>
       <p className="muted text-sm">
-        {ready || cover.escrow ? t("cover.escrowHelp") : t("cover.escrowNeeds")}{" "}
+        {t("cover.escrowHelp")}{" "}
         <Link to="/terms?version=v1#t-6-1" className="ent">{t("cover.escrowTerms")}</Link>
       </p>
+      {cover.escrow && !ready && <p className="error text-sm">{t("cover.escrowNeeds")}</p>}
 
       {cover.escrow && (
         <div className="two-up">
