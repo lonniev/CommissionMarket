@@ -23,7 +23,7 @@ const ARBITER_DAYS = 7;
 /** The shortest refund period that cannot cut an appeal short, as Task Booth enforces it. */
 export const leastRefundDays = (deemedDays: number) => GRACE_DAYS + deemedDays + APPEAL_DAYS + ARBITER_DAYS;
 
-const isNpub = (text: string) => {
+export const isNpub = (text: string) => {
   try {
     return nip19.decode(text).type === "npub";
   } catch {

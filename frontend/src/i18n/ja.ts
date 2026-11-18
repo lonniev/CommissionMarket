@@ -440,6 +440,7 @@ const ja: Translation = {
   "project.noCircle": "まだ誰もいません。",
   "project.defaults": "既定の条件",
   "project.defaultsHelp": "このプロジェクトの新しい依頼は、これらの条件で始まります。投稿前に個別に変更することもできます。",
+  "project.arbiterHelp": "このプロジェクトの新しい依頼が指名する仲裁者です。エスクローには仲裁者が必要です。",
   "project.paid": "支払い済み",
   "project.committed": "確保済み",
   "project.left": "残り",

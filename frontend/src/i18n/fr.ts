@@ -440,6 +440,7 @@ const fr: Translation = {
   "project.noCircle": "Personne pour l'instant.",
   "project.defaults": "Conditions par défaut",
   "project.defaultsHelp": "Une nouvelle commande de ce Projet démarre avec ces conditions ; chacune peut encore être modifiée avant la publication.",
+  "project.arbiterHelp": "L'arbitre que désigne chaque nouvelle commande de ce Projet. Le séquestre en demande un.",
   "project.paid": "Payé",
   "project.committed": "Engagé",
   "project.left": "Restant",

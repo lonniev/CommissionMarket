@@ -440,6 +440,7 @@ const es: Translation = {
   "project.noCircle": "Aún no hay nadie.",
   "project.defaults": "Condiciones por defecto",
   "project.defaultsHelp": "Un nuevo encargo de este Proyecto parte de estas condiciones; todavía se puede cambiar cada una antes de publicarlo.",
+  "project.arbiterHelp": "El árbitro que nombra cada nuevo encargo de este Proyecto. El depósito en garantía necesita uno.",
   "project.paid": "Pagado",
   "project.committed": "Comprometido",
   "project.left": "Disponible",
