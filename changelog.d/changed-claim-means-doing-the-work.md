@@ -1,1 +1,0 @@
-- The new-commission form, its tour, the Guide and the Glossary say that the invited professionals are the people who would do the work, and that claiming a commission takes that work on as specified. The Glossary adds **Claim** (Standard Terms §2.2), and the field has an ⓘ.
