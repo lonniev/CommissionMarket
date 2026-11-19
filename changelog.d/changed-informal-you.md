@@ -1,0 +1,1 @@
+- Spanish, Chinese and Hindi address the reader informally (tú, 你, तुम), like French; quotations keep their own words.
