@@ -74,8 +74,8 @@ export const glossary: GlossaryText = {
     },
     spec_link: {
       term: "Spécification",
-      aka: ["spec", "cahier des charges"],
-      said: "Un lien vers la description complète du travail, pour tout ce qui dépasse le cahier des charges.",
+      aka: ["spec", "cahier des charges", "document de conception", "CAO", "exigences", "maquette", "plan"],
+      said: "Un lien vers le document de conception que le travail doit respecter, comme des plans, de la CAO, des exigences ou une maquette, sous gestion de versions pour que la version signée reste fixe.",
     },
     spec_hash: {
       term: "sha256 de la spécification",

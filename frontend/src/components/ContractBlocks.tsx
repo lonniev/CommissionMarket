@@ -17,6 +17,7 @@ import FormBlock from "./FormBlock";
 import { People, Person } from "./Person";
 import Sats from "./Sats";
 import Word from "./Word";
+import SpecLink from "./SpecLink";
 
 export default function ContractBlocks({ task }: { task: Task }) {
   const t = useT();
@@ -38,8 +39,8 @@ export default function ContractBlocks({ task }: { task: Task }) {
   const body: Record<BlockId, ReactNode> = {
     spec: (
       <dl className="facts">
-        {c && <><dt>{t("cover.deliverables")}</dt><dd><ul className="deliverables">{c.deliverables.map((d) => <li key={d}>{d}</li>)}</ul></dd></>}
-        {c?.spec_url && <><dt>{t("cover.specUrl")}</dt><dd><a href={c.spec_url} target="_blank" rel="noopener noreferrer nofollow" className="ent">{c.spec_url}</a></dd></>}
+        {c && <><dt>{t("cover.deliverables")}</dt><dd><ol className="deliverables">{c.deliverables.map((d, i) => <li key={i}>{d}</li>)}</ol></dd></>}
+        {c?.spec_url && <><dt>{t("cover.specUrl")}</dt><dd><SpecLink url={c.spec_url} /></dd></>}
         {c?.spec_hash && <><dt>{t("cover.specHash")} <Word of="spec_hash" badge align="left" /></dt><dd><code className="hash">{c.spec_hash}</code></dd></>}
       </dl>
     ),

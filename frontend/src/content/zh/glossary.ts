@@ -73,8 +73,8 @@ export const glossary: GlossaryText = {
     },
     spec_link: {
       term: "规格说明",
-      aka: ["规格", "说明书", "spec"],
-      said: "指向工作完整描述的链接，用于委托简介写不下的内容。",
+      aka: ["规格", "设计文档", "CAD", "需求", "模型", "图纸"],
+      said: "指向工作须满足的设计文档的链接，如图纸、CAD、需求或模型，纳入版本控制，使签署的版本固定不变。",
     },
     spec_hash: {
       term: "规格说明的 sha256",
