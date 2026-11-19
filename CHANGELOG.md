@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.7.0] — 2026-11-19
+
+### Added
+
+- Move a commission into a Project: a Project page lists your commissions filed elsewhere, or nowhere, with **Move here**, and a commission's client can move it from its own page. Its terms and signatures stand; a Project's default terms only start new commissions, as its page now says.
+
 ## [0.6.0] — 2026-11-19
 
 ### Changed
