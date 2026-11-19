@@ -5,7 +5,7 @@
  */
 
 import { useParams } from "react-router-dom";
-import { NpubChip } from "@tollbooth-dpyc/web/react";
+import { NpubChip, tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { ROLE_MARK } from "../components/RankLine";
 import Waiting from "../components/Waiting";
 import { useT } from "../i18n";
@@ -14,6 +14,7 @@ import { isNpub } from "../lib/cover";
 import { REP_ROLES, standingIn, type RepRole } from "../lib/reputation";
 import { useReputation } from "../lib/useReputation";
 import type { Reputation, VerdictCounts } from "../lib/tasks";
+import Word from "../components/Word";
 
 type Row = [MessageKey, number | string];
 
@@ -50,6 +51,7 @@ export default function PersonPage() {
   const { npub = "" } = useParams();
   const valid = isNpub(npub);
   const { rep, problem } = useReputation(valid ? npub : "");
+  useTour("person", { ready: !!rep });
   const verdict = (v: VerdictCounts): Row[] => [
     ["inspection.verdict.verified", v.verified], ["inspection.verdict.concerns", v.concerns],
     ["inspection.verdict.not_verified", v.not_verified],
@@ -58,14 +60,14 @@ export default function PersonPage() {
   return (
     <div className="page grid gap-3">
       <div className="toolbar">
-        <h1 className="page-title">{t("rep.title")}</h1>
+        <h1 className="page-title">{t("rep.title")} <Word of="rank" badge align="left" /></h1>
       </div>
       {valid ? <NpubChip npub={npub} /> : <p className="error">{t("rep.notAnNpub")}</p>}
-      <p className="muted">{t("rep.says")}</p>
+      <p className="muted" {...tourTarget("person.says")}>{t("rep.says")}</p>
       {problem && <p className="error">{problem}</p>}
       {valid && !rep && !problem && <Waiting heading={t("rep.fetching")} />}
       {rep && (
-        <div className="rep-cards">
+        <div className="rep-cards" {...tourTarget("person.ranks")}>
           {REP_ROLES.map((role) => {
             const { rank, finished, good } = standingIn(rep, role);
             return (

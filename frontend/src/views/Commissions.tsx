@@ -1,5 +1,6 @@
 /** Every commission you can see: open to you, posted by you, or yours to deliver. */
 
+import { tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarDays, FolderOpen, Plus, RefreshCw, Search, X } from "lucide-react";
@@ -47,6 +48,7 @@ function inTab(task: Task, tab: Tab): boolean {
 export default function Commissions() {
   const t = useT();
   const [tasks, setTasks] = useState<Task[] | null>(null);
+  useTour("commissions", { ready: !!tasks });
   const [problem, setProblem] = useState("");
   const [tab, setTab] = useState<Tab>("open");
   const now = Math.floor(Date.now() / 1000);
@@ -83,14 +85,14 @@ export default function Commissions() {
       <div className="toolbar">
         <h1 className="page-title">{t("nav.commissions")}</h1>
         <div className="toolbar-actions">
-          <button type="button" className="icon-btn" onClick={() => void load()} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")}>
+          <button type="button" className="icon-btn" onClick={() => void load()} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")} {...tourTarget("commissions.refresh")}>
             <RefreshCw size={18} aria-hidden />
           </button>
-          <Link to="/commissions/new" className="btn btn-go"><Plus size={18} aria-hidden />{t("list.new")}</Link>
+          <Link to="/commissions/new" className="btn btn-go" {...tourTarget("commissions.new")}><Plus size={18} aria-hidden />{t("list.new")}</Link>
         </div>
       </div>
 
-      <div className="tabs" role="tablist">
+      <div className="tabs" role="tablist" {...tourTarget("commissions.tabs")}>
         {TABS.filter(({ tab: k }) => k !== "orgs" || counts.orgs > 0 || tab === "orgs").map(({ tab: k, label }) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "chip chip-on" : "chip"} onClick={() => setTab(k)}>
             {t(label)} <span className="num muted">({counts[k] ?? 0})</span>
@@ -99,7 +101,7 @@ export default function Commissions() {
       </div>
 
       {(inThisTab.length >= BROWSE_FROM || query || inThisTab.some((x) => x.project_id)) && (
-        <div className="browse">
+        <div className="browse" {...tourTarget("commissions.browse")}>
           <label className="browse-search">
             <Search size={18} aria-hidden />
             <input className="field" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("browse.find")} aria-label={t("browse.find")} />
@@ -132,7 +134,7 @@ export default function Commissions() {
         </div>
       )}
 
-      <section className="card panel grid gap-3">
+      <section className="card panel grid gap-3" {...tourTarget("commissions.list")}>
         {problem && <p className="error">{problem}</p>}
         {!tasks && !problem && <Waiting heading={t("waiting.fetchingList")} />}
         {tasks && !inThisTab.length && <p className="muted">{t(`list.empty.${tab}`)}</p>}

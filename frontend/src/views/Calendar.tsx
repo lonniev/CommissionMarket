@@ -1,5 +1,6 @@
 /** Your commissions on a month: when each was posted, claimed, paid ahead, delivered, graded and paid, and what falls due. */
 
+import { tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { RefreshCw } from "lucide-react";
@@ -31,6 +32,7 @@ function Happening({ event }: { event: CommissionEvent }) {
 export default function Calendar() {
   const t = useT();
   const [tasks, setTasks] = useState<Task[] | null>(null);
+  useTour("calendar", { ready: !!tasks });
   const [problem, setProblem] = useState("");
   const [loading, setLoading] = useState(true);
   const now = Math.floor(Date.now() / 1000);
@@ -54,7 +56,7 @@ export default function Calendar() {
       <div className="toolbar">
         <h1 className="page-title">{t("cal.title")}</h1>
         <div className="toolbar-actions">
-          <button type="button" className="icon-btn" onClick={() => void load()} disabled={loading} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")}>
+          <button type="button" className="icon-btn" onClick={() => void load()} disabled={loading} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")} {...tourTarget("calendar.refresh")}>
             <RefreshCw size={18} aria-hidden />
           </button>
         </div>
@@ -62,9 +64,9 @@ export default function Calendar() {
       {problem && <p className="card panel error">{problem}</p>}
       {loading && !tasks && <div className="card panel"><Waiting heading={t("waiting.fetchingList")} /></div>}
       {tasks && (
-        <MonthCalendar events={events} now={now} renderDay={(day) => (
+        <div {...tourTarget("calendar.month")}><MonthCalendar events={events} now={now} renderDay={(day) => (
           <ul className="happenings">{day.map((e, i) => <Happening key={`${e.task.task_id}-${e.kind}-${i}`} event={e} />)}</ul>
-        )} />
+        )} /></div>
       )}
     </div>
   );

@@ -3,7 +3,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AlarmClock, ArrowLeft, Pencil, RefreshCw } from "lucide-react";
-import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
+import { tourTarget, useLanguageLocale, useTour } from "@tollbooth-dpyc/web/react";
 import Actions from "../components/Actions";
 import FailureNote from "../components/FailureNote";
 import ContractBlocks from "../components/ContractBlocks";
@@ -60,6 +60,7 @@ export default function Commission() {
   const { taskId = "" } = useParams();
   const t = useT();
   const [task, setTask] = useState<Task | null>(null);
+  useTour("commission", { ready: !!task });
   const [payout, setPayout] = useState<Invoice | null>(null);
   const [problem, setProblem] = useState("");
   const [loading, setLoading] = useState(true);
@@ -98,14 +99,14 @@ export default function Commission() {
         <Link to="/commissions" className="btn btn-quiet"><ArrowLeft size={18} aria-hidden />{t("nav.commissions")}</Link>
         <div className="toolbar-actions">
           {mayEdit(task) && <Link to={`${commissionHref(task.task_id)}/edit`} className="btn btn-quiet"><Pencil size={18} aria-hidden />{t("commission.edit")}</Link>}
-          <button type="button" className="icon-btn" onClick={() => void load()} disabled={loading} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")}>
+          <button type="button" className="icon-btn" onClick={() => void load()} disabled={loading} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")} {...tourTarget("commission.refresh")}>
             <RefreshCw size={18} aria-hidden />
           </button>
         </div>
       </div>
 
       <section className="card panel grid gap-3">
-        <ProjectCrumb task={task} onMoved={setTask} />
+        <div {...tourTarget("commission.project")}><ProjectCrumb task={task} onMoved={setTask} /></div>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="page-title">{task.title}</h1>
           <StandingBadge standing={task.standing} />
@@ -116,7 +117,7 @@ export default function Commission() {
             <MarkdownText text={task.description} />
           </Suspense>
         )}
-        <dl className="facts">
+        <dl className="facts" {...tourTarget("commission.facts")}>
           <dt>{t("commission.neededBy")}</dt><dd>{new Date(task.needed_by * 1000).toLocaleDateString()} · {say(t, dueText(task.needed_by, now))}</dd>
           <dt>{t("commission.ifLate")}</dt><dd>{lateRuleText(task.late).map((s) => say(t, s)).join(" ")}</dd>
           <dt>{t("commission.client")}</dt><dd><Person npub={task.purchaser} /></dd>
@@ -129,19 +130,19 @@ export default function Commission() {
         {graded?.appeal?.reasons && <blockquote className="quote">{t("commission.appealQuote", { reasons: graded.appeal.reasons })}</blockquote>}
         {task.rejection?.reasons && <blockquote className="quote">{task.rejection.reasons}</blockquote>}
         {task.failure && <FailureNote failure={task.failure} />}
-        <Actions task={task} onChanged={setTask} />
+        <div {...tourTarget("commission.actions")}><Actions task={task} onChanged={setTask} /></div>
       </section>
 
-      {task.cover && <OfferPanel task={task} onChanged={setTask} />}
-      {task.cover?.inspector_npub && <InspectionPanel task={task} onChanged={setTask} />}
+      {task.cover && <div {...tourTarget("commission.offer")}><OfferPanel task={task} onChanged={setTask} /></div>}
+      {task.cover?.inspector_npub && <div {...tourTarget("commission.inspection")}><InspectionPanel task={task} onChanged={setTask} /></div>}
       {task.cover?.escrow && (
         <Suspense fallback={null}>
-          <EscrowPanel task={task} now={now} onChanged={() => void load()} />
+          <div {...tourTarget("commission.escrow")}><EscrowPanel task={task} now={now} onChanged={() => void load()} /></div>
         </Suspense>
       )}
-      <MoneyPanel task={task} payout={payout} now={now} onChanged={(next) => { setTask(next); void load(); }} />
+      <div {...tourTarget("commission.money")}><MoneyPanel task={task} payout={payout} now={now} onChanged={(next) => { setTask(next); void load(); }} /></div>
 
-      <ContractBlocks task={task} />
+      <div {...tourTarget("commission.contract")}><ContractBlocks task={task} /></div>
       {task.your_roles.some((r) => r !== "audience") && <History taskId={task.task_id} />}
     </div>
   );

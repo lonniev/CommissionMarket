@@ -142,7 +142,8 @@ export const lessons: LessonsText = {
         "Las calificaciones se nombran de antemano, como Aceptado, Aceptado con cambios y No aceptado, cada una con sus sats.",
         "Nombrarlas desde el principio permite que ambas partes sepan cuánto vale cada resultado antes de empezar el trabajo.",
         "Entregue lo que enumera la portada, en la forma que describen las especificaciones.",
-        "Si el trabajo se retrasa, se aplica la regla de retraso de la oferta: pago íntegro, un descuento por día o el cierre del encargo como incumplido.",
+        "Si el trabajo se retrasa, se aplica la regla de retraso de la oferta: pago íntegro, una parte menos por día, tramos de descuento en plazos fijados, o el cierre del encargo como incumplido.",
+        "El trabajo que siga sin entregar en el punto de incumplimiento de la portada pone fin al encargo, y el profesional puede alegar causa dentro del plazo para apelar.",
         "La aceptación tácita protege al profesional frente a un cliente que nunca responde.",
         "La portada fija su calificación y su plazo, de 1 a 60 días.",
         "Una vez calificado, se debe la remuneración menos lo pagado por adelantado, y se paga mediante factura Lightning como cualquier otro pago."
@@ -177,13 +178,15 @@ export const lessons: LessonsText = {
       title: "Cuando no están de acuerdo",
       lines: [
         "Un profesional que no está de acuerdo con una calificación puede apelarla una vez, con sus motivos.",
-        "Quien desempata, designado en el encargo, lee ambas partes y decide.",
+        "El árbitro nombrado en la portada lee ambas partes y decide, o quien desempata cuando no hay árbitro.",
         "Un cliente que no recibió nada puede rechazar la entrega en lugar de calificarla."
       ],
       more: [
         "La mayoría de los desacuerdos se resuelven antes con un mensaje directo que con una apelación, así que hablen primero.",
-        "Una apelación indica qué debe examinar quien desempata, y el registro ya contiene la oferta, las calificaciones y el historial.",
-        "Quien desempata elige una calificación de la misma lista, y esa decisión es definitiva.",
+        "Una apelación se presenta dentro del plazo para apelar que fija la portada, e indica qué debe examinar el árbitro.",
+        "El registro ya contiene la oferta, las calificaciones y el historial.",
+        "El árbitro elige una calificación de la misma lista dentro de su plazo para decidir, y esa decisión es definitiva.",
+        "La opinión firmada de un inspector sobre el trabajo es un consejo que el árbitro puede tener en cuenta.",
         "Cada paso consta en el historial del encargo, con su hora y con quién lo dio.",
         "Antes de que alguien acepte un encargo, el cliente puede retirarlo.",
         "Después de aceptarlo, el profesional puede renunciar a él, y el encargo vuelve a quedar abierto para el círculo.",
@@ -194,7 +197,30 @@ export const lessons: LessonsText = {
         from: "Mateo 5:25"
       },
       tryThis: "Revise el historial de un encargo en el que participe, y compruebe que cuenta la historia tal como usted la recuerda.",
-      ask: "Si este encargo saliera mal, ¿qué querría que pudiera leer quien desempata?"
+      ask: "Si este encargo saliera mal, ¿qué querría que pudiera leer el árbitro?"
+    },
+    "your-standing": {
+      title: "Su reputación",
+      lines: [
+        "Cada npub tiene una reputación, que se lee en los encargos en los que ha participado.",
+        "Cuenta cada papel por separado: como cliente, profesional, árbitro e inspector.",
+        "Cualquiera puede leerla, así que un cliente puede ver a quién invita, y un profesional, para quién trabaja."
+      ],
+      more: [
+        "Para un profesional, cuenta los encargos entregados, a tiempo y con retraso, los incumplimientos con y sin causa, y las apelaciones ganadas y perdidas.",
+        "Para un cliente, cuenta las calificaciones dadas a tiempo, los Saldos pagados y las apelaciones perdidas.",
+        "Para un árbitro, cuenta las resoluciones dadas dentro del plazo para decidir; para un inspector, las opiniones dadas.",
+        "Un rango lo resume en una palabra: nuevo, irregular, probado, de confianza o ejemplar.",
+        "El rango depende de cuántos encargos terminaron y de cuántos salieron bien, según los umbrales que fija el Operador.",
+        "Solo cuentan los encargos, así que las tareas y los trabajos de práctica dejan su reputación tal como estaba.",
+        "Cada nombre del formulario del encargo muestra su rango al lado, con un enlace al historial completo."
+      ],
+      saying: {
+        text: "De más estima es el buen nombre que las muchas riquezas.",
+        from: "Proverbios 22:1"
+      },
+      tryThis: "Abra su propia página de reputación desde su npub, y léala como la leería un desconocido antes de invitarle.",
+      ask: "¿Qué recuento de su historial querría mejorar más en sus próximos tres encargos?"
     },
     "price-and-worth": {
       title: "Precio en sats, valor en su moneda",
@@ -219,21 +245,6 @@ export const lessons: LessonsText = {
       ask: "¿Qué cree que comprará más el año que viene: mil sats, o lo que valen hoy en su moneda?"
     }
   },
-  words: [
-    { word: "Bitcoin", means: "Un dinero con una oferta fija que ningún gobierno emite y ningún banco controla." },
-    { word: "sat", means: "La unidad más pequeña de bitcoin: 100.000.000 de sats forman un bitcoin." },
-    { word: "Lightning", means: "Una red de pagos construida sobre Bitcoin para pagos rápidos y pequeños." },
-    { word: "factura", means: "Una solicitud Lightning para recibir un número exacto de sats, con un vencimiento." },
-    { word: "dirección Lightning", means: "Una dirección como nombre@billetera.example que genera una factura nueva para cada pago." },
-    { word: "npub", means: "Su clave pública de Nostr: el nombre por el que se le conoce y se le invita." },
-    { word: "nsec", means: "Su clave secreta de Nostr: firma en su nombre, así que nunca sale de sus manos." },
-    { word: "sha256", means: "Una huella de un texto: cualquier cambio en el texto cambia la huella." },
-    { word: "oferta", means: "Una declaración sencilla de todas las condiciones de un encargo, que ambas partes firman." },
-    { word: "portada", means: "Los datos particulares de un encargo conforme a las Condiciones generales." },
-    { word: "aceptación tácita", means: "Una entrega que queda sin calificar durante los días acordados recibe la calificación acordada." },
-    { word: "quien desempata", means: "La persona designada para resolver una apelación." },
-    { word: "api_sats", means: "Saldo en su billetera de Tollbooth con el que se paga la pequeña tarifa de cada herramienta de Task Booth." }
-  ],
   shelves: {
     money: "Dinero",
     exchange: "Intercambio y empresa",

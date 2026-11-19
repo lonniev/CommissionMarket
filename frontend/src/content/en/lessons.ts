@@ -142,7 +142,8 @@ export const lessons: LessonsText = {
         "Grades are named in advance, such as Accepted, Accepted with changes and Not accepted, each with its sats.",
         "Naming them up front means both parties know what each outcome is worth before any work begins.",
         "Deliver what the cover page lists, in the form the specification describes.",
-        "If the work is late, the late rule in the offer applies: paid in full, a discount per day, or the commission closes as missed.",
+        "If the work is late, the late rule in the offer applies: paid in full, a share off per day, steps off at set times, or the commission closes as missed.",
+        "Work still undelivered at the failure point on the cover page ends the commission, and the professional may claim cause within the time to appeal.",
         "Deemed acceptance protects the professional from a client who never answers.",
         "The cover page sets its grade and its period, from 1 to 60 days.",
         "Once graded, the award less what was paid ahead is owed, and paid by Lightning invoice like every other payment."
@@ -177,13 +178,15 @@ export const lessons: LessonsText = {
       title: "When you disagree",
       lines: [
         "A professional who disagrees with a grade may appeal it once, with reasons.",
-        "The tie-breaker named on the commission reads both sides and decides.",
+        "The arbiter named on the cover page reads both sides and decides, or the tie-breaker when there is no arbiter.",
         "A client who received nothing may reject the delivery instead of grading it."
       ],
       more: [
         "Most disagreements end sooner with a direct message than with an appeal, so talk first.",
-        "An appeal names what the tie-breaker should look at, and the record already holds the offer, the grades and the history.",
-        "The tie-breaker chooses a grade from the same list, and that decision is final.",
+        "An appeal comes within the time to appeal on the cover page, and names what the arbiter should look at.",
+        "The record already holds the offer, the grades and the history.",
+        "The arbiter chooses a grade from the same list within the time to rule, and that decision is final.",
+        "An inspector's signed opinion of the work is advice the arbiter may weigh.",
         "Every step is in the commission's history with its time and who took it.",
         "Before anyone claims a commission, the client may withdraw it.",
         "After claiming it, the professional may release the claim, and the commission opens again to the circle.",
@@ -194,7 +197,30 @@ export const lessons: LessonsText = {
         from: "Matthew 5:25"
       },
       tryThis: "Look at the history of a commission you are in, and check that it tells the story as you remember it.",
-      ask: "If this commission went wrong, what would you want the tie-breaker to be able to read?"
+      ask: "If this commission went wrong, what would you want the arbiter to be able to read?"
+    },
+    "your-standing": {
+      title: "Your standing",
+      lines: [
+        "Every npub has a reputation, read from the commissions it took part in.",
+        "It counts each part separately: as client, professional, arbiter and inspector.",
+        "Anyone may read it, so a client can see who they invite and a professional who they work for."
+      ],
+      more: [
+        "For a professional, it counts commissions delivered, on time and late, failures with and without cause, and appeals won and lost.",
+        "For a client, it counts grades given in time, Balances paid, and appeals lost.",
+        "For an arbiter, it counts rulings given within the time to rule; for an inspector, opinions given.",
+        "A rank sums it up in a word: new, uneven, proven, trusted or exemplary.",
+        "The rank comes from how many commissions finished and how many of them went well, at thresholds the Operator sets.",
+        "Only commissions count, so chores and practice jobs leave your standing as it was.",
+        "Each name on the commission form shows its rank beside it, and links to the full record."
+      ],
+      saying: {
+        text: "A good name is rather to be chosen than great riches.",
+        from: "Proverbs 22:1"
+      },
+      tryThis: "Open your own reputation page from your npub, and read it as a stranger would before inviting you.",
+      ask: "Which one count in your record would you most like to improve over your next three commissions?"
     },
     "price-and-worth": {
       title: "Price in sats, worth in your currency",
@@ -219,21 +245,6 @@ export const lessons: LessonsText = {
       ask: "Which do you expect to buy more next year: a thousand sats, or what they are worth in your currency today?"
     }
   },
-  words: [
-    { word: "Bitcoin", means: "A money with a fixed supply that no government issues and no bank controls." },
-    { word: "sat", means: "The smallest unit of bitcoin: 100,000,000 sats make one bitcoin." },
-    { word: "Lightning", means: "A payment network built on Bitcoin for fast, small payments." },
-    { word: "invoice", means: "A Lightning request to be paid an exact number of sats, with an expiry." },
-    { word: "Lightning address", means: "An address like name@wallet.example that makes a fresh invoice for each payment." },
-    { word: "npub", means: "Your public Nostr key: the name you are known and invited by." },
-    { word: "nsec", means: "Your secret Nostr key: it signs as you, so it never leaves your hands." },
-    { word: "sha256", means: "A fingerprint of a text: any change to the text changes the fingerprint." },
-    { word: "offer", means: "One plain statement of every term of a commission, which both parties sign." },
-    { word: "cover page", means: "The particulars of one commission under the Standard Terms." },
-    { word: "deemed acceptance", means: "A delivery left ungraded for the agreed days is graded at the agreed grade." },
-    { word: "tie-breaker", means: "The person named to decide an appeal." },
-    { word: "api_sats", means: "Credit in your Tollbooth wallet that pays the small fee for each Task Booth tool." }
-  ],
   shelves: {
     money: "Money",
     exchange: "Exchange and enterprise",

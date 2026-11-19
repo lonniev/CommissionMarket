@@ -9,12 +9,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
 import { CircleCheck, CircleDashed, RefreshCw, Scale, Search } from "lucide-react";
-import { NpubChip } from "@tollbooth-dpyc/web/react";
+import { NpubChip, tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import CommissionRow from "../components/CommissionRow";
 import Waiting from "../components/Waiting";
 import { useT } from "../i18n";
 import { arbiterDue, arbiterOf, dueKey, inspectorDue, inspectorDueKey, inspectorOf, SHELVES, shelfOf } from "../lib/arbiter";
 import { listTasks, type Task } from "../lib/tasks";
+import Word from "../components/Word";
 
 /** Who stands in one role on a commission, and whether they signed its offer. */
 function WhoLine({ icon, label, npub, signed }: { icon: ReactNode; label: string; npub: string; signed: boolean }) {
@@ -34,6 +35,7 @@ function WhoLine({ icon, label, npub, signed }: { icon: ReactNode; label: string
 export default function Arbitration() {
   const t = useT();
   const [tasks, setTasks] = useState<Task[] | null>(null);
+  useTour("arbitration", { ready: !!tasks });
   const [problem, setProblem] = useState("");
   const now = Math.floor(Date.now() / 1000);
 
@@ -56,21 +58,21 @@ export default function Arbitration() {
   return (
     <div className="page grid gap-3">
       <div className="toolbar">
-        <h1 className="page-title">{t("nav.arbitration")}</h1>
+        <h1 className="page-title">{t("nav.arbitration")} <Word of="arbiter" badge align="left" /></h1>
         <div className="toolbar-actions">
           <button type="button" className="icon-btn" onClick={() => void load()} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")}>
             <RefreshCw size={18} aria-hidden />
           </button>
         </div>
       </div>
-      <p className="muted">{t("arbiter.says")} <Link to="/terms?version=v1#t-8-1" className="ent">§8</Link></p>
+      <p className="muted" {...tourTarget("arbitration.says")}>{t("arbiter.says")} <Link to="/terms?version=v1#t-8-1" className="ent">§8</Link></p>
 
       {problem && <p className="error">{problem}</p>}
       {!tasks && !problem && <Waiting heading={t("waiting.fetchingList")} />}
       {tasks && !tasks.length && <section className="card panel"><p className="muted">{t("arbiter.none")}</p></section>}
 
       {shelves.filter(({ rows }) => rows.length).map(({ shelf, rows }) => (
-        <section key={shelf} className="card panel grid gap-3">
+        <section key={shelf} className="card panel grid gap-3" {...(shelf === shelves.find((s) => s.rows.length)?.shelf ? tourTarget("arbitration.shelf") : {})}>
           <h2 className="panel-title">{t(`arbiter.shelf.${shelf}`)} <span className="num muted">({rows.length})</span></h2>
           <ul className="row-list">
             {rows.map((task) => {

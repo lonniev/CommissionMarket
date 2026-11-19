@@ -8,7 +8,7 @@ import { lazy, Suspense, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FolderOpen, Maximize2, Plus, Trash2 } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
-import { NpubField, NpubListField, useAppShell } from "@tollbooth-dpyc/web/react";
+import { NpubField, NpubListField, tourTarget, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
 import { say, useT } from "../i18n";
 import { BLOCKS, blockOf, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
 import { aheadFrom, audienceFrom, blankCover, coverFrom, failHoursOf, MAX_AUDIENCE, rowsOf, windowHoursOf, type CoverRows, type MilestoneRow } from "../lib/cover";
@@ -24,12 +24,15 @@ import EscrowFields from "./EscrowFields";
 import RankLine from "./RankLine";
 import FormBlock, { blockAnchor } from "./FormBlock";
 import TermsFields from "./TermsFields";
+import Word from "./Word";
+import type { GlossaryKey } from "../lib/glossary";
 
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
 const BRIEF_MAX = 4000;
 
 const LATE_KINDS: LateKind[] = ["full", "discount", "steps", "cancel"];
 const UNITS: Unit[] = ["hours", "days"];
+const WINDOW_WORD: Record<"appeal" | "ruling" | "pay", GlossaryKey> = { appeal: "appeal_window", ruling: "ruling_time", pay: "payment_window" };
 const satsOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
 const pctOf = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text.trim()) : 0);
 
@@ -76,6 +79,13 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     toggle(id, true);
     requestAnimationFrame(() => document.getElementById(blockAnchor(id))?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
+  // The tour opens each block before it points into it.
+  useTour(editing ? "edit" : "compose", {
+    actions: Object.fromEntries(BLOCKS.map((id) => [`open:${id}`, async () => {
+      toggle(id, true);
+      await new Promise((drawn) => requestAnimationFrame(() => requestAnimationFrame(drawn)));
+    }])),
+  });
   /** Say what to fix, and open the block that holds it. */
   function refuse(key: string, text: string) {
     setProblem(text);
@@ -136,11 +146,11 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
   const body: Record<BlockId, ReactNode> = {
     spec: (
       <>
-          <label className="grid gap-1">
+          <label className="grid gap-1" {...tourTarget("compose.title")}>
             <span className="label">{t("form.title")}</span>
             <input className="field" value={title} maxLength={190} onChange={(e) => setTitle(e.target.value)} placeholder={t("form.titlePlaceholder")} />
           </label>
-          <div className="grid gap-1">
+          <div className="grid gap-1" {...tourTarget("compose.brief")}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <label htmlFor="brief" className="label">{t("form.description")}</label>
               <button type="button" className="chip" onClick={() => setBig(true)}><Maximize2 size={16} aria-hidden />{t("form.bigEditor")}</button>
@@ -155,18 +165,18 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
               </Suspense>
             )}
           </div>
-          <label className="grid gap-1">
+          <label className="grid gap-1" {...tourTarget("compose.deliverables")}>
             <span className="label">{t("cover.deliverables")}</span>
             <textarea className="field" rows={3} value={cover.deliverables} onChange={(e) => setCoverField("deliverables", e.target.value)}
               placeholder={t("cover.deliverablesPlaceholder")} />
           </label>
-          <div className="two-up">
+          <div className="two-up" {...tourTarget("compose.spec")}>
             <label className="grid gap-1">
               <span className="label">{t("cover.specUrl")}</span>
               <input className="field" value={cover.specUrl} onChange={(e) => setCoverField("specUrl", e.target.value)} placeholder="https://…" inputMode="url" autoCapitalize="none" />
             </label>
             <label className="grid gap-1">
-              <span className="label">{t("cover.specHash")}</span>
+              <span className="label">{t("cover.specHash")} <Word of="spec_hash" badge /></span>
               <input className="field font-mono text-sm" value={cover.specHash} onChange={(e) => setCoverField("specHash", e.target.value)} placeholder="sha256" autoCapitalize="none" spellCheck={false} />
             </label>
           </div>
@@ -174,22 +184,22 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     ),
     people: (
       <>
-          <div className="grid gap-1">
+          <div className="grid gap-1" {...tourTarget("compose.audience")}>
             <span className="label">{t("form.audience")}</span>
             <NpubListField value={audience} onChange={setAudience} label={t("form.audience")} max={MAX_AUDIENCE}
               ownNpub={session.signedIn ? session.npub : undefined} look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
             <span className="muted text-sm">{t("form.audienceHelp")}</span>
             {audience.map((n) => <RankLine key={n} npub={n} role="artist" />)}
           </div>
-          <div className="grid gap-1">
-            <span className="label">{t("cover.arbiter")}</span>
+          <div className="grid gap-1" {...tourTarget("compose.arbiter")}>
+            <span className="label">{t("cover.arbiter")} <Word of="arbiter" badge /></span>
             <NpubField value={cover.arbiter} onChange={(n) => setCoverField("arbiter", n)} label={t("cover.arbiter")}
               look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
             <span className="muted text-sm">{t("cover.arbiterHelp")}</span>
             <RankLine npub={cover.arbiter.trim()} role="arbiter" />
           </div>
-          <div className="grid gap-1">
-            <span className="label">{t("cover.inspector")}</span>
+          <div className="grid gap-1" {...tourTarget("compose.inspector")}>
+            <span className="label">{t("cover.inspector")} <Word of="inspector" badge /></span>
             <NpubField value={cover.inspector} onChange={(n) => setCoverField("inspector", n)} label={t("cover.inspector")}
               look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
             <span className="muted text-sm">{t("cover.inspectorHelp")}</span>
@@ -200,7 +210,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     grades: (
       <>
           {rows.map((row, i) => (
-            <div key={i} className="grade-card">
+            <div key={i} className="grade-card" {...(i === 0 ? tourTarget("compose.grade") : {})}>
               <div className="grade-card-head">
                 <input className="field" value={row.name} maxLength={60} onChange={(e) => setRow(i, { name: e.target.value })}
                   placeholder={t("form.gradeName")} aria-label={t("form.gradeNumber", { n: i + 1 })} />
@@ -216,9 +226,9 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             </div>
           ))}
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="muted text-sm">{t("form.top")} <Sats sats={top} /></span>
+            <span className="muted text-sm" {...tourTarget("compose.top")}>{t("form.top")} <Sats sats={top} /> <Word of="grade" badge align="left" /></span>
             {rows.length < MAX_GRADES && (
-              <button type="button" className="chip" onClick={() => setRows((list) => [...list, { name: "", sats: "", criteria: "" }])}>
+              <button type="button" className="chip" onClick={() => setRows((list) => [...list, { name: "", sats: "", criteria: "" }])} {...tourTarget("compose.addGrade")}>
                 <Plus size={16} aria-hidden />{t("form.addGrade")}
               </button>
             )}
@@ -227,12 +237,12 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     ),
     schedule: (
       <>
-          <label className="grid gap-1 w-fit">
+          <label className="grid gap-1 w-fit" {...tourTarget("compose.neededBy")}>
             <span className="label">{t("form.neededBy")}</span>
             <input type="date" className="field" value={due} min={dayFrom(now, 1)} onChange={(e) => setDue(e.target.value)} />
           </label>
-          <div className="flex flex-wrap gap-2" role="group" aria-label={t("late.title")}>
-            <span className="label w-full">{t("late.title")}</span>
+          <div className="flex flex-wrap gap-2" role="group" aria-label={t("late.title")} {...tourTarget("compose.late")}>
+            <span className="label w-full">{t("late.title")} <Word of="late_terms" badge align="left" /></span>
             {LATE_KINDS.map((k) => (
               <button key={k} type="button" className={lateKind === k ? "chip chip-on" : "chip"} aria-pressed={lateKind === k} onClick={() => setLateKind(k)}>
                 {t(`late.pick.${k}`)}
@@ -275,8 +285,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             </div>
           )}
           <p className="muted text-sm">{t(`late.pickHelp.${lateKind}`)}</p>
-          <div className="step-row">
-            <span className="label">{t("late.fail")}</span>
+          <div className="step-row" {...tourTarget("compose.failure")}>
+            <span className="label">{t("late.fail")} <Word of="failure_point" badge align="left" /></span>
             <input className="field num text-right" inputMode="numeric" value={cover.failAfter} maxLength={4}
               onChange={(e) => setCoverField("failAfter", e.target.value)} aria-label={t("late.fail")} />
             <select className="field" value={cover.failUnit} onChange={(e) => setCoverField("failUnit", e.target.value as Unit)} aria-label={t("late.unitLabel")}>
@@ -289,8 +299,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     ),
     payments: (
       <>
-          <label className="inline-pct">
-            <span className="label">{t("form.deposit")}</span>
+          <label className="inline-pct" {...tourTarget("compose.deposit")}>
+            <span className="label">{t("form.deposit")} <Word of="deposit" badge align="left" /></span>
             <input className="field num text-right" inputMode="numeric" value={deposit} maxLength={2} onChange={(e) => setDeposit(e.target.value)} aria-label={t("form.deposit")} />
             <span>%</span>
             <span className="muted">× {t("sats.amount", { sats: formatSats(top) })} =</span>
@@ -316,21 +326,21 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             </div>
           ))}
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className={ahead > MAX_AHEAD_PCT ? "error text-sm" : "muted text-sm"}>{t("form.aheadTotal", { pct: ahead, max: MAX_AHEAD_PCT })}</span>
+            <span className={ahead > MAX_AHEAD_PCT ? "error text-sm" : "muted text-sm"}>{t("form.aheadTotal", { pct: ahead, max: MAX_AHEAD_PCT })} <Word of="paid_ahead" badge align="left" /></span>
             {milestones.length < MAX_MILESTONES && (
-              <button type="button" className="chip" onClick={() => setMilestones((list) => [...list, { name: "", day: due, pct: "" }])}>
+              <button type="button" className="chip" onClick={() => setMilestones((list) => [...list, { name: "", day: due, pct: "" }])} {...tourTarget("compose.milestones")}>
                 <Plus size={16} aria-hidden />{t("form.addMilestone")}
               </button>
             )}
           </div>
-          <EscrowFields cover={cover} set={setCoverField} onOpen={show} />
+          <div {...tourTarget("compose.escrow")}><EscrowFields cover={cover} set={setCoverField} onOpen={show} /></div>
       </>
     ),
     conclusion: (
       <>
-          <div className="two-up">
+          <div className="two-up" {...tourTarget("compose.deemed")}>
             <label className="grid gap-1">
-              <span className="label">{t("cover.deemedGrade")}</span>
+              <span className="label">{t("cover.deemedGrade")} <Word of="deemed_acceptance" badge align="left" /></span>
               <select className="field" value={cover.deemedGrade} onChange={(e) => setCoverField("deemedGrade", e.target.value)}>
                 <option value="">{t("cover.noDeemed")}</option>
                 {gradeNames.map((g) => <option key={g} value={g}>{t("cover.countAs", { grade: g })}</option>)}
@@ -345,8 +355,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
           </div>
           <p className="muted text-sm">{t("cover.deemedHelp")}</p>
           {(["appeal", "ruling", "pay"] as const).map((w) => (
-            <div key={w} className="step-row">
-              <span className="label">{t(`window.${w}`)}</span>
+            <div key={w} className="step-row" {...tourTarget(`compose.${w}`)}>
+              <span className="label">{t(`window.${w}`)} <Word of={WINDOW_WORD[w]} badge align="left" /></span>
               <input className="field num text-right" inputMode="numeric" value={cover[w].after} maxLength={4}
                 onChange={(e) => setCoverField(w, { ...cover[w], after: e.target.value })} aria-label={t(`window.${w}`)} />
               <select className="field" value={cover[w].unit} onChange={(e) => setCoverField(w, { ...cover[w], unit: e.target.value as Unit })}
@@ -367,7 +377,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     ),
     legal: (
       <>
-          <TermsFields cover={cover} set={setCoverField} />
+          <TermsFields cover={cover} set={setCoverField} tour />
           <p className="muted text-sm">{t("cover.underTerms")} <Link to="/terms" className="ent">{t("nav.terms")}</Link></p>
       </>
     ),
@@ -379,7 +389,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
         <h1 className="page-title">{editing ? t("form.editTitle") : t("form.newTitle")}</h1>
         {editing?.agreement.purchaser_signed && <p className="gate">{t("form.editClearsSignature")}</p>}
         {filing && (
-          <p className="filing">
+          <p className="filing" {...tourTarget("compose.filing")}>
             <FolderOpen size={16} aria-hidden />
             <span>{t("form.filedIn")} <Link to={projectHref(filing.project)} className="ent">{filing.project.name}</Link></span>
             {budgetLeft(filing.project.budget_sats, filing.project.totals) !== null && (
@@ -399,7 +409,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
         <div className="flex flex-wrap items-center justify-end gap-2">
           <span className="muted text-sm">{t("form.youSignNext", { sats: formatSats(top) })}</span>
           <Link to={editing ? commissionHref(editing.task_id) : "/commissions"} className="btn btn-quiet">{t("actions.cancel")}</Link>
-          <button type="submit" className="btn btn-go" disabled={busy}>
+          <button type="submit" className="btn btn-go" disabled={busy} {...tourTarget("compose.post")}>
             {editing ? (busy ? t("form.saving") : t("form.save")) : (busy ? t("form.posting") : t("form.post"))}
           </button>
         </div>

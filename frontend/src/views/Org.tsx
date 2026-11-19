@@ -7,7 +7,7 @@ import { Person, projectHref } from "../components/Person";
 import ProjectForm from "../components/ProjectForm";
 import Sats from "../components/Sats";
 import Waiting from "../components/Waiting";
-import { NpubField } from "@tollbooth-dpyc/web/react";
+import { NpubField, tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
 import { getOrg, removeMember, saveMember, saveOrg, type OrgDetail } from "../lib/orgs";
 
@@ -95,7 +95,7 @@ function Members({ org, onChanged }: { org: OrgDetail; onChanged: () => void }) 
   }
 
   return (
-    <section className="card panel grid gap-3">
+    <section className="card panel grid gap-3" {...tourTarget("org.members")}>
       <h2 className="panel-title">{t("org.members")} <span className="muted num">({org.members.length})</span></h2>
       <p className="muted text-sm">{t("org.membersHelp")}</p>
       {org.members.length > 0 && (
@@ -134,6 +134,7 @@ export default function Org() {
   const t = useT();
   const go = useNavigate();
   const [org, setOrg] = useState<OrgDetail | null>(null);
+  useTour("org", { ready: !!org });
   const [problem, setProblem] = useState("");
   const [adding, setAdding] = useState(false);
 
@@ -160,11 +161,11 @@ export default function Org() {
       {org && (
         <>
           <About key={`${org.name}|${org.about}`} org={org} onChanged={() => void load()} />
-          <section className="grid gap-2">
+          <section className="grid gap-2" {...tourTarget("org.projects")}>
             <div className="toolbar">
               <h2 className="section-title">{t("org.projects")} <span className="muted num">({org.projects.length})</span></h2>
               {org.your_place === "owner" && !adding && (
-                <button type="button" className="btn btn-go" onClick={() => setAdding(true)}><Plus size={18} aria-hidden />{t("project.new")}</button>
+                <button type="button" className="btn btn-go" onClick={() => setAdding(true)} {...tourTarget("org.newProject")}><Plus size={18} aria-hidden />{t("project.new")}</button>
               )}
             </div>
             {adding && <ProjectForm orgId={org.org_id} onSaved={(id) => go(projectHref({ org_id: org.org_id, project_id: id }))} onCancel={() => setAdding(false)} />}

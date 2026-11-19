@@ -1,6 +1,6 @@
 /** What a client or professional new to CommissionMarket should know: the money, the agreement, and what a price says. */
 
-import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
+import { BookA, BookOpen, ChevronRight, Coffee, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
@@ -46,9 +46,10 @@ export default function Learn() {
 
       <section className="card panel grid gap-2">
         <h2 className="panel-title">{t("learn.words")}</h2>
-        <dl className="words">
-          {library.words.map((w) => (<div key={w.word}><dt>{w.word}</dt><dd>{w.means}</dd></div>))}
-        </dl>
+        <p>{t("learn.wordsSays")}</p>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Link to="/glossary" className="btn btn-quiet"><BookA size={18} aria-hidden />{t("nav.glossary")}</Link>
+        </div>
       </section>
 
       <section className="card panel grid gap-3">
@@ -72,6 +73,7 @@ export default function Learn() {
           </div>
         ))}
         <div className="flex flex-wrap justify-end gap-2">
+          <Link to="/catalog" className="btn btn-quiet"><Coffee size={18} aria-hidden />{t("cafe.whole")}</Link>
           <a href={BOOKSHELF_HREF} {...out} className="btn btn-quiet"><BookOpen size={18} aria-hidden />{t("learn.shelf.more")}<ExternalLink size={14} aria-hidden /></a>
         </div>
       </section>

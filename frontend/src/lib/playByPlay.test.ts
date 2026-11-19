@@ -1,16 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import english from "../content/en/index.ts";
-import { clauseHref, storyPieces, storyRefs } from "./playByPlay.ts";
+import { storyClauseHref as clauseHref, storyPieces, storyRefs } from "./playByPlay.ts";
+import { inV1 } from "./clauses.ts";
 
 const story = english.playByPlay!;
 
-// How many clauses each section of the Standard Terms v1 has: the story may cite only these.
-const V1 = [7, 9, 3, 10, 10, 17, 3, 10, 7, 3, 4, 3, 3, 12, 3, 2, 5, 4];
-const inV1 = (clause: string) => {
-  const [s, c] = clause.split(".").map(Number);
-  return s >= 1 && s <= V1.length && (c === undefined || (c >= 1 && c <= V1[s - 1]));
-};
 
 test("every ending has a beat for every phase, and something in each part", () => {
   assert.equal(story.endings.length, 3);

@@ -1,5 +1,6 @@
 /** One Project: its brief, its budget against what its commissions committed and paid, its circle, its terms, and its commissions. */
 
+import { tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Archive, ArchiveRestore, ArrowLeft, FolderInput, Pencil, Plus, RefreshCw } from "lucide-react";
@@ -37,6 +38,7 @@ export default function Project() {
   const t = useT();
   const [project, setProject] = useState<ProjectView | null>(null);
   const [tasks, setTasks] = useState<Task[] | null>(null);
+  useTour("project", { ready: !!project && !!tasks });
   /** Commissions you posted that are filed elsewhere, or nowhere: ones you may move here. */
   const [elsewhere, setElsewhere] = useState<Task[]>([]);
   const [moving, setMoving] = useState(false);
@@ -94,7 +96,7 @@ export default function Project() {
             </button>
           )}
           {project && !project.archived && (
-            <Link to={`/commissions/new?project=${encodeURIComponent(projectId)}`} className="btn btn-go"><Plus size={18} aria-hidden />{t("project.postHere")}</Link>
+            <Link to={`/commissions/new?project=${encodeURIComponent(projectId)}`} className="btn btn-go" {...tourTarget("project.post")}><Plus size={18} aria-hidden />{t("project.postHere")}</Link>
           )}
         </div>
       </div>
@@ -108,26 +110,26 @@ export default function Project() {
           <section className="card panel grid gap-2">
             <h1 className="page-title">{project.name} {project.archived && <span className="badge align-middle">{t("project.archived")}</span>}</h1>
             {project.brief && <p className="whitespace-pre-wrap">{project.brief}</p>}
-            <BudgetBar budget={project.budget_sats} totals={project.totals} />
+            <div {...tourTarget("project.budget")}><BudgetBar budget={project.budget_sats} totals={project.totals} /></div>
           </section>
           <div className="two-up">
-            <section className="card panel grid gap-2">
+            <section className="card panel grid gap-2" {...tourTarget("project.circle")}>
               <h2 className="panel-title">{t("project.circle")}</h2>
               {project.circle.length ? <People npubs={project.circle} /> : <p className="muted">{t("project.noCircle")}</p>}
             </section>
-            <section className="card panel grid gap-2">
+            <section className="card panel grid gap-2" {...tourTarget("project.defaults")}>
               <h2 className="panel-title">{t("project.defaults")}</h2>
               <Defaults project={project} />
               <p className="muted text-sm">{t("project.defaultsNote")}</p>
             </section>
           </div>
-          <section className="card panel grid gap-2">
+          <section className="card panel grid gap-2" {...tourTarget("project.commissions")}>
             <h2 className="panel-title">{t("nav.commissions")} <span className="muted num">({tasks?.length ?? 0})</span></h2>
             {tasks && !tasks.length && <p className="muted">{t("project.noCommissions")}</p>}
             {tasks && tasks.length > 0 && <ul className="row-list">{tasks.map((x) => <CommissionRow key={x.task_id} task={x} now={now} />)}</ul>}
             {!project.archived && elsewhere.length > 0 && !moving && (
               <div className="flex justify-end">
-                <button type="button" className="chip" onClick={() => setMoving(true)}>
+                <button type="button" className="chip" onClick={() => setMoving(true)} {...tourTarget("project.moveHere")}>
                   <FolderInput size={16} aria-hidden />{t("move.here")}
                 </button>
               </div>
