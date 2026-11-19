@@ -240,6 +240,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             <span className="label">{t("form.deposit")}</span>
             <input className="field num text-right" inputMode="numeric" value={deposit} maxLength={2} onChange={(e) => setDeposit(e.target.value)} aria-label={t("form.deposit")} />
             <span>%</span>
+            <span className="muted">× {t("sats.amount", { sats: formatSats(top) })} =</span>
             <Sats sats={shareOf(top, pctOf(deposit))} />
           </label>
           {milestones.map((m, i) => (
@@ -253,6 +254,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
                   aria-label={t("form.milestonePct")} />
                 <span>%</span>
               </span>
+              <span className="muted">× {t("sats.amount", { sats: formatSats(top) })} =</span>
               <Sats sats={shareOf(top, pctOf(m.pct))} />
               <button type="button" className="icon-btn" onClick={() => setMilestones((list) => list.filter((_, j) => j !== i))}
                 aria-label={t("form.removeMilestone")} title={t("form.removeMilestone")}>
