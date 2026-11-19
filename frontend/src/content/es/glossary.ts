@@ -193,22 +193,22 @@ export const glossary: GlossaryText = {
     api_sats: {
       term: "api_sats",
       aka: ["tarifas de herramientas", "crédito de Tollbooth"],
-      said: "El crédito de su billetera de Tollbooth que paga la pequeña tarifa de cada herramienta de Task Booth. Es independiente de lo que paga un encargo.",
+      said: "El crédito de tu billetera de Tollbooth que paga la pequeña tarifa de cada herramienta de Task Booth. Es independiente de lo que paga un encargo.",
     },
     npub: {
       term: "npub",
       aka: ["clave pública", "Nostr"],
-      said: "Su clave pública de Nostr: el nombre por el que se le conoce, se le invita y con el que inicia sesión.",
+      said: "Tu clave pública de Nostr: el nombre por el que se te conoce, se te invita y con el que inicias sesión.",
     },
     nsec: {
       term: "nsec",
       aka: ["clave secreta", "clave privada"],
-      said: "Su clave secreta de Nostr. Firma en su nombre, así que permanece en sus propias manos.",
+      said: "Tu clave secreta de Nostr. Firma en tu nombre, así que permanece en tus propias manos.",
     },
     signature: {
       term: "Firma",
       aka: ["firmar", "firmado"],
-      said: "La marca de su clave de Nostr sobre una declaración, que prueba que usted aceptó exactamente esas palabras. Cada firma se pide y se da en un mensaje directo.",
+      said: "La marca de tu clave de Nostr sobre una declaración, que prueba que aceptaste exactamente esas palabras. Cada firma se pide y se da en un mensaje directo.",
     },
     sha256: {
       term: "sha256",

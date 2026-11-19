@@ -194,22 +194,22 @@ export const glossary: GlossaryText = {
     api_sats: {
       term: "api_sats",
       aka: ["工具费", "Tollbooth 额度"],
-      said: "您 Tollbooth 钱包中的额度，用于支付每次使用 Task Booth 工具的小额费用。它与委托的款项是分开的。",
+      said: "你 Tollbooth 钱包中的额度，用于支付每次使用 Task Booth 工具的小额费用。它与委托的款项是分开的。",
     },
     npub: {
       term: "npub",
       aka: ["公钥", "Nostr"],
-      said: "您的 Nostr 公钥：别人认识您、邀请您以及您登录所用的名字。",
+      said: "你的 Nostr 公钥：别人认识你、邀请你以及你登录所用的名字。",
     },
     nsec: {
       term: "nsec",
       aka: ["私钥", "密钥"],
-      said: "您的 Nostr 私钥。它以您的名义签名，所以要始终留在您自己手中。",
+      said: "你的 Nostr 私钥。它以你的名义签名，所以要始终留在你自己手中。",
     },
     signature: {
       term: "签名",
       aka: ["签署", "已签署", "signature"],
-      said: "您的 Nostr 密钥在一份文本上留下的标记，证明您同意的正是这些字句。每个签名都通过私信请求和给出。",
+      said: "你的 Nostr 密钥在一份文本上留下的标记，证明你同意的正是这些字句。每个签名都通过私信请求和给出。",
     },
     sha256: {
       term: "sha256",
