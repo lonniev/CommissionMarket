@@ -185,7 +185,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     people: (
       <>
           <div className="grid gap-1" {...tourTarget("compose.audience")}>
-            <span className="label">{t("form.audience")}</span>
+            <span className="label">{t("form.audience")} <Word of="claim" badge /></span>
             <NpubListField value={audience} onChange={setAudience} label={t("form.audience")} max={MAX_AUDIENCE}
               ownNpub={session.signedIn ? session.npub : undefined} look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
             <span className="muted text-sm">{t("form.audienceHelp")}</span>

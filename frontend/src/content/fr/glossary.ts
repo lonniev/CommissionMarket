@@ -25,7 +25,7 @@ export const glossary: GlossaryText = {
     professional: {
       term: "Prestataire",
       aka: ["professionnel", "artiste", "artisan", "travailleur"],
-      said: "Celui qui prend en charge une commande, signe son offre, réalise le travail et le livre.",
+      said: "Celui qui s'engage à faire le travail : il prend en charge une commande, signe son offre, réalise le travail et le livre.",
     },
     arbiter: {
       term: "Arbitre",
@@ -45,12 +45,17 @@ export const glossary: GlossaryText = {
     audience: {
       term: "Prestataires invités",
       aka: ["invités", "cercle", "public"],
-      said: "Les npub qu'un client invite à une commande. Eux seuls la voient et peuvent la prendre en charge.",
+      said: "Les prestataires qu'un client invite à faire le travail, par npub. Eux seuls voient la commande et peuvent la prendre en charge.",
     },
     offer: {
       term: "Offre",
       aka: ["offre signée", "énoncé"],
       said: "Un énoncé simple de toutes les conditions d'une commande. Le client, le prestataire, et l'arbitre et l'inspecteur s'il y en a, signent chacun ce même énoncé.",
+    },
+    claim: {
+      term: "Prise en charge",
+      aka: ["prendre en charge", "accepter", "s'engager"],
+      said: "Le geste par lequel un prestataire se charge du travail d'une commande. Une fois que lui et le client ont signé la même offre, il est tenu de réaliser le travail tel que spécifié.",
     },
     cover_page: {
       term: "Page de garde",

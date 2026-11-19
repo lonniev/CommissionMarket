@@ -24,7 +24,7 @@ export const glossary: GlossaryText = {
     professional: {
       term: "承接方",
       aka: ["专业人士", "艺术家", "匠人", "乙方", "professional"],
-      said: "承接委托、签署要约、完成工作并交付的一方。",
+      said: "同意完成工作的一方：承接委托、签署要约、完成工作并交付。",
     },
     arbiter: {
       term: "仲裁人",
@@ -44,12 +44,17 @@ export const glossary: GlossaryText = {
     audience: {
       term: "受邀承接方",
       aka: ["圈子", "受邀者", "audience"],
-      said: "委托方邀请参与某项委托的 npub。只有他们能看到并承接该委托。",
+      said: "委托方邀请来做这项工作的承接方的 npub。只有他们能看到并承接该委托。",
     },
     offer: {
       term: "要约",
       aka: ["签署的要约", "报价", "offer"],
       said: "一份写明委托全部条款的简明文本。委托方、承接方，以及仲裁人和检验人（如有），各自签署同一份文本。",
+    },
+    claim: {
+      term: "承接",
+      aka: ["接单", "承揽", "接下"],
+      said: "承接方接下一项委托工作的步骤。承接方与委托方签署同一份要约后，就有义务按规格完成工作。",
     },
     cover_page: {
       term: "封面页",
