@@ -24,6 +24,7 @@ export const GLOSSARY_KEYS = [
   ["audience", "people"],
 
   ["offer", "agreement", "2.3"],
+  ["claim", "agreement", "2.2"],
   ["cover_page", "agreement", "2.7"],
   ["standard_terms", "agreement", "18.1"],
   ["deliverable", "agreement", "3.1"],

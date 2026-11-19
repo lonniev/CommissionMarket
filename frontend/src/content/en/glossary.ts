@@ -29,7 +29,7 @@ export const glossary: GlossaryText = {
     professional: {
       term: "Professional",
       aka: ["artist", "worker", "performer", "artisan"],
-      said: "The one who claims a commission, signs its offer, does the work and delivers it.",
+      said: "The one who agrees to do the work: they claim a commission, sign its offer, do the work and deliver it.",
     },
     arbiter: {
       term: "Arbiter",
@@ -47,12 +47,17 @@ export const glossary: GlossaryText = {
     audience: {
       term: "Invited professionals",
       aka: ["audience", "circle"],
-      said: "The npubs a client invites to a commission. Only they see it and may claim it.",
+      said: "The professionals a client invites to do the work, by npub. Only they see the commission and may claim it.",
     },
     offer: {
       term: "Offer",
       aka: ["signed offer", "statement"],
       said: "One plain statement of every term of a commission. The client, the professional, and any arbiter and inspector each sign the same statement.",
+    },
+    claim: {
+      term: "Claim",
+      aka: ["claiming", "take on", "accept"],
+      said: "A professional's step to take on a commission's work. Once they and the client sign the same offer, they're bound to do the work as specified.",
     },
     cover_page: {
       term: "Cover page",

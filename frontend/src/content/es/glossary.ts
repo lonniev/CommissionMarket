@@ -27,7 +27,7 @@ export const glossary: GlossaryText = {
     professional: {
       term: "Profesional",
       aka: ["artista", "trabajador", "ejecutante", "artesano"],
-      said: "Quien acepta un encargo, firma su oferta, hace el trabajo y lo entrega.",
+      said: "Quien se compromete a hacer el trabajo: acepta un encargo, firma su oferta, hace el trabajo y lo entrega.",
     },
     arbiter: {
       term: "Árbitro",
@@ -46,12 +46,17 @@ export const glossary: GlossaryText = {
     audience: {
       term: "Profesionales invitados",
       aka: ["invitados", "círculo", "público"],
-      said: "Los npub que un cliente invita a un encargo. Solo ellos lo ven y pueden aceptarlo.",
+      said: "Los profesionales que un cliente invita a hacer el trabajo, por npub. Solo ellos ven el encargo y pueden aceptarlo.",
     },
     offer: {
       term: "Oferta",
       aka: ["oferta firmada", "declaración"],
       said: "Una declaración sencilla de todas las condiciones de un encargo. El cliente, el profesional y, si los hay, el árbitro y el inspector firman cada uno la misma declaración.",
+    },
+    claim: {
+      term: "Aceptar un encargo",
+      aka: ["aceptar", "asumir", "reclamar"],
+      said: "El paso con que un profesional asume el trabajo de un encargo. Cuando él y el cliente firman la misma oferta, queda obligado a hacer el trabajo según lo especificado.",
     },
     cover_page: {
       term: "Portada",
