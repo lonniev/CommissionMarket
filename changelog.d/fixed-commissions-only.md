@@ -1,1 +1,0 @@
-- The commission list shows only commissions: tasks under a cover page. A ChipIn chore posted before sites stamped their tasks, such as Make the Bed, no longer appears here, and stays in ChipIn.
