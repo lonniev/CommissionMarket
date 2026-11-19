@@ -11,45 +11,24 @@ import { useCallback, useEffect, useState } from "react";
 import { CircleCheck, CircleDashed, FileSignature, Send } from "lucide-react";
 import { Tx, useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT, WORDS } from "../i18n";
+import { keepAsk, keptAsk, type Asked } from "../lib/keptAsk";
 import { mySignatureDue } from "../lib/moves";
 import { offerTerms, receiveSignature, requestSignature, type Offer, type Task } from "../lib/tasks";
 import { Person } from "./Person";
 
 const keyOf = (taskId: string) => `commission:signing:${taskId}`;
 
-interface Asked {
-  nonce: string;
-  statement_hash: string;
-}
-
-function keptAsk(taskId: string): Asked | null {
-  try {
-    const kept = sessionStorage.getItem(keyOf(taskId));
-    return kept ? (JSON.parse(kept) as Asked) : null;
-  } catch {
-    return null;
-  }
-}
-
-function keepAsk(taskId: string, asked: Asked | null) {
-  try {
-    if (asked) sessionStorage.setItem(keyOf(taskId), JSON.stringify(asked));
-    else sessionStorage.removeItem(keyOf(taskId));
-  } catch {
-    // Without storage the ask lives as long as this page does.
-  }
-}
-
 export default function OfferPanel({ task, onChanged }: { task: Task; onChanged: (task: Task) => void }) {
   const t = useT();
   const locale = useLanguageLocale();
   const [offer, setOffer] = useState<Offer | null>(null);
-  const [asked, setAsked] = useState<Asked | null>(() => keptAsk(task.task_id));
+  const [asked, setAsked] = useState<Asked | null>(() => keptAsk(keyOf(task.task_id)));
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState("");
   const due = mySignatureDue(task);
-  const { purchaser_signed, performer_signed, arbiter_signed } = task.agreement;
+  const { purchaser_signed, performer_signed, arbiter_signed, inspector_signed } = task.agreement;
   const arbiter = task.cover?.arbiter_npub ?? "";
+  const inspector = task.cover?.inspector_npub ?? "";
 
   const load = useCallback(async () => {
     try {
@@ -59,7 +38,7 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
     }
   }, [task.task_id]);
 
-  useEffect(() => { void load(); }, [load, purchaser_signed, performer_signed, arbiter_signed]);
+  useEffect(() => { void load(); }, [load, purchaser_signed, performer_signed, arbiter_signed, inspector_signed]);
 
   async function ask() {
     setBusy(true);
@@ -67,7 +46,7 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
     try {
       const r = await requestSignature(task.task_id);
       const kept = { nonce: r.nonce, statement_hash: r.statement_hash };
-      keepAsk(task.task_id, kept);
+      keepAsk(keyOf(task.task_id), kept);
       setAsked(kept);
     } catch (e) {
       setProblem((e as Error).message);
@@ -82,7 +61,7 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
     setProblem("");
     try {
       const signed = await receiveSignature(task.task_id, asked.nonce, asked.statement_hash);
-      keepAsk(task.task_id, null);
+      keepAsk(keyOf(task.task_id), null);
       setAsked(null);
       onChanged(signed);
     } catch (e) {
@@ -93,7 +72,7 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
   }
 
   function startOver() {
-    keepAsk(task.task_id, null);
+    keepAsk(keyOf(task.task_id), null);
     setAsked(null);
   }
 
@@ -127,6 +106,14 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
             <span className="muted text-sm">{sig?.arbiter ? t("offer.signedAt", { when: when(sig.arbiter.signed_at) }) : t("offer.notSigned")}</span>
           </li>
         )}
+        {inspector && (
+          <li>
+            {inspector_signed ? <CircleCheck size={18} aria-hidden className="ok" /> : <CircleDashed size={18} aria-hidden className="muted" />}
+            <span>{t("offer.inspector")}</span>
+            <Person npub={inspector} />
+            <span className="muted text-sm">{sig?.inspector ? t("offer.signedAt", { when: when(sig.inspector.signed_at) }) : t("offer.notSigned")}</span>
+          </li>
+        )}
       </ul>
 
       {offer && (
@@ -139,7 +126,8 @@ export default function OfferPanel({ task, onChanged }: { task: Task; onChanged:
 
       {due && !asked && (
         <div className="grid gap-2">
-          <p>{due === "purchaser" ? t("offer.youSignFirst") : due === "arbiter" ? t("offer.youSignAsArbiter") : t("offer.youSignToDeliver")}</p>
+          <p>{due === "purchaser" ? t("offer.youSignFirst") : due === "arbiter" ? t("offer.youSignAsArbiter")
+            : due === "inspector" ? t("offer.youSignAsInspector") : t("offer.youSignToDeliver")}</p>
           <div className="actions-row">
             <button type="button" className="btn btn-go" disabled={busy} onClick={() => void ask()}>
               <Send size={18} aria-hidden />{t("offer.sendDm")}

@@ -164,8 +164,11 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 .grade-picks { display: grid; gap: 0.5rem; }
 
 /* People are npubs. */
-.person { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0; border: 0; background: none; color: inherit; font-size: 0.875rem; }
-.person:hover { color: var(--tb-accent); }
+.person { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.875rem; }
+.person a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.person a:hover { color: var(--tb-accent); }
+.person-copy { display: inline-flex; padding: 0.25rem; border: 0; background: none; color: inherit; cursor: pointer; }
+.person-copy:hover { color: var(--tb-accent); }
 .people { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem 0.875rem; }
 
 /* The offer and its signatures. */
@@ -446,3 +449,23 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
   .form-block-summary { grid-column: 1 / -1; grid-row: 2; text-align: left; white-space: normal; }
 }
 .link-btn { color: var(--tb-accent); text-decoration: underline; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
+
+/* The inspector's opinion, and an npub's reputation. */
+.warn { color: var(--gold); }
+.verdict-line { display: flex; align-items: center; gap: 0.5rem; font-size: 1.0625rem; }
+.verdict-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.5rem; }
+.verdict-choice {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3.25rem; padding: 0.5rem 1rem;
+  border: 1px solid var(--tb-line); border-radius: 0.75rem; background: transparent; color: inherit; font-size: 1rem;
+}
+.verdict-choice:hover { background: var(--tb-surface-2); }
+.verdict-choice.chosen { border-color: var(--tb-accent); box-shadow: inset 0 0 0 1px var(--tb-accent); font-weight: 600; }
+.rank-line { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; font-size: 0.875rem; }
+.rank-badge { border-radius: 999px; padding: 0.0625rem 0.625rem; border: 1px solid var(--tb-line); font-weight: 600; }
+.rank-exemplary, .rank-trusted { border-color: var(--gold); color: var(--gold); }
+.rank-proven { border-color: var(--tb-ok); color: var(--tb-ok); }
+.rank-uneven { border-color: var(--bad); color: var(--bad); }
+.rep-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.75rem; }
+.rep-card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.rep-counts { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; }
+.rep-counts dd { text-align: right; font-variant-numeric: tabular-nums; }

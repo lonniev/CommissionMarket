@@ -21,6 +21,7 @@ import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
 import { commissionHref, projectHref } from "./Person";
 import Sats from "./Sats";
 import EscrowFields from "./EscrowFields";
+import RankLine from "./RankLine";
 import FormBlock, { blockAnchor } from "./FormBlock";
 import TermsFields from "./TermsFields";
 
@@ -121,7 +122,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
 
   const shape: Shape = {
     title, deliverables: cover.deliverables.split("\n").filter((d) => d.trim()).length, invited: audience.length,
-    arbiter: cover.arbiter, grades: gradeNames.length, topSats: top,
+    arbiter: cover.arbiter, inspector: cover.inspector.trim(), grades: gradeNames.length, topSats: top,
     neededBy: due ? new Date(`${due}T12:00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" }) : "—",
     late: lateKind, failHours: failHoursOf(cover), depositPct: pctOf(deposit), milestones: milestones.length,
     escrowMint: cover.escrow ? cover.mint : "", deemedGrade: cover.deemedGrade,
@@ -178,12 +179,21 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             <NpubListField value={audience} onChange={setAudience} label={t("form.audience")} max={MAX_AUDIENCE}
               ownNpub={session.signedIn ? session.npub : undefined} look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
             <span className="muted text-sm">{t("form.audienceHelp")}</span>
+            {audience.map((n) => <RankLine key={n} npub={n} role="artist" />)}
           </div>
           <div className="grid gap-1">
             <span className="label">{t("cover.arbiter")}</span>
             <NpubField value={cover.arbiter} onChange={(n) => setCoverField("arbiter", n)} label={t("cover.arbiter")}
               look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
             <span className="muted text-sm">{t("cover.arbiterHelp")}</span>
+            <RankLine npub={cover.arbiter.trim()} role="arbiter" />
+          </div>
+          <div className="grid gap-1">
+            <span className="label">{t("cover.inspector")}</span>
+            <NpubField value={cover.inspector} onChange={(n) => setCoverField("inspector", n)} label={t("cover.inspector")}
+              look={{ inputClassName: "field font-mono text-sm", buttonClassName: "chip" }} />
+            <span className="muted text-sm">{t("cover.inspectorHelp")}</span>
+            <RankLine npub={cover.inspector.trim()} role="inspector" />
           </div>
       </>
     ),

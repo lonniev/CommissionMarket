@@ -27,7 +27,7 @@ export default function ContractBlocks({ task }: { task: Task }) {
   const top = Math.max(0, ...task.rubric.grades.map((g) => g.sats));
 
   const shape: Shape = {
-    title: task.title, deliverables: c?.deliverables.length ?? 0, invited: task.audience.length, arbiter: c?.arbiter_npub ?? "",
+    title: task.title, deliverables: c?.deliverables.length ?? 0, invited: task.audience.length, arbiter: c?.arbiter_npub ?? "", inspector: c?.inspector_npub ?? "",
     grades: task.rubric.grades.length, topSats: top, neededBy: day(task.needed_by), late: task.late.kind,
     failHours: c?.fail_after_hours ?? 0,
     depositPct: task.deposit_pct, milestones: task.milestones.length, escrowMint: c?.escrow ? c.escrow_mint : "",
@@ -49,6 +49,7 @@ export default function ContractBlocks({ task }: { task: Task }) {
           ? <><dt>{t("commission.professional")}</dt><dd><Person npub={task.performer} /></dd></>
           : <><dt>{t("commission.whoMay")}</dt><dd><People npubs={task.audience} /></dd></>}
         {c?.arbiter_npub && <><dt>{t("cover.arbiter")}</dt><dd><Person npub={c.arbiter_npub} /></dd></>}
+        {c?.inspector_npub && <><dt>{t("cover.inspector")}</dt><dd><Person npub={c.inspector_npub} /></dd></>}
       </dl>
     ),
     grades: (

@@ -33,7 +33,7 @@ export function failHoursOf(rows: Pick<CoverRows, "failAfter" | "failUnit">): nu
   return "hours" in made ? made.hours : 0;
 }
 
-const isNpub = (text: string) => {
+export const isNpub = (text: string) => {
   try {
     return nip19.decode(text).type === "npub";
   } catch {
@@ -106,6 +106,8 @@ export interface CoverRows {
   law: string;
   venue: string;
   arbiter: string;
+  /** Who gives a signed opinion of the finished work (terms 8.6). */
+  inspector: string;
   escrow: boolean;
   mint: string;
   refundDays: string;
@@ -117,7 +119,7 @@ export interface CoverRows {
 export const blankCover = (): CoverRows => ({
   deliverables: "", specUrl: "", specHash: "", deemedGrade: "", deemedDays: "14", ip: "assign", ipCustom: "",
   confidential: false, consumer: false, thirdParty: false, law: "", venue: "",
-  arbiter: "", escrow: false, mint: "", refundDays: "", failAfter: "7", failUnit: "days",
+  arbiter: "", inspector: "", escrow: false, mint: "", refundDays: "", failAfter: "7", failUnit: "days",
 });
 
 /**
@@ -143,6 +145,9 @@ export function coverFrom(rows: CoverRows, grades: string[], steps: LateStep[] =
   if (rows.ip === "custom" && !rows.ipCustom.trim()) return { problem: { key: "form.needIpCustom" } };
   const arbiter = rows.arbiter.trim();
   if (arbiter && !isNpub(arbiter)) return { problem: { key: "form.badArbiter" } };
+  const inspector = rows.inspector.trim();
+  if (inspector && !isNpub(inspector)) return { problem: { key: "form.badInspector" } };
+  if (inspector && inspector === arbiter) return { problem: { key: "form.inspectorIsArbiter" } };
   const fail = failFrom(rows.failAfter, rows.failUnit, steps);
   if ("problem" in fail) return fail;
   let refund = 0;
@@ -171,6 +176,7 @@ export function coverFrom(rows: CoverRows, grades: string[], steps: LateStep[] =
       governing_law: rows.law.trim().slice(0, 200),
       venue: rows.venue.trim().slice(0, 200),
       arbiter_npub: arbiter,
+      inspector_npub: inspector,
       escrow: rows.escrow,
       escrow_mint: rows.escrow ? rows.mint : "",
       refund_days: refund,
@@ -187,7 +193,7 @@ export function rowsOf(cover: CoverInput | null): CoverRows {
     deemedGrade: cover.deemed_grade, deemedDays: cover.deemed_acceptance_days ? String(cover.deemed_acceptance_days) : "14",
     ip: cover.ip_option, ipCustom: cover.ip_custom_text, confidential: cover.confidential, consumer: cover.client_is_consumer,
     thirdParty: cover.third_party_allowed, law: cover.governing_law, venue: cover.venue,
-    arbiter: cover.arbiter_npub ?? "", escrow: Boolean(cover.escrow), mint: cover.escrow_mint ?? "",
+    arbiter: cover.arbiter_npub ?? "", inspector: cover.inspector_npub ?? "", escrow: Boolean(cover.escrow), mint: cover.escrow_mint ?? "",
     refundDays: cover.refund_days ? String(cover.refund_days) : "",
     ...(cover.fail_after_hours ? { failAfter: rowOf(cover.fail_after_hours).after, failUnit: rowOf(cover.fail_after_hours).unit }
       : { failAfter: "7", failUnit: "days" as const }),
