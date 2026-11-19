@@ -1,0 +1,7 @@
+- A Glossary of the site's words, apart from the Standard Terms. Every word is searchable, with the clause that governs it, and words tap open in place across the form, the contract, the Guide and the lessons.
+- The Good Brew café's shelf on Home and a Catalog: machines artisans prefer, consultations, books and the network's goods, read live, with orders at the café.
+- The guild courtyard behind every page, under a veil of the page's colour.
+- Guided tours on every page. The new-commission tour opens each block of the form in turn and points at each field.
+- A live-tutorial switch and "show me" buttons on the Guide.
+- The play-by-play story's cover page now covers every field: filing, deliverables, specification, inspector, late rule and legal choices.
+- A new lesson, "Your standing". "When you disagree" now names the arbiter, the windows and the inspector.

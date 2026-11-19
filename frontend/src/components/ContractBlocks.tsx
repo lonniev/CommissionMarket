@@ -16,6 +16,7 @@ import { failSaid, spanSaid } from "../lib/late";
 import FormBlock from "./FormBlock";
 import { People, Person } from "./Person";
 import Sats from "./Sats";
+import Word from "./Word";
 
 export default function ContractBlocks({ task }: { task: Task }) {
   const t = useT();
@@ -39,7 +40,7 @@ export default function ContractBlocks({ task }: { task: Task }) {
       <dl className="facts">
         {c && <><dt>{t("cover.deliverables")}</dt><dd><ul className="deliverables">{c.deliverables.map((d) => <li key={d}>{d}</li>)}</ul></dd></>}
         {c?.spec_url && <><dt>{t("cover.specUrl")}</dt><dd><a href={c.spec_url} target="_blank" rel="noopener noreferrer nofollow" className="ent">{c.spec_url}</a></dd></>}
-        {c?.spec_hash && <><dt>{t("cover.specHash")}</dt><dd><code className="hash">{c.spec_hash}</code></dd></>}
+        {c?.spec_hash && <><dt>{t("cover.specHash")} <Word of="spec_hash" badge align="left" /></dt><dd><code className="hash">{c.spec_hash}</code></dd></>}
       </dl>
     ),
     people: (
@@ -48,8 +49,8 @@ export default function ContractBlocks({ task }: { task: Task }) {
         {task.performer
           ? <><dt>{t("commission.professional")}</dt><dd><Person npub={task.performer} /></dd></>
           : <><dt>{t("commission.whoMay")}</dt><dd><People npubs={task.audience} /></dd></>}
-        {c?.arbiter_npub && <><dt>{t("cover.arbiter")}</dt><dd><Person npub={c.arbiter_npub} /></dd></>}
-        {c?.inspector_npub && <><dt>{t("cover.inspector")}</dt><dd><Person npub={c.inspector_npub} /></dd></>}
+        {c?.arbiter_npub && <><dt>{t("cover.arbiter")} <Word of="arbiter" badge align="left" /></dt><dd><Person npub={c.arbiter_npub} /></dd></>}
+        {c?.inspector_npub && <><dt>{t("cover.inspector")} <Word of="inspector" badge align="left" /></dt><dd><Person npub={c.inspector_npub} /></dd></>}
       </dl>
     ),
     grades: (
@@ -69,21 +70,21 @@ export default function ContractBlocks({ task }: { task: Task }) {
       <dl className="facts">
         <dt>{t("commission.neededBy")}</dt><dd>{day(task.needed_by)}</dd>
         <dt>{t("commission.ifLate")}</dt><dd>{lateRuleText(task.late).map((s) => say(t, s)).join(" ")}</dd>
-        {c?.fail_after_hours ? <><dt>{t("late.failShort")}</dt><dd>{say(t, failSaid(c.fail_after_hours))}</dd></> : null}
+        {c?.fail_after_hours ? <><dt>{t("late.failShort")} <Word of="failure_point" badge align="left" /></dt><dd>{say(t, failSaid(c.fail_after_hours))}</dd></> : null}
       </dl>
     ),
     payments: (
       <dl className="facts">
-        <dt>{t("form.deposit")}</dt><dd>{task.deposit_pct}%</dd>
+        <dt>{t("form.deposit")} <Word of="deposit" badge align="left" /></dt><dd>{task.deposit_pct}%</dd>
         {task.milestones.map((m) => <Fragment key={m.name}><dt>{m.name}</dt><dd>{m.pct}% · {day(m.due_at)}</dd></Fragment>)}
-        <dt>{t("cover.escrowShort")}</dt>
+        <dt>{t("cover.escrowShort")} <Word of="escrow" badge align="left" /></dt>
         <dd>{c?.escrow ? t("cover.escrowFact", { mint: c.escrow_mint, days: c.refund_days }) : t("block.sum.noEscrow")}</dd>
       </dl>
     ),
     conclusion: (
       <>
         <dl className="facts">
-          <dt>{t("cover.deemedGrade")}</dt>
+          <dt>{t("cover.deemedGrade")} <Word of="deemed_acceptance" badge align="left" /></dt>
           <dd>{c?.deemed_grade ? t("cover.deemedAfter", { grade: c.deemed_grade, days: c.deemed_acceptance_days }) : t("cover.noDeemed")}</dd>
         </dl>
         <p className="muted text-sm">
@@ -98,11 +99,11 @@ export default function ContractBlocks({ task }: { task: Task }) {
     ),
     legal: c ? (
       <dl className="facts">
-        <dt>{t("cover.ip")}</dt><dd>{t(`cover.ip.${c.ip_option}`)}{c.ip_custom_text && ` · ${c.ip_custom_text}`}</dd>
+        <dt>{t("cover.ip")} <Word of="ip_terms" badge align="left" /></dt><dd>{t(`cover.ip.${c.ip_option}`)}{c.ip_custom_text && ` · ${c.ip_custom_text}`}</dd>
         {c.confidential && <><dt>{t("cover.confidentialShort")}</dt><dd>✓</dd></>}
         {c.client_is_consumer && <><dt>{t("cover.consumerShort")}</dt><dd>✓</dd></>}
         <dt>{t("cover.thirdPartyShort")}</dt><dd>{c.third_party_allowed ? t("cover.allowed") : t("cover.notAllowed")}</dd>
-        {c.governing_law && <><dt>{t("cover.law")}</dt><dd>{c.governing_law}</dd></>}
+        {c.governing_law && <><dt>{t("cover.law")} <Word of="governing_law" badge align="left" /></dt><dd>{c.governing_law}</dd></>}
         {c.venue && <><dt>{t("cover.venue")}</dt><dd>{c.venue}</dd></>}
         <dt>{t("nav.terms")}</dt>
         <dd><Link to={`/terms?version=${encodeURIComponent(c.terms_version)}`} className="ent">{c.terms_version}</Link> · <code className="hash">{c.terms_hash.slice(0, 12)}…</code></dd>

@@ -142,7 +142,8 @@ export const lessons: LessonsText = {
         "Les appréciations sont nommées à l'avance, comme Accepté, Accepté avec modifications et Non accepté, chacune avec ses sats.",
         "Les nommer dès le départ permet aux deux parties de savoir ce que vaut chaque issue avant que le travail ne commence.",
         "Livre ce que la page de garde énumère, sous la forme que décrit la spécification.",
-        "Si le travail est en retard, la règle de retard de l'offre s'applique : paiement en totalité, réduction par jour, ou commande close comme manquée.",
+        "Si le travail est en retard, la règle de retard de l'offre s'applique : paiement en totalité, une part retirée par jour, des paliers à des moments fixés, ou commande close comme manquée.",
+        "Un travail toujours en attente de livraison au point de défaut indiqué sur la page de garde met fin à la commande, et le prestataire peut invoquer un motif dans le délai de contestation.",
         "L'acceptation tacite protège le prestataire d'un client qui ne répond jamais.",
         "La page de garde fixe son appréciation et son délai, de 1 à 60 jours.",
         "Une fois l'appréciation donnée, la rémunération, moins ce qui a été payé d'avance, est due et réglée par facture Lightning, comme tout autre paiement."
@@ -177,13 +178,15 @@ export const lessons: LessonsText = {
       title: "En cas de désaccord",
       lines: [
         "Un prestataire en désaccord avec une appréciation peut la contester une fois, motifs à l'appui.",
-        "L'arbitre désigné dans la commande examine les deux points de vue et tranche.",
+        "L'arbitre désigné sur la page de garde examine les deux points de vue et tranche, ou le départageur quand il n'y a pas d'arbitre.",
         "Un client qui n'a rien reçu peut refuser la livraison au lieu de lui donner une appréciation."
       ],
       more: [
         "La plupart des désaccords se règlent plus vite par un message privé que par une contestation : parlez-vous d'abord.",
-        "Une contestation indique ce que l'arbitre doit examiner, et le dossier contient déjà l'offre, les appréciations et l'historique.",
-        "L'arbitre choisit une appréciation dans la même liste, et sa décision est définitive.",
+        "Une contestation arrive dans le délai de contestation fixé sur la page de garde, et indique ce que l'arbitre doit examiner.",
+        "Le dossier contient déjà l'offre, les appréciations et l'historique.",
+        "L'arbitre choisit une appréciation dans la même liste, dans le délai de décision, et sa décision est définitive.",
+        "L'avis signé d'un inspecteur sur le travail est un conseil dont l'arbitre peut tenir compte.",
         "Chaque étape figure dans l'historique de la commande, avec son heure et son auteur.",
         "Tant que personne n'a pris la commande en charge, le client peut la retirer.",
         "Après l'avoir prise en charge, le prestataire peut y renoncer, et la commande s'ouvre de nouveau au cercle.",
@@ -195,6 +198,29 @@ export const lessons: LessonsText = {
       },
       tryThis: "Consulte l'historique d'une commande à laquelle tu participes, et vérifie qu'il raconte les faits comme tu t'en souviens.",
       ask: "Si cette commande tournait mal, que voudrais-tu que l'arbitre puisse lire ?"
+    },
+    "your-standing": {
+      title: "Ta réputation",
+      lines: [
+        "Chaque npub a une réputation, tirée des commandes auxquelles elle a pris part.",
+        "Elle compte chaque rôle à part : client, prestataire, arbitre et inspecteur.",
+        "Tout le monde peut la lire : un client voit ainsi qui il invite, et un prestataire pour qui il travaille."
+      ],
+      more: [
+        "Pour un prestataire, elle compte les commandes livrées, à temps et en retard, les défauts avec et sans motif, et les contestations gagnées et perdues.",
+        "Pour un client, elle compte les appréciations données à temps, les Soldes payés et les contestations perdues.",
+        "Pour un arbitre, elle compte les décisions rendues dans le délai de décision ; pour un inspecteur, les avis donnés.",
+        "Un rang la résume en un mot : nouveau, inégal, confirmé, fiable ou exemplaire.",
+        "Le rang dépend du nombre de commandes terminées et de celles qui se sont bien passées, selon des seuils que fixe l'Opérateur.",
+        "Seules les commandes comptent : les tâches ménagères et les travaux d'entraînement laissent ta réputation telle qu'elle était.",
+        "Chaque nom sur le formulaire de commande affiche son rang à côté, avec un lien vers le dossier complet."
+      ],
+      saying: {
+        text: "La réputation est préférable à de grandes richesses.",
+        from: "Proverbes 22:1"
+      },
+      tryThis: "Ouvre ta propre page de réputation depuis ton npub, et lis-la comme le ferait un inconnu avant de t'inviter.",
+      ask: "Quel chiffre de ton dossier aimerais-tu le plus améliorer au cours de tes trois prochaines commandes ?"
     },
     "price-and-worth": {
       title: "Le prix en sats, la valeur dans ta devise",
@@ -219,21 +245,6 @@ export const lessons: LessonsText = {
       ask: "Lequel penses-tu pouvoir acheter davantage l'an prochain : mille sats, ou ce qu'ils valent aujourd'hui dans ta devise ?"
     }
   },
-  words: [
-    { word: "Bitcoin", means: "Une monnaie à l'offre fixe, qu'aucun gouvernement n'émet et qu'aucune banque ne contrôle." },
-    { word: "sat", means: "La plus petite unité du bitcoin : 100 000 000 sats font un bitcoin." },
-    { word: "Lightning", means: "Un réseau de paiement construit sur Bitcoin pour des paiements rapides et de petit montant." },
-    { word: "facture", means: "Une demande Lightning de paiement d'un nombre exact de sats, avec une expiration." },
-    { word: "adresse Lightning", means: "Une adresse comme name@wallet.example, qui établit une nouvelle facture pour chaque paiement." },
-    { word: "npub", means: "Ta clé Nostr publique : le nom sous lequel tu es connu et invité." },
-    { word: "nsec", means: "Ta clé Nostr secrète : elle signe en ton nom, elle ne quitte donc jamais tes mains." },
-    { word: "sha256", means: "Une empreinte d'un texte : toute modification du texte change l'empreinte." },
-    { word: "offre", means: "Un énoncé simple de toutes les conditions d'une commande, que les deux parties signent." },
-    { word: "page de garde", means: "Les particularités d'une commande au titre des Conditions générales." },
-    { word: "acceptation tacite", means: "Une livraison restée sans appréciation pendant le délai convenu reçoit l'appréciation convenue." },
-    { word: "arbitre", means: "La personne désignée pour trancher une contestation." },
-    { word: "api_sats", means: "Le crédit de ton portefeuille Tollbooth qui règle la petite redevance de chaque outil Task Booth." }
-  ],
   shelves: {
     money: "La monnaie",
     exchange: "L'échange et l'entreprise",

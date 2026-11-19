@@ -5,7 +5,7 @@
  * supplies only the English and its translations.
  */
 
-import { registerNamespace, type Vars } from "@tollbooth-dpyc/web";
+import { registerNamespace, translate, type Vars } from "@tollbooth-dpyc/web";
 import { useT as useWords } from "@tollbooth-dpyc/web/react";
 import englishContent from "../content/en/index.ts";
 import en, { type MessageKey } from "./en.ts";
@@ -39,6 +39,13 @@ export type Translate = (key: MessageKey, vars?: Vars) => string;
 
 /** `t(key, vars?)` for CommissionMarket's words, in the reader's language. */
 export const useT = (): Translate => useWords<MessageKey>(WORDS);
+
+/**
+ * `tr(key, vars?)` outside a component, in the language on screen now. A
+ * component uses `useT`, which redraws when the language changes; `tr` is for
+ * data built once per language, like the tours.
+ */
+export const tr: Translate = (key, vars) => translate(key, vars, WORDS);
 
 /** Something a pure function wants said: the message, and what fills its `{{places}}`. */
 export interface Said {

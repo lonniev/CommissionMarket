@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { getMyProperties, setMyProperty } from "@tollbooth-dpyc/web";
-import { AccountPage, LanguageChooser, useAppShell } from "@tollbooth-dpyc/web/react";
+import { AccountPage, LanguageChooser, tourTarget, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
 import CalendarFeed from "../components/CalendarFeed";
 import { useT } from "../i18n";
 import { FIATS, useFiat } from "../lib/FiatContext";
@@ -15,7 +15,7 @@ const BUILD = {
 
 /** The operator's settings, as a card like the panels beside it; the field takes the row's width. */
 const OPERATOR = {
-  root: "card panel grid gap-2", heading: "panel-title", row: "flex flex-wrap items-center gap-2 py-1",
+  root: "card panel grid gap-2 operator-props", heading: "panel-title", row: "flex flex-wrap items-center gap-2 py-1",
   label: "muted", control: "field min-w-0 flex-1", error: "error",
 };
 
@@ -61,7 +61,7 @@ function PayoutAddress() {
   }
 
   return (
-    <section className="card panel grid gap-2">
+    <section className="card panel grid gap-2" {...tourTarget("profile.payout")}>
       <h2 className="panel-title">{t("profile.payout.title")}</h2>
       <p className="muted text-sm">{t("profile.payout.says")}</p>
       <form className="flex flex-wrap items-center justify-end gap-2" onSubmit={(e) => { e.preventDefault(); void save(); }}>
@@ -80,7 +80,7 @@ function Currency() {
   const t = useT();
   const { fiat, choose } = useFiat();
   return (
-    <section className="card panel grid gap-2">
+    <section className="card panel grid gap-2" {...tourTarget("profile.currency")}>
       <h2 className="panel-title">{t("profile.currency.title")}</h2>
       <p className="muted text-sm">{t("profile.currency.says")}</p>
       <div className="flex flex-wrap gap-2">
@@ -95,7 +95,7 @@ function Currency() {
 function LanguageChoice() {
   const t = useT();
   return (
-    <section className="card panel grid gap-2">
+    <section className="card panel grid gap-2" {...tourTarget("profile.language")}>
       <h2 className="panel-title">{t("language.title")}</h2>
       <LanguageChooser classNames={{ root: "flex flex-wrap gap-2", chip: "chip", active: "chip-on" }} />
     </section>
@@ -104,6 +104,7 @@ function LanguageChoice() {
 
 export default function Profile() {
   const { session, status } = useAppShell();
+  useTour("account");
   return (
     <div className="page">
       <AccountPage

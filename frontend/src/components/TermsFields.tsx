@@ -2,17 +2,21 @@
 
 import { IP_OPTIONS, type CoverRows } from "../lib/cover";
 import type { IpOption } from "../lib/tasks";
+import { tourTarget } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
+import Word from "./Word";
 
-export default function TermsFields({ cover, set }: {
+export default function TermsFields({ cover, set, tour = false }: {
   cover: CoverRows;
+  /** Marked for the new-commission tour. */
+  tour?: boolean;
   set: <K extends keyof CoverRows>(key: K, value: CoverRows[K]) => void;
 }) {
   const t = useT();
   return (
     <>
-      <div className="grid gap-2">
-        <span className="label">{t("cover.ip")}</span>
+      <div className="grid gap-2" {...(tour ? tourTarget("compose.ip") : {})}>
+        <span className="label">{t("cover.ip")} <Word of="ip_terms" badge align="left" /></span>
         <div className="flex flex-wrap gap-2">
           {IP_OPTIONS.map((ip: IpOption) => (
             <button key={ip} type="button" className={cover.ip === ip ? "chip chip-on" : "chip"} aria-pressed={cover.ip === ip} onClick={() => set("ip", ip)}>
@@ -25,7 +29,7 @@ export default function TermsFields({ cover, set }: {
           <textarea className="field" rows={3} value={cover.ipCustom} onChange={(e) => set("ipCustom", e.target.value)} placeholder={t("cover.ipCustom")} />
         )}
       </div>
-      <div className="grid gap-1">
+      <div className="grid gap-1" {...(tour ? tourTarget("compose.flags") : {})}>
         {(["confidential", "consumer", "thirdParty"] as const).map((flag) => (
           <label key={flag} className="check">
             <input type="checkbox" checked={cover[flag]} onChange={(e) => set(flag, e.target.checked)} />
@@ -33,9 +37,9 @@ export default function TermsFields({ cover, set }: {
           </label>
         ))}
       </div>
-      <div className="two-up">
+      <div className="two-up" {...(tour ? tourTarget("compose.law") : {})}>
         <label className="grid gap-1">
-          <span className="label">{t("cover.law")}</span>
+          <span className="label">{t("cover.law")} <Word of="governing_law" badge align="left" /></span>
           <input className="field" value={cover.law} maxLength={200} onChange={(e) => set("law", e.target.value)} placeholder={t("cover.lawPlaceholder")} />
         </label>
         <label className="grid gap-1">

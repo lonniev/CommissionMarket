@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { useT } from "../i18n";
 import { useLessons } from "../lib/content";
+import Word from "../components/Word";
 
 export default function LessonPage() {
   const { slug = "" } = useParams();
@@ -30,6 +31,10 @@ export default function LessonPage() {
           </blockquote>
         )}
       </article>
+      <section className="card panel grid gap-2">
+        <h2 className="panel-title"><span aria-hidden>📖</span> {t("lesson.words")}</h2>
+        <p className="step-words">{lesson.words.map((w) => <Word key={w} of={w} align="left" />)}</p>
+      </section>
       {lesson.links && (
         <section className="card panel grid gap-2">
           <h2 className="panel-title">{t("lesson.places")}</h2>

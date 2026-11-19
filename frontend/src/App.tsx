@@ -1,18 +1,22 @@
-import { lazy, Suspense, type ReactNode } from "react";
+import { lazy, Suspense, useMemo, type ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { BookOpen, BriefcaseBusiness, Building2, CalendarDays, Compass, Scale, ScrollText, Wallet as WalletIcon } from "lucide-react";
-import { AppShell, SiteNav, Wallet, matchesPath, useAppShell } from "@tollbooth-dpyc/web/react";
+import { BookA, BookOpen, BriefcaseBusiness, Building2, CalendarDays, Coffee, Compass, Scale, ScrollText, Wallet as WalletIcon } from "lucide-react";
+import { AppShell, SiteNav, TourProvider, Wallet, matchesPath, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
 import Waiting from "./components/Waiting";
 import { useT } from "./i18n";
 import { FiatProvider } from "./lib/FiatContext";
 import { decorateTileWith } from "./lib/tiles";
+import { tours } from "./lib/tours";
 
 // Each page is its own chunk, fetched the first time it opens.
 const Arbitration = lazy(() => import("./views/Arbitration"));
 const Calendar = lazy(() => import("./views/Calendar"));
+const Catalog = lazy(() => import("./views/Catalog"));
+const CatalogCollection = lazy(() => import("./views/Catalog").then((m) => ({ default: m.CatalogCollection })));
 const Commission = lazy(() => import("./views/Commission"));
 const Commissions = lazy(() => import("./views/Commissions"));
 const EditCommission = lazy(() => import("./views/EditCommission"));
+const Glossary = lazy(() => import("./views/Glossary"));
 const Guide = lazy(() => import("./views/Guide"));
 const Home = lazy(() => import("./views/Home"));
 const Learn = lazy(() => import("./views/Learn"));
@@ -31,7 +35,9 @@ const PAGES = [
   { href: "/calendar", label: "nav.calendar", icon: <CalendarDays size={18} aria-hidden /> },
   { href: "/arbitration", label: "nav.arbitration", icon: <Scale size={18} aria-hidden /> },
   { href: "/learn", label: "nav.learn", icon: <BookOpen size={18} aria-hidden /> },
+  { href: "/glossary", label: "nav.glossary", icon: <BookA size={18} aria-hidden /> },
   { href: "/guide", label: "nav.guide", icon: <Compass size={18} aria-hidden /> },
+  { href: "/catalog", label: "nav.catalog", icon: <Coffee size={18} aria-hidden /> },
   { href: "/wallet", label: "nav.wallet", icon: <WalletIcon size={18} aria-hidden /> },
 ] as const;
 
@@ -76,6 +82,8 @@ function Nav() {
         <span className="ml-auto flex flex-wrap items-center gap-2">
           <Link to="/guide" className="chip">{t("nav.guide")}</Link>
           <Link to="/learn" className="chip">{t("nav.learn")}</Link>
+          <Link to="/glossary" className="chip">{t("nav.glossary")}</Link>
+          <Link to="/catalog" className="chip">{t("nav.catalog")}</Link>
         </span>
         <Link to="/signin" className="chip chip-accent">{t("nav.signIn")}</Link>
       </header>
@@ -119,8 +127,15 @@ function SignedIn({ children }: { children: ReactNode }) {
   return session.signedIn ? <>{children}</> : <Navigate to="/signin" replace />;
 }
 
+function SignInPage() {
+  const { gate } = useAppShell();
+  useTour("signin");
+  return <div className="page"><div className="card p-6">{gate}</div></div>;
+}
+
 function WalletPage() {
   const t = useT();
+  useTour("wallet");
   return (
     <div className="page grid gap-3">
       <section className="card panel grid gap-1">
@@ -134,17 +149,19 @@ function WalletPage() {
 }
 
 function Site() {
-  const { session, gate } = useAppShell();
+  const { session } = useAppShell();
   const t = useT();
+  const shown = useMemo(() => tours(t), [t]);
   return (
     <BrowserRouter>
+      <TourProvider tours={shown}>
       <FiatProvider>
         <Nav />
         <main className="flex-1">
           <Suspense fallback={<div className="page"><div className="card panel"><Waiting heading={t("waiting.openingPage")} /></div></div>}>
             <Routes>
               <Route index element={session.signedIn ? <Navigate to="/commissions" replace /> : <Home />} />
-              <Route path="signin" element={session.signedIn ? <Navigate to="/commissions" replace /> : <div className="page"><div className="card p-6">{gate}</div></div>} />
+              <Route path="signin" element={session.signedIn ? <Navigate to="/commissions" replace /> : <SignInPage />} />
               <Route path="commissions" element={<SignedIn><Commissions /></SignedIn>} />
               <Route path="commissions/new" element={<SignedIn><NewCommission /></SignedIn>} />
               <Route path="commissions/:taskId" element={<SignedIn><Commission /></SignedIn>} />
@@ -160,6 +177,9 @@ function Site() {
               <Route path="terms" element={<Terms />} />
               <Route path="guide" element={<Guide />} />
               <Route path="learn" element={<Learn />} />
+              <Route path="glossary" element={<Glossary />} />
+              <Route path="catalog" element={<Catalog />} />
+              <Route path="catalog/:handle" element={<CatalogCollection />} />
               <Route path="learn/:slug" element={<LessonPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -167,6 +187,7 @@ function Site() {
         </main>
         <Footer />
       </FiatProvider>
+      </TourProvider>
     </BrowserRouter>
   );
 }

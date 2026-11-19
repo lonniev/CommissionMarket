@@ -8,6 +8,8 @@
  * in `src/content/<language>/lessons.ts`.
  */
 
+import type { GlossaryKey } from "./glossary.ts";
+
 export type LessonGroup = "money" | "contract" | "worth";
 
 interface LessonShape {
@@ -16,23 +18,26 @@ interface LessonShape {
   /** Shown until the lesson's artwork arrives. */
   picture: string;
   group: LessonGroup;
+  /** The glossary words the lesson leans on, shown under it to tap. */
+  words: ReadonlyArray<GlossaryKey>;
   /** Places outside CommissionMarket. Each opens in a new tab. */
   links?: ReadonlyArray<{ name: string; href: string }>;
 }
 
 export const LESSON_SHAPES = [
-  { slug: "sats-and-lightning", picture: "⚡", group: "money" },
-  { slug: "your-keys-your-wallet", picture: "🔑", group: "money" },
+  { slug: "sats-and-lightning", picture: "⚡", group: "money", words: ["sat", "bitcoin", "lightning", "invoice", "lightning_address"] },
+  { slug: "your-keys-your-wallet", picture: "🔑", group: "money", words: ["nsec", "api_sats"] },
   {
-    slug: "your-npub-and-signing", picture: "✍️", group: "money",
+    slug: "your-npub-and-signing", picture: "✍️", group: "money", words: ["npub", "nsec", "signature", "sha256"],
     links: [{ name: "nostr.how", href: "https://nostr.how" }],
   },
-  { slug: "the-signed-offer", picture: "📜", group: "contract" },
-  { slug: "deposits-and-milestones", picture: "🪜", group: "contract" },
-  { slug: "delivery-and-grading", picture: "📦", group: "contract" },
-  { slug: "who-owns-the-work", picture: "🖼️", group: "contract" },
-  { slug: "when-you-disagree", picture: "⚖️", group: "contract" },
-  { slug: "price-and-worth", picture: "🏷️", group: "worth" },
+  { slug: "the-signed-offer", picture: "📜", group: "contract", words: ["offer", "cover_page", "standard_terms", "signature"] },
+  { slug: "deposits-and-milestones", picture: "🪜", group: "contract", words: ["deposit", "milestone", "paid_ahead", "balance", "escrow"] },
+  { slug: "delivery-and-grading", picture: "📦", group: "contract", words: ["deliverable", "grade", "rubric", "late_terms", "failure_point", "deemed_acceptance"] },
+  { slug: "who-owns-the-work", picture: "🖼️", group: "contract", words: ["ip_terms", "governing_law"] },
+  { slug: "when-you-disagree", picture: "⚖️", group: "contract", words: ["arbiter", "tie_breaker", "inspector", "appeal_window", "ruling_time", "claim_of_cause"] },
+  { slug: "your-standing", picture: "🏅", group: "contract", words: ["reputation", "rank", "claim_of_cause"] },
+  { slug: "price-and-worth", picture: "🏷️", group: "worth", words: ["sat", "grade"] },
 ] as const satisfies ReadonlyArray<LessonShape>;
 
 export type LessonSlug = (typeof LESSON_SHAPES)[number]["slug"];
@@ -95,8 +100,6 @@ export interface LessonText {
 /** Everything the Learn pages say in one language. */
 export interface LessonsText {
   lessons: Record<LessonSlug, LessonText>;
-  /** The glossary. "npub", "nsec" and "sha256" keep their names. */
-  words: { word: string; means: string }[];
   /** Each shelf's title. */
   shelves: Record<ShelfKey, string>;
   /** What each book is about, by its handle. */
@@ -113,6 +116,7 @@ export interface Lesson {
   saying?: { text: string; from: string };
   tryThis: string;
   ask: string;
+  words: ReadonlyArray<GlossaryKey>;
   links?: { name: string; href: string; says: string }[];
 }
 
@@ -126,14 +130,13 @@ export interface Book {
 
 export const bookHref = (book: Pick<Book, "handle">) => `${GOOD_BREW}/products/${book.handle}`;
 
-/** The lessons, glossary and bookshelf in one language. */
+/** The lessons and bookshelf in one language. */
 export interface Library {
   /** Every lesson, in reading order. */
   lessons: Lesson[];
   money: Lesson[];
   contract: Lesson[];
   worth: Lesson[];
-  words: { word: string; means: string }[];
   shelves: { key: ShelfKey; title: string; books: Book[] }[];
   at: (slug: string) => Lesson | undefined;
 }
@@ -148,6 +151,7 @@ export function libraryIn(text: LessonsText): Library {
       slug: shape.slug,
       picture: shape.picture,
       group: shape.group,
+      words: shape.words,
       ...(places ? { links: places.map((k, i) => ({ ...k, says: says?.[i] ?? "" })) } : {}),
     };
   });
@@ -157,7 +161,6 @@ export function libraryIn(text: LessonsText): Library {
     money: of("money"),
     contract: of("contract"),
     worth: of("worth"),
-    words: text.words,
     shelves: SHELF_SHAPES.map((s) => ({
       key: s.key,
       title: text.shelves[s.key],

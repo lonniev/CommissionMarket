@@ -12,6 +12,7 @@ import english from "./en/index.ts";
 import { LANGUAGES } from "@tollbooth-dpyc/web";
 import type { LanguageContent } from "../lib/content.ts";
 import { LESSON_SHAPES, libraryIn, SHELF_SHAPES } from "../lib/lessons.ts";
+import { GLOSSARY_GROUPS, GLOSSARY_KEYS } from "../lib/glossary.ts";
 
 const here = new URL(".", import.meta.url);
 const folders = readdirSync(here, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
@@ -58,9 +59,6 @@ for (const [code, pack] of Object.entries(packs)) {
       assert.equal(pack.lessons.lessons[model.slug].links?.length, english.lessons.lessons[model.slug].links?.length, `${model.slug}: links`);
       for (const k of lesson.links ?? []) assert.ok(k.says, `${model.slug}: ${k.name}`);
     });
-    assert.equal(mine.words.length, theirs.words.length);
-    for (const w of mine.words) assert.ok(w.word && w.means, w.word);
-    for (const word of ["npub", "nsec", "sha256"]) assert.ok(mine.words.some((w) => w.word === word), `${word} keeps its name`);
     for (const shelf of mine.shelves) {
       assert.ok(shelf.title, shelf.key);
       for (const book of shelf.books) assert.ok(book.says, book.handle);
@@ -74,5 +72,18 @@ for (const [code, pack] of Object.entries(packs)) {
     assert.equal(pack.quotes.length, english.quotes.length);
     assert.equal(new Set(pack.quotes.map((q) => q.text)).size, pack.quotes.length);
     for (const q of pack.quotes) assert.ok(q.text.trim() && q.author.trim(), q.text);
+  });
+}
+
+for (const [code, pack] of Object.entries(packs)) {
+  test(`${code}: every word of the glossary is defined, under every group's title`, () => {
+    for (const g of GLOSSARY_GROUPS) assert.ok(pack.glossary.groups[g]?.trim(), `${code} ${g}`);
+    assert.deepEqual(Object.keys(pack.glossary.words).sort(), GLOSSARY_KEYS.map(([k]) => k).sort());
+    for (const [k] of GLOSSARY_KEYS) {
+      const w = pack.glossary.words[k];
+      assert.ok(w.term.trim() && w.said.trim(), `${code} ${k}`);
+      for (const a of w.aka ?? []) assert.ok(a.trim(), `${code} ${k} aka`);
+    }
+    for (const k of ["npub", "nsec", "sha256", "api_sats"] as const) assert.equal(pack.glossary.words[k].term, english.glossary.words[k].term, `${code}: ${k} keeps its name`);
   });
 }

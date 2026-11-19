@@ -6,6 +6,7 @@ import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
 import guildWide from "../assets/guild-1264.webp";
 import guildNarrow from "../assets/guild-760.webp";
+import { CafeShelf } from "../components/Cafe";
 
 const CARDS: { icon: LucideIcon; title: MessageKey; says: MessageKey }[] = [
   { icon: FileSignature, title: "home.card.signed.title", says: "home.card.signed.says" },
@@ -42,8 +43,11 @@ export default function Home() {
 
       <p className="flex flex-wrap justify-end gap-x-4 gap-y-2">
         <Link to="/learn" className="ent">{t("nav.learn")}</Link>
+        <Link to="/glossary" className="ent">{t("nav.glossary")}</Link>
         <Link to="/terms" className="ent inline-flex items-center gap-1"><Landmark size={16} aria-hidden />{t("home.readTerms")}</Link>
       </p>
+
+      <CafeShelf count={4} />
     </div>
   );
 }

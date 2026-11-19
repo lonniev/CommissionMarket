@@ -9,7 +9,7 @@ import { createContext, useContext, useEffect, useId, useRef, useState, type CSS
 import { Link } from "react-router-dom";
 import { usePlayByPlay } from "../lib/content";
 import Clock from "./Clock";
-import { clauseHref, storyPieces, type Word } from "../lib/playByPlay";
+import { storyClauseHref, storyPieces, type Word } from "../lib/playByPlay";
 
 const Open = createContext<{ open: string; setOpen: (id: string) => void }>({ open: "", setOpen: () => {} });
 
@@ -58,7 +58,7 @@ function KeyWord({ word, children }: { word: Word; children: ReactNode }) {
         >
           <strong>{word.word}</strong>
           <span>{word.says}</span>
-          <Link to={clauseHref(word.clause)} className="pbp-clause">§{word.clause}</Link>
+          <Link to={storyClauseHref(word.clause)} className="pbp-clause">§{word.clause}</Link>
         </span>
       )}
     </>
@@ -71,7 +71,7 @@ function Line({ text }: { text: string }) {
     <span className="pbp-line">
       {storyPieces(text, words).map((p, i) =>
         p.kind === "word" ? <KeyWord key={i} word={words[p.key]}>{p.text}</KeyWord>
-          : p.kind === "clause" ? <Link key={i} to={clauseHref(p.clause)} className="pbp-clause">{p.text}</Link>
+          : p.kind === "clause" ? <Link key={i} to={storyClauseHref(p.clause)} className="pbp-clause">{p.text}</Link>
             : <span key={i}>{p.text}</span>)}
     </span>
   );

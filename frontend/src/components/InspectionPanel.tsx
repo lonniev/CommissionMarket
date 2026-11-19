@@ -16,6 +16,7 @@ import { inspectorDue } from "../lib/arbiter";
 import { keepAsk, keptAsk, type Asked } from "../lib/keptAsk";
 import { receiveInspection, requestInspection, VERDICTS, type Task, type Verdict } from "../lib/tasks";
 import { Person } from "./Person";
+import Word from "./Word";
 
 const MAX_REASONS = 2000;
 const DELIVERED = new Set(["done", "assessed", "appealed", "owed", "paid", "rejected"]);
@@ -86,7 +87,7 @@ export default function InspectionPanel({ task, onChanged }: { task: Task; onCha
 
   return (
     <section className="card panel grid gap-3">
-      <h2 className="panel-title flex items-center gap-2"><Search size={18} aria-hidden />{t("inspection.title")}</h2>
+      <h2 className="panel-title flex items-center gap-2"><Search size={18} aria-hidden />{t("inspection.title")} <Word of="inspector" badge align="left" /></h2>
 
       {opinion && (
         <div className="grid gap-2">

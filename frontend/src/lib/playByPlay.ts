@@ -8,6 +8,8 @@
  *   §6.5                  a clause of the Standard Terms the story follows, linked
  */
 
+import { clauseHref } from "./clauses.ts";
+
 /** The version of the Standard Terms the story is told under; its clauses are the ones cited. */
 export const STORY_TERMS = "v1";
 
@@ -109,4 +111,4 @@ export function storyRefs(text: PlayByPlayText): { words: string[]; clauses: str
 }
 
 /** Where a clause of the story's terms lives. */
-export const clauseHref = (clause: string) => `/terms?version=${STORY_TERMS}#t-${clause.replace(".", "-")}`;
+export const storyClauseHref = (clause: string) => clauseHref(clause, STORY_TERMS);

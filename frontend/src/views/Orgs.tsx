@@ -1,5 +1,6 @@
 /** Your Organizations: the ones you own and the ones you belong to, and a way to make one. */
 
+import { tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Building2, ChevronRight, Plus, RefreshCw } from "lucide-react";
@@ -52,6 +53,7 @@ function NewOrg({ onCancel }: { onCancel: () => void }) {
 export default function Orgs() {
   const t = useT();
   const [orgs, setOrgs] = useState<Org[] | null>(null);
+  useTour("orgs", { ready: !!orgs });
   const [problem, setProblem] = useState("");
   const [adding, setAdding] = useState(false);
 
@@ -73,7 +75,7 @@ export default function Orgs() {
           <button type="button" className="icon-btn" onClick={() => void load()} aria-label={t("actions.lookAgain")} title={t("actions.lookAgain")}>
             <RefreshCw size={18} aria-hidden />
           </button>
-          {!adding && <button type="button" className="btn btn-go" onClick={() => setAdding(true)}><Plus size={18} aria-hidden />{t("org.new")}</button>}
+          {!adding && <button type="button" className="btn btn-go" onClick={() => setAdding(true)} {...tourTarget("orgs.new")}><Plus size={18} aria-hidden />{t("org.new")}</button>}
         </div>
       </div>
       <p className="muted">{t("org.lead")}</p>
@@ -82,7 +84,7 @@ export default function Orgs() {
       {!orgs && !problem && <div className="card panel"><Waiting heading={t("waiting.fetchingOrgs")} /></div>}
       {orgs && !orgs.length && !adding && <p className="card panel muted">{t("org.none")}</p>}
       {orgs && orgs.length > 0 && (
-        <ul className="card-list">
+        <ul className="card-list" {...tourTarget("orgs.list")}>
           {orgs.map((o) => (
             <li key={o.org_id}>
               <Link to={orgHref(o.org_id)} className="card panel org-card">

@@ -3,6 +3,7 @@
  * always filed in one, so the form opens only once a Project is chosen.
  */
 
+import { tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Building2, FolderOpen, Plus } from "lucide-react";
@@ -14,6 +15,7 @@ import Waiting from "./Waiting";
 export default function ProjectPicker() {
   const t = useT();
   const [filed, setFiled] = useState<{ org: OrgDetail; projects: ProjectSummary[] }[] | null>(null);
+  useTour("pick", { ready: !!filed });
   const [problem, setProblem] = useState("");
 
   useEffect(() => {
@@ -37,8 +39,8 @@ export default function ProjectPicker() {
       <p className="muted">{t("filing.says")}</p>
       {problem && <p className="error">{problem}</p>}
       {!filed && !problem && <Waiting heading={t("waiting.fetchingList")} />}
-      {(filed ?? []).filter((f) => f.projects.length).map(({ org, projects }) => (
-        <section key={org.org_id} className="card panel grid gap-2">
+      {(filed ?? []).filter((f) => f.projects.length).map(({ org, projects }, i) => (
+        <section key={org.org_id} className="card panel grid gap-2" {...(i === 0 ? tourTarget("pick.projects") : {})}>
           <h2 className="panel-title flex items-center gap-2">
             <Building2 size={18} aria-hidden /><Link to={orgHref(org.org_id)} className="ent">{org.name}</Link>
           </h2>
