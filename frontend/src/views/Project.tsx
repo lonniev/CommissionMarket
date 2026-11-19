@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Archive, ArchiveRestore, ArrowLeft, Pencil, Plus, RefreshCw } from "lucide-react";
+import { Archive, ArchiveRestore, ArrowLeft, FolderInput, Pencil, Plus, RefreshCw } from "lucide-react";
 import BudgetBar from "../components/BudgetBar";
 import CommissionRow from "../components/CommissionRow";
 import { orgHref, People } from "../components/Person";
@@ -10,7 +10,8 @@ import ProjectForm from "../components/ProjectForm";
 import Waiting from "../components/Waiting";
 import { useT } from "../i18n";
 import { archiveProject, getProject, type Project as ProjectView } from "../lib/orgs";
-import { listTasks, type Task } from "../lib/tasks";
+import { fileTask, listTasks, type Task } from "../lib/tasks";
+import { useProjectNames } from "../lib/useProjectNames";
 
 function Defaults({ project }: { project: ProjectView }) {
   const t = useT();
@@ -36,6 +37,9 @@ export default function Project() {
   const t = useT();
   const [project, setProject] = useState<ProjectView | null>(null);
   const [tasks, setTasks] = useState<Task[] | null>(null);
+  /** Commissions you posted that are filed elsewhere, or nowhere: ones you may move here. */
+  const [elsewhere, setElsewhere] = useState<Task[]>([]);
+  const [moving, setMoving] = useState(false);
   const [problem, setProblem] = useState("");
   const [editing, setEditing] = useState(false);
   const now = Math.floor(Date.now() / 1000);
@@ -46,6 +50,7 @@ export default function Project() {
       const [p, all] = await Promise.all([getProject(projectId), listTasks()]);
       setProject(p);
       setTasks(all.filter((x) => x.project_id === projectId));
+      setElsewhere(all.filter((x) => x.project_id !== projectId && x.your_roles.includes("purchaser")));
     } catch (e) {
       setProblem((e as Error).message);
     }
@@ -55,6 +60,19 @@ export default function Project() {
   async function archive(archived: boolean) {
     try {
       await archiveProject(orgId, projectId, archived);
+      await load();
+    } catch (e) {
+      setProblem((e as Error).message);
+    }
+  }
+
+  const names = useProjectNames(elsewhere);
+
+  async function moveHere(task: Task) {
+    if (!project) return;
+    setProblem("");
+    try {
+      await fileTask(task.task_id, project.org_id, projectId);
       await load();
     } catch (e) {
       setProblem((e as Error).message);
@@ -100,13 +118,42 @@ export default function Project() {
             <section className="card panel grid gap-2">
               <h2 className="panel-title">{t("project.defaults")}</h2>
               <Defaults project={project} />
+              <p className="muted text-sm">{t("project.defaultsNote")}</p>
             </section>
           </div>
           <section className="card panel grid gap-2">
             <h2 className="panel-title">{t("nav.commissions")} <span className="muted num">({tasks?.length ?? 0})</span></h2>
             {tasks && !tasks.length && <p className="muted">{t("project.noCommissions")}</p>}
             {tasks && tasks.length > 0 && <ul className="row-list">{tasks.map((x) => <CommissionRow key={x.task_id} task={x} now={now} />)}</ul>}
+            {!project.archived && elsewhere.length > 0 && !moving && (
+              <div className="flex justify-end">
+                <button type="button" className="chip" onClick={() => setMoving(true)}>
+                  <FolderInput size={16} aria-hidden />{t("move.here")}
+                </button>
+              </div>
+            )}
           </section>
+          {!project.archived && moving && (
+            <section className="card panel grid gap-2">
+              <h2 className="panel-title">{t("move.hereTitle")} <span className="muted num">({elsewhere.length})</span></h2>
+              <p className="muted text-sm">{t("move.says")}</p>
+              <ul className="row-list">
+                {elsewhere.map((x) => (
+                  <CommissionRow key={x.task_id} task={x} now={now} project={names.get(x.project_id) ?? (x.project_id ? undefined : t("move.unfiled"))}
+                    after={(
+                      <div className="flex justify-end px-2 pb-3">
+                        <button type="button" className="chip chip-accent" onClick={() => void moveHere(x)}>
+                          <FolderInput size={16} aria-hidden />{t("move.moveHere")}
+                        </button>
+                      </div>
+                    )} />
+                ))}
+              </ul>
+              <div className="flex justify-end">
+                <button type="button" className="btn btn-quiet" onClick={() => setMoving(false)}>{t("move.done")}</button>
+              </div>
+            </section>
+          )}
           {owner && (
             <div className="flex justify-end">
               {project.archived ? (

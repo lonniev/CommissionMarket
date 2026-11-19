@@ -78,6 +78,11 @@ export const saveOrg = async (name: string, about: string, orgId = "") =>
   (await ask<{ org_id: string }>("save_organization", { name, about, org_id: orgId })).org_id;
 export const saveMember = async (orgId: string, member: string, label: string) => { await ask("save_member", { org_id: orgId, member, label }); };
 export const removeMember = async (orgId: string, member: string) => { await ask("remove_member", { org_id: orgId, member }); };
+/** Every open Project you may file a commission in, by Organization: owners and members may. */
+export async function postableProjects(): Promise<{ org: OrgDetail; projects: ProjectSummary[] }[]> {
+  const detail = await Promise.all((await listOrgs()).map((o) => getOrg(o.org_id)));
+  return detail.map((org) => ({ org, projects: org.projects.filter((p) => !p.archived) }));
+}
 export const getProject = async (projectId: string) => (await ask<{ project: Project }>("get_project", { project_id: projectId })).project;
 export const archiveProject = async (orgId: string, projectId: string, archived: boolean) => {
   await ask("archive_project", { org_id: orgId, project_id: projectId, archived });

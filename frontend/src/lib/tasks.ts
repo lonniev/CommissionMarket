@@ -224,6 +224,10 @@ export const isCommission = (task: Pick<Task, "cover">) => Boolean(task.cover);
 
 export const listTasks = async () => (await ask<{ tasks: Task[] }>("list_tasks", { site: SITE })).tasks.filter(isCommission);
 
+/** Move a commission you posted into a Project, or to another: its terms and signatures stand. */
+export const fileTask = async (taskId: string, orgId: string, projectId: string) =>
+  (await ask<{ task: Task }>("file_task", { task_id: taskId, org_id: orgId, project_id: projectId })).task;
+
 export const getTask = (taskId: string) => ask<{ task: Task; payout?: Invoice }>("get_task", { task_id: taskId });
 
 export const taskHistory = async (taskId: string) =>

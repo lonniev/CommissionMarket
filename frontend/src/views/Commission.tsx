@@ -105,7 +105,7 @@ export default function Commission() {
       </div>
 
       <section className="card panel grid gap-3">
-        <ProjectCrumb task={task} />
+        <ProjectCrumb task={task} onMoved={setTask} />
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="page-title">{task.title}</h1>
           <StandingBadge standing={task.standing} />
