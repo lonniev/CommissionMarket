@@ -1,5 +1,5 @@
 /**
- * The lessons in the reader's language, read through the shared package
+ * The lessons and quotations in the reader's language, read through the shared package
  * (`useContent`), English for any a language lacks.
  */
 
@@ -9,10 +9,13 @@ import english from "../content/en/index.ts";
 import { CONTENT } from "../i18n/index.ts";
 import { libraryIn, type Library, type LessonsText } from "./lessons.ts";
 import type { PlayByPlayText } from "./playByPlay.ts";
+import type { QuoteText } from "./quotes.ts";
 
 /** Everything one language's `src/content/<code>/` folder supplies. */
 export type LanguageContent = {
   lessons: LessonsText;
+  /** Read while a page waits on Task Booth. */
+  quotes: QuoteText[];
   /** English always has it; a language without it shows the English. */
   playByPlay?: PlayByPlayText;
 };
@@ -27,3 +30,6 @@ export function useLessons(): Library {
 export function usePlayByPlay(): PlayByPlayText {
   return useContent<PlayByPlayText>(CONTENT, "playByPlay") ?? english.playByPlay!;
 }
+
+/** The quotations for a wait. */
+export const useQuotes = (): QuoteText[] => useContent<QuoteText[]>(CONTENT, "quotes") ?? english.quotes;

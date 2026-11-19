@@ -67,3 +67,12 @@ for (const [code, pack] of Object.entries(packs)) {
     }
   });
 }
+
+for (const [code, pack] of Object.entries(packs)) {
+  test(`${code}: a quotation for every one in English, each with its author`, () => {
+    assert.ok(english.quotes.length > 0);
+    assert.equal(pack.quotes.length, english.quotes.length);
+    assert.equal(new Set(pack.quotes.map((q) => q.text)).size, pack.quotes.length);
+    for (const q of pack.quotes) assert.ok(q.text.trim() && q.author.trim(), q.text);
+  });
+}

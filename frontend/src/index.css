@@ -252,10 +252,14 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 .points { display: grid; gap: 0.5rem; list-style: disc; padding-left: 1.25rem; }
 
 /* A wait. */
-.waiting { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; color: var(--tb-muted); }
-.spin { animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+.waiting { display: grid; gap: 0.75rem; text-align: right; }
+.waiting-head { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; color: var(--tb-muted); }
+.waiting-spin { width: 1.25rem; height: 1.25rem; }
+.waiting-figure { margin: 0; }
+.waiting-text { margin: 0; font-size: 1.125rem; line-height: 1.45; font-style: italic; }
+.waiting-mark { color: var(--gold); font-style: normal; }
+.waiting-author { margin-top: 0.25rem; color: var(--tb-muted); font-size: 0.875rem; }
+.waiting-author::before { content: "— "; }
 
 /* Profile. */
 .account-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); align-items: start; }

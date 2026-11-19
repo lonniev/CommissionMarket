@@ -1,0 +1,1 @@
+- Every wait shows a quotation while Task Booth answers: patrons of the arts, famous commissions, craftsmen such as Gaudí, and contract lawyers, in all six languages.
