@@ -1,2 +1,0 @@
-- Each block of the commission form and page has its own picture: 📝 👥 🏅 📅 💰 ⚖️ 📜.
-- A deposit or milestone shows what it is a share of: 10 % × 1,000 sats = 100 sats.

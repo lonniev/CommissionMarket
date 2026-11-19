@@ -1,4 +1,0 @@
-- 📅 Schedule: "If the work is late" offers **Steps**, rows of "more than N hours or days late → X% off", rising.
-- 📅 Schedule: every commission sets its **failure point**, "Failure to deliver after N hours or days late". It's 7 days unless changed, and it must come after the last step. The escrow refund floor counts from it.
-- A commission that fails to deliver says so, with when the professional may **Claim cause** and the arbiter's **Uphold / Reject**. Once the failure stands without cause, the escrow panel says the client and the arbiter sign the whole escrow back to the client (Terms §14.10).
-- The play-by-play's "painter vanishes" now follows the new §14: no clawback of what was paid ahead, the whole escrow back to Rosa, and the sketch becomes hers.
