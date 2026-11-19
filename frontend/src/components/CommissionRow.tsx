@@ -1,5 +1,6 @@
 /** One commission as a row in a list: its title, standing, needed-by day, offer, Project and price. */
 
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { CircleAlert, FileSignature, FolderOpen } from "lucide-react";
 import { say, useT } from "../i18n";
@@ -11,8 +12,10 @@ import { commissionHref } from "./Person";
 import Sats from "./Sats";
 import StandingBadge from "./StandingBadge";
 
-/** `note` says what is asked of you, in place of the plain "needs you". */
-export default function CommissionRow({ task, now, project, note }: { task: Task; now: number; project?: string; note?: string }) {
+/** `note` says what is asked of you, in place of the plain "needs you"; `after` is a line under the row, outside its link. */
+export default function CommissionRow({ task, now, project, note, after }: {
+  task: Task; now: number; project?: string; note?: string; after?: ReactNode;
+}) {
   const t = useT();
   const yours = Boolean(note) || laneOf(task) === "yours";
   return (
@@ -35,6 +38,7 @@ export default function CommissionRow({ task, now, project, note }: { task: Task
         </div>
         <Sats sats={topSats(task.rubric)} />
       </Link>
+      {after}
     </li>
   );
 }

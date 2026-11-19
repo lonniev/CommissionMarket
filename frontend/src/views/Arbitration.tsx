@@ -1,16 +1,17 @@
 /**
- * Every commission that names you as its arbiter: those asking you to sign their offer, those
- * waiting on your decision, those you are watching, and those closed. Each row says what is
- * asked of you and opens the commission, where you sign, decide, or sign an escrow split.
+ * Every commission you are part of that names an arbiter, by your part in it: those you
+ * arbitrate (with what each asks of you), those you posted, the work you do, and those open
+ * to you. Each row names its arbiter and opens the commission, where you sign or decide.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { RefreshCw } from "lucide-react";
+import { CircleCheck, CircleDashed, RefreshCw, Scale } from "lucide-react";
+import { NpubChip } from "@tollbooth-dpyc/web/react";
 import CommissionRow from "../components/CommissionRow";
 import Waiting from "../components/Waiting";
 import { useT } from "../i18n";
-import { arbiterDue, dueKey, isArbiterOf, SHELVES, shelfOf } from "../lib/arbiter";
+import { arbiterDue, arbiterOf, dueKey, SHELVES, shelfOf } from "../lib/arbiter";
 import { listTasks, type Task } from "../lib/tasks";
 
 export default function Arbitration() {
@@ -22,7 +23,7 @@ export default function Arbitration() {
   const load = useCallback(async () => {
     setProblem("");
     try {
-      setTasks((await listTasks()).filter(isArbiterOf));
+      setTasks((await listTasks()).filter((x) => shelfOf(x) !== null));
     } catch (e) {
       setProblem((e as Error).message);
     }
@@ -57,7 +58,19 @@ export default function Arbitration() {
           <ul className="row-list">
             {rows.map((task) => {
               const due = arbiterDue(task);
-              return <CommissionRow key={task.task_id} task={task} now={now} note={due ? t(dueKey(due)) : undefined} />;
+              return (
+                <CommissionRow key={task.task_id} task={task} now={now} note={due ? t(dueKey(due)) : undefined}
+                  after={(
+                    <div className="arbiter-line">
+                      <Scale size={16} aria-hidden className="muted" />
+                      <span className="muted">{t("offer.arbiter")}</span>
+                      <NpubChip npub={arbiterOf(task)} />
+                      {task.agreement.arbiter_signed
+                        ? <span className="inline-flex items-center gap-1 text-sm"><CircleCheck size={14} aria-hidden className="ok" />{t("arbiter.signed")}</span>
+                        : <span className="inline-flex items-center gap-1 text-sm muted"><CircleDashed size={14} aria-hidden />{t("offer.notSigned")}</span>}
+                    </div>
+                  )} />
+              );
             })}
           </ul>
         </section>
