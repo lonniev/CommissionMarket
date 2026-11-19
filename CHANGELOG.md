@@ -5,6 +5,20 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.3.0] — 2026-11-18
+
+### Added
+
+- 📅 Schedule: "If the work is late" offers **Steps**, rows of "more than N hours or days late → X% off", rising.
+- 📅 Schedule: every commission sets its **failure point**, "Failure to deliver after N hours or days late". It's 7 days unless changed, and it must come after the last step. The escrow refund floor counts from it.
+- A commission that fails to deliver says so, with when the professional may **Claim cause** and the arbiter's **Uphold / Reject**. Once the failure stands without cause, the escrow panel says the client and the arbiter sign the whole escrow back to the client (Terms §14.10).
+- The play-by-play's "painter vanishes" now follows the new §14: no clawback of what was paid ahead, the whole escrow back to Rosa, and the sketch becomes hers.
+
+### Changed
+
+- Each block of the commission form and page has its own picture: 📝 👥 🏅 📅 💰 ⚖️ 📜.
+- A deposit or milestone shows what it is a share of: 10 % × 1,000 sats = 100 sats.
+
 ## [0.2.0] — 2026-11-18
 
 ### Added
