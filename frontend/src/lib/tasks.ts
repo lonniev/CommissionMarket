@@ -45,6 +45,8 @@ export interface Cover {
   venue: string;
   /** Someone both parties trust: signs the offer, decides an appeal, holds the third escrow key. */
   arbiter_npub: string;
+  /** Someone who signs the offer and gives one signed opinion of the finished work, as advice (terms 8.6). */
+  inspector_npub?: string;
   /** The Balance is held at a Cashu mint until two of the three agree how it divides (terms 6). */
   escrow: boolean;
   escrow_mint: string;
@@ -114,7 +116,9 @@ export interface Task {
   deposit?: Deposit;
   milestones: Milestone[];
   cover: Cover | null;
-  agreement: { purchaser_signed: boolean; performer_signed: boolean; arbiter_signed?: boolean };
+  agreement: { purchaser_signed: boolean; performer_signed: boolean; arbiter_signed?: boolean; inspector_signed?: boolean };
+  /** The inspector's signed opinion of the delivered work, once given (terms 8.7). */
+  inspection?: Inspection | null;
   /** Where the escrow stands, once its invoice is asked for. */
   escrow?: Escrow | null;
   failure?: Failure | null;
@@ -123,6 +127,19 @@ export interface Task {
 }
 
 export type EscrowRole = "purchaser" | "performer" | "arbiter";
+
+export const VERDICTS = ["verified", "concerns", "not_verified"] as const;
+export type Verdict = (typeof VERDICTS)[number];
+
+/** The inspector's opinion: advice that grades nothing and moves no escrow (terms 8.8). */
+export interface Inspection {
+  verdict: Verdict;
+  reasons: string;
+  at: number;
+  inspector: string;
+  statement_hash: string;
+  method: string;
+}
 
 /** A commission's escrow as anyone on it reads it: no proofs, no blinding factors. */
 export interface Escrow {
@@ -260,7 +277,7 @@ export const decideCause = async (taskId: string, ruling: "upheld" | "rejected",
 export interface Offer {
   statement: string;
   statement_hash: string;
-  signatures: Partial<Record<EscrowRole, { signer: string; signed_at: number; method: string }>>;
+  signatures: Partial<Record<EscrowRole | "inspector", { signer: string; signed_at: number; method: string }>>;
 }
 
 export const offerTerms = (taskId: string) => ask<Offer>("offer_terms", { task_id: taskId });
@@ -272,6 +289,35 @@ export const requestSignature = (taskId: string) =>
 /** Collect that reply and keep it as their signature. */
 export const receiveSignature = async (taskId: string, nonce: string, statementHash: string) =>
   (await ask<{ task: Task }>("receive_offer_signature", { task_id: taskId, nonce, statement_hash: statementHash })).task;
+
+// ── The inspector's opinion ─────────────────────────────────────────────────
+
+/** Ask Task Booth to DM the opinion to the inspector; their reply is their signature. */
+export const requestInspection = (taskId: string, verdict: Verdict, reasons: string) =>
+  ask<{ nonce: string; statement_hash: string }>("request_inspection_signature", { task_id: taskId, verdict, reasons });
+
+/** Collect that reply and keep it as the inspector's opinion. */
+export const receiveInspection = async (taskId: string, verdict: Verdict, reasons: string, nonce: string, statementHash: string) =>
+  (await ask<{ task: Task }>("receive_inspection_signature",
+    { task_id: taskId, verdict, reasons, nonce, statement_hash: statementHash })).task;
+
+// ── Reputation ──────────────────────────────────────────────────────────────
+
+export type VerdictCounts = Record<Verdict, number>;
+
+/** What an npub did on commissions, role by role: counts only (Task Booth's `reputation`). */
+export interface Reputation {
+  npub: string;
+  client: { commissions: number; graded: number; graded_in_time: number; owed: number; paid: number; appeals_lost: number };
+  artist: {
+    commissions: number; delivered: number; on_time: number; late: number; failed_without_cause: number;
+    failed_with_cause: number; appeals_won: number; appeals_lost: number; grade_pct: number | null; verdicts: VerdictCounts;
+  };
+  arbiter: { named: number; signed: number; decided: number; decided_in_time: number };
+  inspector: { named: number; signed: number; opinions: number; opinions_in_time: number; verdicts: VerdictCounts };
+}
+
+export const reputation = (npub: string) => ask<Reputation>("reputation", { of_npub: npub });
 
 // ── Paying: ahead, and the award ────────────────────────────────────────────
 

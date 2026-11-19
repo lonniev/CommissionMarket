@@ -8,6 +8,7 @@ import Actions from "../components/Actions";
 import FailureNote from "../components/FailureNote";
 import ContractBlocks from "../components/ContractBlocks";
 import MoneyPanel from "../components/MoneyPanel";
+import InspectionPanel from "../components/InspectionPanel";
 import OfferPanel from "../components/OfferPanel";
 import { commissionHref, People, Person } from "../components/Person";
 import ProjectCrumb from "../components/ProjectCrumb";
@@ -132,6 +133,7 @@ export default function Commission() {
       </section>
 
       {task.cover && <OfferPanel task={task} onChanged={setTask} />}
+      {task.cover?.inspector_npub && <InspectionPanel task={task} onChanged={setTask} />}
       {task.cover?.escrow && (
         <Suspense fallback={null}>
           <EscrowPanel task={task} now={now} onChanged={() => void load()} />

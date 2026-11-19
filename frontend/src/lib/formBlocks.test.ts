@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { BLOCKS, blockOf, summaryOf, type Shape } from "./formBlocks.ts";
 
 const shape: Shape = {
-  title: "A portrait of Murray Rothbard", deliverables: 2, invited: 3, arbiter: "npub1pmywygyld7vprgda3v8sd3lxnzuq",
+  title: "A portrait of Murray Rothbard", deliverables: 2, invited: 3, arbiter: "npub1pmywygyld7vprgda3v8sd3lxnzuq", inspector: "",
   grades: 4, topSats: 100000, neededBy: "30 Dec", late: "discount", depositPct: 20, milestones: 1,
   escrowMint: "https://testnut.cashu.space", deemedGrade: "Good", deemedDays: 7, ip: "assign", law: "Vermont",
 };

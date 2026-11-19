@@ -18,6 +18,7 @@ const Home = lazy(() => import("./views/Home"));
 const Learn = lazy(() => import("./views/Learn"));
 const LessonPage = lazy(() => import("./views/LessonPage"));
 const NewCommission = lazy(() => import("./views/NewCommission"));
+const PersonPage = lazy(() => import("./views/PersonPage"));
 const Org = lazy(() => import("./views/Org"));
 const Orgs = lazy(() => import("./views/Orgs"));
 const Project = lazy(() => import("./views/Project"));
@@ -155,6 +156,7 @@ function Site() {
               <Route path="arbitration" element={<SignedIn><Arbitration /></SignedIn>} />
               <Route path="wallet" element={<SignedIn><WalletPage /></SignedIn>} />
               <Route path="profile" element={<SignedIn><Profile /></SignedIn>} />
+              <Route path="people/:npub" element={<PersonPage />} />
               <Route path="terms" element={<Terms />} />
               <Route path="guide" element={<Guide />} />
               <Route path="learn" element={<Learn />} />

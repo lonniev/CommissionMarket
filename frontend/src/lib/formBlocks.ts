@@ -24,7 +24,7 @@ export const BLOCK_ICON: Record<BlockId, string> = {
 
 const BY_KEY: [RegExp, BlockId][] = [
   [/^form\.(needTitle|needDeliverable|deliverablesTooMany|deliverableLong|badSpecUrl|badSpecHash)$/, "spec"],
-  [/^form\.(needAudience|audienceTooMany|notAnNpub|badArbiter|escrowNeedsArbiter)$/, "people"],
+  [/^form\.(needAudience|audienceTooMany|notAnNpub|badArbiter|escrowNeedsArbiter|badInspector|inspectorIsArbiter)$/, "people"],
   [/^rubric\./, "grades"],
   [/^(form\.needDay|late\.)/, "schedule"],
   [/^form\.(depositPct|aheadCap|milestone\w*|escrowNeedsMint|badRefundDays)$/, "payments"],
@@ -43,6 +43,7 @@ export interface Shape {
   deliverables: number;
   invited: number;
   arbiter: string;
+  inspector: string;
   grades: number;
   topSats: number;
   neededBy: string;
@@ -74,7 +75,8 @@ export function summaryOf(id: BlockId, s: Shape): Said[] {
         { key: "block.sum.deliverables", vars: { count: s.deliverables } }];
     case "people":
       return [{ key: "block.sum.invited", vars: { count: s.invited } },
-        s.arbiter ? { key: "block.sum.arbiter", vars: { who: `${s.arbiter.slice(0, 10)}…` } } : { key: "block.sum.noArbiter" }];
+        s.arbiter ? { key: "block.sum.arbiter", vars: { who: `${s.arbiter.slice(0, 10)}…` } } : { key: "block.sum.noArbiter" },
+        ...(s.inspector ? [{ key: "block.sum.inspector", vars: { who: `${s.inspector.slice(0, 10)}…` } } satisfies Said] : [])];
     case "grades":
       return [{ key: "block.sum.grades", vars: { count: s.grades, top: s.topSats.toLocaleString() } }];
     case "schedule":

@@ -1,18 +1,35 @@
 /**
- * Every commission you are part of that names an arbiter, by your part in it: those you
- * arbitrate (with what each asks of you), those you posted, the work you do, and those open
- * to you. Each row names its arbiter and opens the commission, where you sign or decide.
+ * Every commission you are part of that names an arbiter or an inspector, by your part in it:
+ * those you arbitrate or inspect (with what each asks of you), those you posted, the work you
+ * do, and those open to you. Each row names its arbiter and inspector and opens the
+ * commission, where you sign, decide or give your opinion.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CircleCheck, CircleDashed, RefreshCw, Scale } from "lucide-react";
+import type { ReactNode } from "react";
+import { CircleCheck, CircleDashed, RefreshCw, Scale, Search } from "lucide-react";
 import { NpubChip } from "@tollbooth-dpyc/web/react";
 import CommissionRow from "../components/CommissionRow";
 import Waiting from "../components/Waiting";
 import { useT } from "../i18n";
-import { arbiterDue, arbiterOf, dueKey, SHELVES, shelfOf } from "../lib/arbiter";
+import { arbiterDue, arbiterOf, dueKey, inspectorDue, inspectorDueKey, inspectorOf, SHELVES, shelfOf } from "../lib/arbiter";
 import { listTasks, type Task } from "../lib/tasks";
+
+/** Who stands in one role on a commission, and whether they signed its offer. */
+function WhoLine({ icon, label, npub, signed }: { icon: ReactNode; label: string; npub: string; signed: boolean }) {
+  const t = useT();
+  return (
+    <div className="arbiter-line">
+      {icon}
+      <span className="muted">{label}</span>
+      <NpubChip npub={npub} />
+      {signed
+        ? <span className="inline-flex items-center gap-1 text-sm"><CircleCheck size={14} aria-hidden className="ok" />{t("arbiter.signed")}</span>
+        : <span className="inline-flex items-center gap-1 text-sm muted"><CircleDashed size={14} aria-hidden />{t("offer.notSigned")}</span>}
+    </div>
+  );
+}
 
 export default function Arbitration() {
   const t = useT();
@@ -58,17 +75,21 @@ export default function Arbitration() {
           <ul className="row-list">
             {rows.map((task) => {
               const due = arbiterDue(task);
+              const asked = inspectorDue(task);
+              const note = due ? t(dueKey(due)) : asked ? t(inspectorDueKey(asked)) : undefined;
               return (
-                <CommissionRow key={task.task_id} task={task} now={now} note={due ? t(dueKey(due)) : undefined}
+                <CommissionRow key={task.task_id} task={task} now={now} note={note}
                   after={(
-                    <div className="arbiter-line">
-                      <Scale size={16} aria-hidden className="muted" />
-                      <span className="muted">{t("offer.arbiter")}</span>
-                      <NpubChip npub={arbiterOf(task)} />
-                      {task.agreement.arbiter_signed
-                        ? <span className="inline-flex items-center gap-1 text-sm"><CircleCheck size={14} aria-hidden className="ok" />{t("arbiter.signed")}</span>
-                        : <span className="inline-flex items-center gap-1 text-sm muted"><CircleDashed size={14} aria-hidden />{t("offer.notSigned")}</span>}
-                    </div>
+                    <>
+                      {arbiterOf(task) && (
+                        <WhoLine icon={<Scale size={16} aria-hidden className="muted" />} label={t("offer.arbiter")}
+                          npub={arbiterOf(task)} signed={Boolean(task.agreement.arbiter_signed)} />
+                      )}
+                      {inspectorOf(task) && (
+                        <WhoLine icon={<Search size={16} aria-hidden className="muted" />} label={t("offer.inspector")}
+                          npub={inspectorOf(task)} signed={Boolean(task.agreement.inspector_signed)} />
+                      )}
+                    </>
                   )} />
               );
             })}

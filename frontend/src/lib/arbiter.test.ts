@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { arbiterDue, shelfOf } from "./arbiter.ts";
+import { arbiterDue, inspectorDue, shelfOf } from "./arbiter.ts";
 
-type Role = "arbiter" | "tie_breaker" | "purchaser" | "performer" | "audience";
+type Role = "arbiter" | "tie_breaker" | "purchaser" | "performer" | "audience" | "inspector";
 const cover = { arbiter_npub: "npub1arbiter" } as never;
 const base = {
   standing: "posted" as const, final: false, your_roles: ["arbiter", "tie_breaker"] as Role[], cover,
@@ -42,4 +42,19 @@ test("a finished job closes, unless its escrow is still to settle; no arbiter, n
   assert.equal(shelfOf({ ...base, your_roles: ["purchaser"], standing: "missed", final: true, escrow: escrowOf("funded") }), "client");
   assert.equal(shelfOf({ ...base, cover: null }), null);
   assert.equal(shelfOf({ ...base, cover: { arbiter_npub: "" } as never }), null);
+});
+
+test("an inspector signs the offer, then gives an opinion once the work is delivered", () => {
+  const inspected = { ...base, cover: { arbiter_npub: "", inspector_npub: "npub1inspector" } as never, your_roles: ["inspector"] as Role[] };
+  assert.equal(inspectorDue(inspected), "sign");
+  assert.equal(shelfOf(inspected), "inspectAsked");
+  const signedOn = { ...inspected, agreement: { ...base.agreement, inspector_signed: true } };
+  assert.equal(shelfOf({ ...signedOn, standing: "claimed" }), "inspecting");
+  assert.equal(shelfOf({ ...signedOn, standing: "done" }), "inspectDue");
+  // An opinion may come after payment, so a paid job waits for it rather than closing.
+  assert.equal(shelfOf({ ...signedOn, standing: "paid", final: true }), "inspectDue");
+  const opinion = { verdict: "verified" as const, reasons: "Fine.", at: 1, inspector: "npub1inspector", statement_hash: "", method: "" };
+  assert.equal(shelfOf({ ...signedOn, standing: "paid", final: true, inspection: opinion }), "closed");
+  assert.equal(shelfOf({ ...signedOn, your_roles: ["purchaser"], standing: "done" }), "client");
+  assert.equal(inspectorDue({ ...signedOn, your_roles: ["purchaser"], standing: "done" }), null);
 });
