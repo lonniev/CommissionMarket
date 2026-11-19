@@ -1,0 +1,1 @@
+- Move a commission into a Project: a Project page lists your commissions filed elsewhere, or nowhere, with **Move here**, and a commission's client can move it from its own page. Its terms and signatures stand; a Project's default terms only start new commissions, as its page now says.
