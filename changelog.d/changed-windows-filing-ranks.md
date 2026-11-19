@@ -1,3 +1,0 @@
-- **Organizations** is the first tab, and a new commission is filed in a Project first: "New commission" asks which Project of your Organizations, and points you to Organizations when you have none.
-- The ⚖️ Conclusion block sets the **time to appeal**, the **arbiter's time to rule** and the **time to pay**, in hours or days, in place of a fixed 7 days. The commission page and the escrow refund floor follow them.
-- Reputation ranks follow the thresholds the Operator sets on its Profile page.
