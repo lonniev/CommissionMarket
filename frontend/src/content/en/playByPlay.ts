@@ -38,6 +38,9 @@ export const playByPlay: PlayByPlayText = {
     ["Escrow", "50,000 sats at a mint the site offers"],
     ["Refund date", "28 days after delivery · day 58"],
     ["Failure to deliver", "More than 7 days late · day 37"],
+    ["Time to appeal", "7 days"],
+    ["Arbiter's time to rule", "7 days"],
+    ["Time to pay", "7 days"],
   ],
   clock: {
     title: "The clock",

@@ -6,9 +6,9 @@
 
 import { nip19 } from "nostr-tools";
 import type { Said } from "../i18n/index.ts";
-import { failDays, failFrom, rowOf, type LateStep, type Unit } from "./late.ts";
+import { failDays, failFrom, hoursOf, rowOf, type LateStep, type Unit } from "./late.ts";
 import { MAX_AHEAD_PCT, MAX_MILESTONES, withinCap } from "./money.ts";
-import type { CoverInput, IpOption } from "./tasks.ts";
+import { DEFAULT_WINDOW_HOURS, WINDOWS, windowHours, type CoverInput, type IpOption, type WindowName } from "./tasks.ts";
 import { endOfDay } from "./when.ts";
 
 export const IP_OPTIONS: IpOption[] = ["assign", "license", "worker_keeps", "custom"];
@@ -16,16 +16,39 @@ export const MAX_DELIVERABLES = 20;
 export const MAX_DEEMED_DAYS = 60;
 export const MAX_AUDIENCE = 500;
 export const MAX_REFUND_DAYS = 90;
-/** Days the Standard Terms give an appeal or a claim of cause (4.6, 14.8), and the arbiter to decide it. */
-const APPEAL_DAYS = 7;
-const ARBITER_DAYS = 7;
+export const MAX_WINDOW_HOURS = 90 * 24;
 
 /**
  * The shortest refund period that cannot cut an appeal short, as Task Booth enforces it: the
- * failure point in whole days, the deemed-acceptance period, a week to appeal and a week to decide.
+ * deemed-acceptance period, then the hours to the failure point, the appeal window and the
+ * arbiter's ruling time, rounded up to whole days.
  */
-export const leastRefundDays = (deemedDays: number, failHours: number) =>
-  failDays(failHours) + deemedDays + APPEAL_DAYS + ARBITER_DAYS;
+export const leastRefundDays = (deemedDays: number, failHours: number, appealHours: number, rulingHours: number) =>
+  deemedDays + failDays(failHours + appealHours + rulingHours);
+
+/** One window as the form holds it: a count and its unit. */
+export interface WindowRow {
+  after: string;
+  unit: Unit;
+}
+
+/** The form's key for each window. */
+export const WINDOW_ROW: Record<WindowName, "appeal" | "ruling" | "pay"> = {
+  appeal_hours: "appeal", ruling_hours: "ruling", pay_hours: "pay",
+};
+
+/** A window in hours, or NaN while it is not a whole number from 1 hour to 90 days. */
+export function windowHoursOf(row: WindowRow): number {
+  const hours = hoursOf(whole(row.after), row.unit);
+  return Number.isNaN(hours) || hours < 1 || hours > MAX_WINDOW_HOURS ? NaN : hours;
+}
+
+/** The refund floor for the form as it stands; windows still being typed count as 7 days. */
+export function leastRefundOf(rows: CoverRows): number {
+  const deemed = rows.deemedGrade ? Number(rows.deemedDays) || 0 : 0;
+  const hours = (w: WindowName) => windowHoursOf(rows[WINDOW_ROW[w]]) || DEFAULT_WINDOW_HOURS;
+  return leastRefundDays(deemed, failHoursOf(rows), hours("appeal_hours"), hours("ruling_hours"));
+}
 
 /** The failure point the form holds in hours, or 0 while it is not a whole number. */
 export function failHoursOf(rows: Pick<CoverRows, "failAfter" | "failUnit">): number {
@@ -114,12 +137,19 @@ export interface CoverRows {
   /** When late becomes failure to deliver (terms 14.7). */
   failAfter: string;
   failUnit: Unit;
+  /** To appeal a grade or claim cause, for the arbiter to rule, and for the client to pay (terms 4.6, 14.8, 7.2). */
+  appeal: WindowRow;
+  ruling: WindowRow;
+  pay: WindowRow;
 }
+
+const weekRow = (): WindowRow => ({ after: "7", unit: "days" });
 
 export const blankCover = (): CoverRows => ({
   deliverables: "", specUrl: "", specHash: "", deemedGrade: "", deemedDays: "14", ip: "assign", ipCustom: "",
   confidential: false, consumer: false, thirdParty: false, law: "", venue: "",
   arbiter: "", inspector: "", escrow: false, mint: "", refundDays: "", failAfter: "7", failUnit: "days",
+  appeal: weekRow(), ruling: weekRow(), pay: weekRow(),
 });
 
 /**
@@ -150,12 +180,17 @@ export function coverFrom(rows: CoverRows, grades: string[], steps: LateStep[] =
   if (inspector && inspector === arbiter) return { problem: { key: "form.inspectorIsArbiter" } };
   const fail = failFrom(rows.failAfter, rows.failUnit, steps);
   if ("problem" in fail) return fail;
+  const windows = {} as Record<WindowName, number>;
+  for (const w of WINDOWS) {
+    windows[w] = windowHoursOf(rows[WINDOW_ROW[w]]);
+    if (Number.isNaN(windows[w])) return { problem: { key: `form.badWindow.${WINDOW_ROW[w]}`, vars: { max: MAX_WINDOW_HOURS / 24 } } };
+  }
   let refund = 0;
   if (rows.escrow) {
     if (!arbiter) return { problem: { key: "form.escrowNeedsArbiter" } };
     if (!deemed) return { problem: { key: "form.escrowNeedsDeemed" } };
     if (!rows.mint) return { problem: { key: "form.escrowNeedsMint" } };
-    const least = leastRefundDays(days, fail.hours);
+    const least = leastRefundDays(days, fail.hours, windows.appeal_hours, windows.ruling_hours);
     refund = whole(rows.refundDays);
     if (Number.isNaN(refund) || refund < least || refund > MAX_REFUND_DAYS) {
       return { problem: { key: "form.badRefundDays", vars: { least, most: MAX_REFUND_DAYS } } };
@@ -181,6 +216,7 @@ export function coverFrom(rows: CoverRows, grades: string[], steps: LateStep[] =
       escrow_mint: rows.escrow ? rows.mint : "",
       refund_days: refund,
       fail_after_hours: fail.hours,
+      ...windows,
     },
   };
 }
@@ -197,5 +233,7 @@ export function rowsOf(cover: CoverInput | null): CoverRows {
     refundDays: cover.refund_days ? String(cover.refund_days) : "",
     ...(cover.fail_after_hours ? { failAfter: rowOf(cover.fail_after_hours).after, failUnit: rowOf(cover.fail_after_hours).unit }
       : { failAfter: "7", failUnit: "days" as const }),
+    appeal: rowOf(windowHours(cover, "appeal_hours")), ruling: rowOf(windowHours(cover, "ruling_hours")),
+    pay: rowOf(windowHours(cover, "pay_hours")),
   };
 }

@@ -9,14 +9,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { FolderOpen, Maximize2, Plus, Trash2 } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { NpubField, NpubListField, useAppShell } from "@tollbooth-dpyc/web/react";
-import { useT } from "../i18n";
+import { say, useT } from "../i18n";
 import { BLOCKS, blockOf, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
-import { aheadFrom, audienceFrom, blankCover, coverFrom, failHoursOf, MAX_AUDIENCE, rowsOf, type CoverRows, type MilestoneRow } from "../lib/cover";
+import { aheadFrom, audienceFrom, blankCover, coverFrom, failHoursOf, MAX_AUDIENCE, rowsOf, windowHoursOf, type CoverRows, type MilestoneRow } from "../lib/cover";
 import { aheadPct, MAX_AHEAD_PCT, MAX_MILESTONES, shareOf } from "../lib/money";
 import { lateFrom, MAX_GRADES, rubricFrom, starterRows, type GradeRow, type LateKind } from "../lib/rubric";
-import { MAX_LATE_STEPS, starterSteps, stepRowsOf, type StepRow, type Unit } from "../lib/late";
+import { MAX_LATE_STEPS, spanSaid, starterSteps, stepRowsOf, type StepRow, type Unit } from "../lib/late";
 import { budgetLeft, coverFromDefaults, type Project } from "../lib/orgs";
-import { editTask, postTask, type Task } from "../lib/tasks";
+import { DEFAULT_WINDOW_HOURS, editTask, postTask, type Task } from "../lib/tasks";
 import { dayFrom, dayKeyOf, endOfDay } from "../lib/when";
 import { commissionHref, projectHref } from "./Person";
 import Sats from "./Sats";
@@ -344,7 +344,25 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             )}
           </div>
           <p className="muted text-sm">{t("cover.deemedHelp")}</p>
-          <p className="muted text-sm">{t("block.conclusionRules")} <Link to="/terms?version=v1#t-4-6" className="ent">§4.6</Link></p>
+          {(["appeal", "ruling", "pay"] as const).map((w) => (
+            <div key={w} className="step-row">
+              <span className="label">{t(`window.${w}`)}</span>
+              <input className="field num text-right" inputMode="numeric" value={cover[w].after} maxLength={4}
+                onChange={(e) => setCoverField(w, { ...cover[w], after: e.target.value })} aria-label={t(`window.${w}`)} />
+              <select className="field" value={cover[w].unit} onChange={(e) => setCoverField(w, { ...cover[w], unit: e.target.value as Unit })}
+                aria-label={t("late.unitLabel")}>
+                {UNITS.map((u) => <option key={u} value={u}>{t(`late.unit.${u}`)}</option>)}
+              </select>
+            </div>
+          ))}
+          <p className="muted text-sm">
+            {t("block.conclusionRules", {
+              appeal: say(t, spanSaid(windowHoursOf(cover.appeal) || DEFAULT_WINDOW_HOURS)),
+              ruling: say(t, spanSaid(windowHoursOf(cover.ruling) || DEFAULT_WINDOW_HOURS)),
+              pay: say(t, spanSaid(windowHoursOf(cover.pay) || DEFAULT_WINDOW_HOURS)),
+            })}{" "}
+            <Link to="/terms?version=v1#t-4-6" className="ent">§4.6</Link> <Link to="/terms?version=v1#t-7-2" className="ent">§7.2</Link>
+          </p>
       </>
     ),
     legal: (

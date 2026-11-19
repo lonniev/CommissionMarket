@@ -4,7 +4,7 @@ import { translate } from "@tollbooth-dpyc/web";
 import { registerCommission, say, WORDS, type Translate } from "../i18n/index.ts";
 import { failFrom, failSaid, failSummary, rowOf, starterSteps, stepRowsOf, stepsFrom } from "./late.ts";
 import { lateFrom } from "./rubric.ts";
-import { blankCover, coverFrom, failHoursOf, leastRefundDays } from "./cover.ts";
+import { blankCover, coverFrom, failHoursOf, leastRefundDays, leastRefundOf, rowsOf } from "./cover.ts";
 
 await registerCommission();
 const t: Translate = (key, vars) => translate(key, vars, WORDS);
@@ -43,8 +43,23 @@ test("the cover page carries the failure point, and the refund floor counts from
   assert.equal(keyOf(coverFrom({ ...blankCover(), deliverables: "One", failAfter: "1", failUnit: "days" }, ["Done"], [{ after_hours: 24, pct_off: 5 }])),
     "late.failAfterSteps");
   assert.equal(failHoursOf(blankCover()), 168);
-  assert.equal(leastRefundDays(7, 168), 28);
-  assert.equal(leastRefundDays(7, 10), 22);
+  assert.equal(leastRefundDays(7, 168, 168, 168), 28);
+  assert.equal(leastRefundDays(7, 10, 168, 168), 22);
+  assert.equal(leastRefundDays(1, 2, 2, 4), 2);
+});
+
+test("the cover page carries its three windows, and the refund floor follows them", () => {
+  const rows = { ...blankCover(), deliverables: "One", appeal: { after: "2", unit: "hours" as const },
+    ruling: { after: "4", unit: "hours" as const }, pay: { after: "1", unit: "days" as const } };
+  const made = coverFrom(rows, ["Done"]);
+  assert.ok("cover" in made);
+  assert.deepEqual([made.cover.appeal_hours, made.cover.ruling_hours, made.cover.pay_hours], [2, 4, 24]);
+  assert.deepEqual(rowsOf(made.cover).appeal, { after: "2", unit: "hours" });
+  assert.equal(leastRefundOf({ ...rows, failAfter: "2", failUnit: "hours" }), 1);
+  assert.equal(keyOf(coverFrom({ ...rows, pay: { after: "91", unit: "days" } }, ["Done"])), "form.badWindow.pay");
+  assert.equal(keyOf(coverFrom({ ...rows, appeal: { after: "0", unit: "hours" } }, ["Done"])), "form.badWindow.appeal");
+  // A cover signed before the windows were set reads as 7 days each.
+  assert.deepEqual(rowsOf({ ...made.cover, appeal_hours: undefined }).appeal, { after: "7", unit: "days" });
 });
 
 test("the failure point is said in the unit it was set in", () => {

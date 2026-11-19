@@ -86,3 +86,9 @@ export function failSummary(hours: number): Said {
   const { after, unit } = rowOf(hours);
   return { key: unit === "days" ? "block.sum.failDays" : "block.sum.failHours", vars: { count: Number(after) } };
 }
+
+/** A window as words: "7 days", "2 hours". */
+export function spanSaid(hours: number): Said {
+  const { after, unit } = rowOf(hours);
+  return { key: unit === "days" ? "window.days" : "window.hours", vars: { count: Number(after) } };
+}

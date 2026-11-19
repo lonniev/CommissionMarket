@@ -4,6 +4,8 @@ import { rankOf, standingIn } from "./reputation.ts";
 import type { Reputation } from "./tasks.ts";
 
 const verdicts = { verified: 0, concerns: 0, not_verified: 0 };
+const ranks = { rank_min_finished: 3, rank_proven_pct: 75, rank_trusted_pct: 90, rank_trusted_finished: 10,
+  rank_exemplary_pct: 95, rank_exemplary_finished: 20 };
 const nobody: Reputation = {
   npub: "npub1x",
   client: { commissions: 0, graded: 0, graded_in_time: 0, owed: 0, paid: 0, appeals_lost: 0 },
@@ -11,16 +13,24 @@ const nobody: Reputation = {
     appeals_won: 0, appeals_lost: 0, grade_pct: null, verdicts },
   arbiter: { named: 0, signed: 0, decided: 0, decided_in_time: 0 },
   inspector: { named: 0, signed: 0, opinions: 0, opinions_in_time: 0, verdicts },
+  ranks,
 };
 
 test("ranks rise with how much went well, and how much was finished", () => {
-  assert.equal(rankOf(2, 2), "new");
-  assert.equal(rankOf(4, 2), "uneven");
-  assert.equal(rankOf(4, 3), "proven");
-  assert.equal(rankOf(9, 9), "proven");
-  assert.equal(rankOf(10, 9), "trusted");
-  assert.equal(rankOf(20, 19), "exemplary");
-  assert.equal(rankOf(20, 18), "trusted");
+  assert.equal(rankOf(2, 2, ranks), "new");
+  assert.equal(rankOf(4, 2, ranks), "uneven");
+  assert.equal(rankOf(4, 3, ranks), "proven");
+  assert.equal(rankOf(9, 9, ranks), "proven");
+  assert.equal(rankOf(10, 9, ranks), "trusted");
+  assert.equal(rankOf(20, 19, ranks), "exemplary");
+  assert.equal(rankOf(20, 18, ranks), "trusted");
+});
+
+test("the operator's thresholds move where each rank begins", () => {
+  const strict = { ...ranks, rank_min_finished: 5, rank_proven_pct: 90 };
+  assert.equal(rankOf(4, 4, strict), "new");
+  assert.equal(rankOf(5, 4, strict), "uneven");
+  assert.equal(rankOf(5, 5, strict), "proven");
 });
 
 test("a role never held has no rank", () => {

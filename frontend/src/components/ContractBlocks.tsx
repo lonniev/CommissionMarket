@@ -10,9 +10,9 @@ import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { say, useT } from "../i18n";
 import { BLOCKS, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
 import { byReward } from "../lib/rubric";
-import type { Task } from "../lib/tasks";
+import { windowHours, type Task } from "../lib/tasks";
 import { lateRuleText } from "../lib/when";
-import { failSaid } from "../lib/late";
+import { failSaid, spanSaid } from "../lib/late";
 import FormBlock from "./FormBlock";
 import { People, Person } from "./Person";
 import Sats from "./Sats";
@@ -86,7 +86,14 @@ export default function ContractBlocks({ task }: { task: Task }) {
           <dt>{t("cover.deemedGrade")}</dt>
           <dd>{c?.deemed_grade ? t("cover.deemedAfter", { grade: c.deemed_grade, days: c.deemed_acceptance_days }) : t("cover.noDeemed")}</dd>
         </dl>
-        <p className="muted text-sm">{t("block.conclusionRules")} <Link to="/terms?version=v1#t-4-6" className="ent">§4.6</Link></p>
+        <p className="muted text-sm">
+          {t("block.conclusionRules", {
+            appeal: say(t, spanSaid(windowHours(c, "appeal_hours"))),
+            ruling: say(t, spanSaid(windowHours(c, "ruling_hours"))),
+            pay: say(t, spanSaid(windowHours(c, "pay_hours"))),
+          })}{" "}
+          <Link to="/terms?version=v1#t-4-6" className="ent">§4.6</Link> <Link to="/terms?version=v1#t-7-2" className="ent">§7.2</Link>
+        </p>
       </>
     ),
     legal: c ? (
