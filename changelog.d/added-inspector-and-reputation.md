@@ -1,3 +1,0 @@
-- **Inspector**: the 👥 People block names an inspector, who signs the offer and, once the work is delivered, gives one signed opinion of it (✅ Verified, ⚠️ Concerns, ❌ Not verified) by Nostr DM. Everyone on the commission sees it; it is advice, and grades nothing.
-- **Reputation** at `/people/<npub>`, open to anyone: a card for each part an npub has played (client, professional, arbiter, inspector) with its rank and counts. Every name on the site links to it, and the form shows the rank of each invited professional, arbiter and inspector.
-- The Arbitration tab also lists what you inspect, and each row names the commission's inspector.

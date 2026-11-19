@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.5.0] — 2026-11-19
+
+### Added
+
+- **Inspector**: the 👥 People block names an inspector, who signs the offer and, once the work is delivered, gives one signed opinion of it (✅ Verified, ⚠️ Concerns, ❌ Not verified) by Nostr DM. Everyone on the commission sees it; it is advice, and grades nothing.
+- **Reputation** at `/people/<npub>`, open to anyone: a card for each part an npub has played (client, professional, arbiter, inspector) with its rank and counts. Every name on the site links to it, and the form shows the rank of each invited professional, arbiter and inspector.
+- The Arbitration tab also lists what you inspect, and each row names the commission's inspector.
+
 ## [0.4.0] — 2026-11-18
 
 ### Added
