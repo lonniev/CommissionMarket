@@ -26,8 +26,8 @@ const Profile = lazy(() => import("./views/Profile"));
 const Terms = lazy(() => import("./views/Terms"));
 
 const PAGES = [
-  { href: "/commissions", label: "nav.commissions", icon: <ScrollText size={18} aria-hidden /> },
   { href: "/orgs", label: "nav.orgs", icon: <Building2 size={18} aria-hidden /> },
+  { href: "/commissions", label: "nav.commissions", icon: <ScrollText size={18} aria-hidden /> },
   { href: "/calendar", label: "nav.calendar", icon: <CalendarDays size={18} aria-hidden /> },
   { href: "/arbitration", label: "nav.arbitration", icon: <Scale size={18} aria-hidden /> },
   { href: "/learn", label: "nav.learn", icon: <BookOpen size={18} aria-hidden /> },

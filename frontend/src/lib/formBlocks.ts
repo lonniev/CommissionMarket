@@ -28,7 +28,7 @@ const BY_KEY: [RegExp, BlockId][] = [
   [/^rubric\./, "grades"],
   [/^(form\.needDay|late\.)/, "schedule"],
   [/^form\.(depositPct|aheadCap|milestone\w*|escrowNeedsMint|badRefundDays)$/, "payments"],
-  [/^form\.(badDeemedGrade|badDeemedDays|escrowNeedsDeemed)$/, "conclusion"],
+  [/^form\.(badDeemedGrade|badDeemedDays|escrowNeedsDeemed|badWindow\.\w+)$/, "conclusion"],
   [/^form\.needIpCustom$/, "legal"],
 ];
 

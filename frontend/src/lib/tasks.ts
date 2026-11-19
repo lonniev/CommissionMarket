@@ -54,7 +54,18 @@ export interface Cover {
   refund_days: number;
   /** Hours past the needed-by time when undelivered work is a failure to deliver (terms 14.7); 0 for none. */
   fail_after_hours: number;
+  /** Hours to appeal a grade or claim cause, for the arbiter to rule, and for the client to pay (terms 4.6, 14.8, 7.2).
+   * A cover signed before these were set has none, and reads as 7 days. */
+  appeal_hours?: number;
+  ruling_hours?: number;
+  pay_hours?: number;
 }
+
+/** The windows a cover page sets, in hours. */
+export const WINDOWS = ["appeal_hours", "ruling_hours", "pay_hours"] as const;
+export type WindowName = (typeof WINDOWS)[number];
+export const DEFAULT_WINDOW_HOURS = 168;
+export const windowHours = (cover: Partial<Cover> | null | undefined, name: WindowName) => cover?.[name] || DEFAULT_WINDOW_HOURS;
 
 /** A failure to deliver, and where a claim of cause stands (terms 14.7, 14.8). */
 export interface Failure {
@@ -315,6 +326,18 @@ export interface Reputation {
   };
   arbiter: { named: number; signed: number; decided: number; decided_in_time: number };
   inspector: { named: number; signed: number; opinions: number; opinions_in_time: number; verdicts: VerdictCounts };
+  /** Where the operator says each rank begins. */
+  ranks: RankThresholds;
+}
+
+/** The operator's rank thresholds (Task Booth's rank_* operator properties). */
+export interface RankThresholds {
+  rank_min_finished: number;
+  rank_proven_pct: number;
+  rank_trusted_pct: number;
+  rank_trusted_finished: number;
+  rank_exemplary_pct: number;
+  rank_exemplary_finished: number;
 }
 
 export const reputation = (npub: string) => ask<Reputation>("reputation", { of_npub: npub });

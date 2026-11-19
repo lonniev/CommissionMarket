@@ -1,9 +1,9 @@
 /**
- * A rank for each role an npub has held, from the counts Task Booth reports. Task Booth
- * reports facts; this page judges them. Pure.
+ * A rank for each role an npub has held, from the counts Task Booth reports, against the
+ * thresholds its operator set. Task Booth reports facts; this page judges them. Pure.
  */
 
-import type { Reputation } from "./tasks.ts";
+import type { RankThresholds, Reputation } from "./tasks.ts";
 
 export type RepRole = "client" | "artist" | "arbiter" | "inspector";
 
@@ -18,8 +18,6 @@ export interface RoleStanding {
   finished: number;
   good: number;
 }
-
-export const MIN_JUDGED = 3;
 
 /** What counts as finished, and as going well, in each role. */
 function counts(rep: Reputation, role: RepRole): { held: number; finished: number; good: number } {
@@ -41,16 +39,16 @@ function counts(rep: Reputation, role: RepRole): { held: number; finished: numbe
   }
 }
 
-export function rankOf(finished: number, good: number): Exclude<Rank, "none"> {
-  if (finished < MIN_JUDGED) return "new";
-  const share = good / finished;
-  if (finished >= 20 && share >= 0.95) return "exemplary";
-  if (finished >= 10 && share >= 0.9) return "trusted";
-  if (share >= 0.75) return "proven";
+export function rankOf(finished: number, good: number, r: RankThresholds): Exclude<Rank, "none"> {
+  if (finished < r.rank_min_finished) return "new";
+  const pct = (100 * good) / finished;
+  if (finished >= r.rank_exemplary_finished && pct >= r.rank_exemplary_pct) return "exemplary";
+  if (finished >= r.rank_trusted_finished && pct >= r.rank_trusted_pct) return "trusted";
+  if (pct >= r.rank_proven_pct) return "proven";
   return "uneven";
 }
 
 export function standingIn(rep: Reputation, role: RepRole): RoleStanding {
   const { held, finished, good } = counts(rep, role);
-  return { rank: held ? rankOf(finished, good) : "none", finished, good: Math.min(good, finished) };
+  return { rank: held ? rankOf(finished, good, rep.ranks) : "none", finished, good: Math.min(good, finished) };
 }
