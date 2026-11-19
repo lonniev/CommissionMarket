@@ -6,16 +6,16 @@
  */
 
 import { useState } from "react";
-import { Check, Hand, MessageCircleQuestion, PenLine, ThumbsUp, Undo2, X, type LucideIcon } from "lucide-react";
+import { Check, Gavel, Hand, MessageCircleQuestion, PenLine, ThumbsUp, Undo2, X, type LucideIcon } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { useT } from "../i18n";
 import { movesFor, waitsOnSignature, type Move } from "../lib/moves";
 import { byReward } from "../lib/rubric";
-import { appeal, assess, decideAppeal, isPlain, move, reject, type Task } from "../lib/tasks";
+import { appeal, assess, claimCause, decideAppeal, decideCause, isPlain, move, reject, type Task } from "../lib/tasks";
 
 const ICON: Partial<Record<Move, LucideIcon>> = {
   claim: Hand, mark_done: Check, release: Undo2, withdraw: Undo2, grade: ThumbsUp, reject: X,
-  accept: ThumbsUp, appeal: MessageCircleQuestion, decide: ThumbsUp,
+  accept: ThumbsUp, appeal: MessageCircleQuestion, decide: ThumbsUp, claim_cause: MessageCircleQuestion, rule_cause: Gavel,
 };
 
 /** Moves that undo something: they ask twice. */
@@ -23,7 +23,7 @@ const TAKES_BACK: Move[] = ["release", "withdraw"];
 /** The money panel draws these. */
 const MONEY: Move[] = ["pay", "confirm_paid"];
 
-type Asking = "grade" | "decide" | "reject" | "appeal" | null;
+type Asking = "grade" | "decide" | "reject" | "appeal" | "claim_cause" | "rule_cause" | null;
 
 export default function Actions({ task, onChanged }: { task: Task; onChanged: (task: Task) => void }) {
   const [busy, setBusy] = useState(false);
@@ -90,7 +90,8 @@ export default function Actions({ task, onChanged }: { task: Task; onChanged: (t
             </div>
           )}
           <textarea className="field w-full" rows={3} maxLength={4000} value={reasons} onChange={(e) => setReasons(e.target.value)}
-            placeholder={asking === "appeal" ? t("actions.appealPlaceholder") : t("actions.wordsPlaceholder")} aria-label={t("actions.words")} />
+            placeholder={asking === "appeal" ? t("actions.appealPlaceholder") : asking === "claim_cause" ? t("actions.causePlaceholder")
+              : t("actions.wordsPlaceholder")} aria-label={t("actions.words")} />
           <div className="actions-row">
             {asking === "reject" && (
               <button type="button" className="btn btn-quiet" disabled={busy} onClick={() => void run(() => reject(task.task_id, reasons))}>
@@ -101,6 +102,21 @@ export default function Actions({ task, onChanged }: { task: Task; onChanged: (t
               <button type="button" className="btn btn-go" disabled={busy} onClick={() => void run(() => appeal(task.task_id, reasons))}>
                 <MessageCircleQuestion size={18} aria-hidden />{t("actions.sendAppeal")}
               </button>
+            )}
+            {asking === "claim_cause" && (
+              <button type="button" className="btn btn-go" disabled={busy || !reasons.trim()} onClick={() => void run(() => claimCause(task.task_id, reasons))}>
+                <MessageCircleQuestion size={18} aria-hidden />{t("actions.sendCause")}
+              </button>
+            )}
+            {asking === "rule_cause" && (
+              <>
+                <button type="button" className="btn btn-go" disabled={busy} onClick={() => void run(() => decideCause(task.task_id, "upheld", reasons))}>
+                  <Check size={18} aria-hidden />{t("actions.upholdCause")}
+                </button>
+                <button type="button" className="btn btn-quiet" disabled={busy} onClick={() => void run(() => decideCause(task.task_id, "rejected", reasons))}>
+                  <X size={18} aria-hidden />{t("actions.rejectCause")}
+                </button>
+              </>
             )}
             <button type="button" className="btn btn-quiet" disabled={busy} onClick={() => setAsking(null)}>{t("actions.cancel")}</button>
           </div>

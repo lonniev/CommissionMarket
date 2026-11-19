@@ -6,6 +6,7 @@
 
 import { nip19 } from "nostr-tools";
 import type { Said } from "../i18n/index.ts";
+import { failDays, failFrom, rowOf, type LateStep, type Unit } from "./late.ts";
 import { MAX_AHEAD_PCT, MAX_MILESTONES, withinCap } from "./money.ts";
 import type { CoverInput, IpOption } from "./tasks.ts";
 import { endOfDay } from "./when.ts";
@@ -15,13 +16,22 @@ export const MAX_DELIVERABLES = 20;
 export const MAX_DEEMED_DAYS = 60;
 export const MAX_AUDIENCE = 500;
 export const MAX_REFUND_DAYS = 90;
-/** Days the Standard Terms give a late delivery (14.3), an appeal (4.6) and the arbiter to decide it. */
-const GRACE_DAYS = 7;
+/** Days the Standard Terms give an appeal or a claim of cause (4.6, 14.8), and the arbiter to decide it. */
 const APPEAL_DAYS = 7;
 const ARBITER_DAYS = 7;
 
-/** The shortest refund period that cannot cut an appeal short, as Task Booth enforces it. */
-export const leastRefundDays = (deemedDays: number) => GRACE_DAYS + deemedDays + APPEAL_DAYS + ARBITER_DAYS;
+/**
+ * The shortest refund period that cannot cut an appeal short, as Task Booth enforces it: the
+ * failure point in whole days, the deemed-acceptance period, a week to appeal and a week to decide.
+ */
+export const leastRefundDays = (deemedDays: number, failHours: number) =>
+  failDays(failHours) + deemedDays + APPEAL_DAYS + ARBITER_DAYS;
+
+/** The failure point the form holds in hours, or 0 while it is not a whole number. */
+export function failHoursOf(rows: Pick<CoverRows, "failAfter" | "failUnit">): number {
+  const made = failFrom(rows.failAfter, rows.failUnit);
+  return "hours" in made ? made.hours : 0;
+}
 
 const isNpub = (text: string) => {
   try {
@@ -99,16 +109,22 @@ export interface CoverRows {
   escrow: boolean;
   mint: string;
   refundDays: string;
+  /** When late becomes failure to deliver (terms 14.7). */
+  failAfter: string;
+  failUnit: Unit;
 }
 
 export const blankCover = (): CoverRows => ({
   deliverables: "", specUrl: "", specHash: "", deemedGrade: "", deemedDays: "14", ip: "assign", ipCustom: "",
   confidential: false, consumer: false, thirdParty: false, law: "", venue: "",
-  arbiter: "", escrow: false, mint: "", refundDays: "",
+  arbiter: "", escrow: false, mint: "", refundDays: "", failAfter: "7", failUnit: "days",
 });
 
-/** The cover page as Task Booth takes it, or what to fix. `grades` are the rubric's names. */
-export function coverFrom(rows: CoverRows, grades: string[]): { cover: CoverInput } | { problem: Said } {
+/**
+ * The cover page as Task Booth takes it, or what to fix. `grades` are the rubric's names; `steps`
+ * are the late steps, which the failure point must come after.
+ */
+export function coverFrom(rows: CoverRows, grades: string[], steps: LateStep[] = []): { cover: CoverInput } | { problem: Said } {
   const deliverables = rows.deliverables.split("\n").map((d) => d.trim()).filter(Boolean);
   if (!deliverables.length) return { problem: { key: "form.needDeliverable" } };
   if (deliverables.length > MAX_DELIVERABLES) return { problem: { key: "form.deliverablesTooMany", vars: { max: MAX_DELIVERABLES } } };
@@ -127,12 +143,14 @@ export function coverFrom(rows: CoverRows, grades: string[]): { cover: CoverInpu
   if (rows.ip === "custom" && !rows.ipCustom.trim()) return { problem: { key: "form.needIpCustom" } };
   const arbiter = rows.arbiter.trim();
   if (arbiter && !isNpub(arbiter)) return { problem: { key: "form.badArbiter" } };
+  const fail = failFrom(rows.failAfter, rows.failUnit, steps);
+  if ("problem" in fail) return fail;
   let refund = 0;
   if (rows.escrow) {
     if (!arbiter) return { problem: { key: "form.escrowNeedsArbiter" } };
     if (!deemed) return { problem: { key: "form.escrowNeedsDeemed" } };
     if (!rows.mint) return { problem: { key: "form.escrowNeedsMint" } };
-    const least = leastRefundDays(days);
+    const least = leastRefundDays(days, fail.hours);
     refund = whole(rows.refundDays);
     if (Number.isNaN(refund) || refund < least || refund > MAX_REFUND_DAYS) {
       return { problem: { key: "form.badRefundDays", vars: { least, most: MAX_REFUND_DAYS } } };
@@ -156,6 +174,7 @@ export function coverFrom(rows: CoverRows, grades: string[]): { cover: CoverInpu
       escrow: rows.escrow,
       escrow_mint: rows.escrow ? rows.mint : "",
       refund_days: refund,
+      fail_after_hours: fail.hours,
     },
   };
 }
@@ -170,5 +189,7 @@ export function rowsOf(cover: CoverInput | null): CoverRows {
     thirdParty: cover.third_party_allowed, law: cover.governing_law, venue: cover.venue,
     arbiter: cover.arbiter_npub ?? "", escrow: Boolean(cover.escrow), mint: cover.escrow_mint ?? "",
     refundDays: cover.refund_days ? String(cover.refund_days) : "",
+    ...(cover.fail_after_hours ? { failAfter: rowOf(cover.fail_after_hours).after, failUnit: rowOf(cover.fail_after_hours).unit }
+      : { failAfter: "7", failUnit: "days" as const }),
   };
 }

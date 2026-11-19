@@ -9,7 +9,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { leastRefundDays, MAX_REFUND_DAYS, type CoverRows } from "../lib/cover";
+import { failHoursOf, leastRefundDays, MAX_REFUND_DAYS, type CoverRows } from "../lib/cover";
 import { escrowMints, isTestMint } from "../lib/tasks";
 import { useT } from "../i18n";
 import type { BlockId } from "../lib/formBlocks";
@@ -23,7 +23,7 @@ export default function EscrowFields({ cover, set, onOpen }: {
   const t = useT();
   const [mints, setMints] = useState<string[] | null>(null);
   const deemedDays = cover.deemedGrade ? Number(cover.deemedDays) || 0 : 0;
-  const least = leastRefundDays(deemedDays);
+  const least = leastRefundDays(deemedDays, failHoursOf(cover));
 
   useEffect(() => {
     let live = true;

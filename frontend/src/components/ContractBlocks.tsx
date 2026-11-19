@@ -12,6 +12,7 @@ import { BLOCKS, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
 import { byReward } from "../lib/rubric";
 import type { Task } from "../lib/tasks";
 import { lateRuleText } from "../lib/when";
+import { failSaid } from "../lib/late";
 import FormBlock from "./FormBlock";
 import { People, Person } from "./Person";
 import Sats from "./Sats";
@@ -28,6 +29,7 @@ export default function ContractBlocks({ task }: { task: Task }) {
   const shape: Shape = {
     title: task.title, deliverables: c?.deliverables.length ?? 0, invited: task.audience.length, arbiter: c?.arbiter_npub ?? "",
     grades: task.rubric.grades.length, topSats: top, neededBy: day(task.needed_by), late: task.late.kind,
+    failHours: c?.fail_after_hours ?? 0,
     depositPct: task.deposit_pct, milestones: task.milestones.length, escrowMint: c?.escrow ? c.escrow_mint : "",
     deemedGrade: c?.deemed_grade ?? "", deemedDays: c?.deemed_acceptance_days ?? 0, ip: c?.ip_option ?? "assign", law: c?.governing_law ?? "",
   };
@@ -65,7 +67,8 @@ export default function ContractBlocks({ task }: { task: Task }) {
     schedule: (
       <dl className="facts">
         <dt>{t("commission.neededBy")}</dt><dd>{day(task.needed_by)}</dd>
-        <dt>{t("commission.ifLate")}</dt><dd>{say(t, lateRuleText(task.late))}</dd>
+        <dt>{t("commission.ifLate")}</dt><dd>{lateRuleText(task.late).map((s) => say(t, s)).join(" ")}</dd>
+        {c?.fail_after_hours ? <><dt>{t("late.failShort")}</dt><dd>{say(t, failSaid(c.fail_after_hours))}</dd></> : null}
       </dl>
     ),
     payments: (

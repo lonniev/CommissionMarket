@@ -3,7 +3,7 @@
 import { callTool, type EscrowSignable } from "@tollbooth-dpyc/web";
 import type { Ahead } from "./money.ts";
 import type { Role, Standing } from "./moves.ts";
-import type { Rubric } from "./rubric.ts";
+import type { LateChoice, Rubric } from "./rubric.ts";
 
 export interface Assessment {
   grade: string;
@@ -23,7 +23,7 @@ export interface Assessment {
   deemed?: boolean;
 }
 
-export type LateRule = { kind: "full" } | { kind: "discount"; pct_per_day: number } | { kind: "cancel" };
+export type LateRule = LateChoice;
 
 export type IpOption = "assign" | "license" | "worker_keeps" | "custom";
 
@@ -50,6 +50,18 @@ export interface Cover {
   escrow_mint: string;
   /** Days after the needed-by date when the client alone may take the escrow back (terms 6.6). */
   refund_days: number;
+  /** Hours past the needed-by time when undelivered work is a failure to deliver (terms 14.7); 0 for none. */
+  fail_after_hours: number;
+}
+
+/** A failure to deliver, and where a claim of cause stands (terms 14.7, 14.8). */
+export interface Failure {
+  at: number;
+  /** Until when the professional may claim cause; null when no arbiter is named. */
+  cause_ends: number | null;
+  cause: { reasons: string; at: number; ruling?: "upheld" | "rejected"; ruling_reasons?: string; ruled_at?: number } | null;
+  /** True once the failure stands without cause; false when cause was upheld; null while it may still come. */
+  without_cause: boolean | null;
 }
 
 /** A cover page as posted: Task Booth stamps the terms version and hash itself. */
@@ -105,6 +117,9 @@ export interface Task {
   agreement: { purchaser_signed: boolean; performer_signed: boolean; arbiter_signed?: boolean };
   /** Where the escrow stands, once its invoice is asked for. */
   escrow?: Escrow | null;
+  failure?: Failure | null;
+  /** After a failure without cause, the whole escrow is the client's (terms 14.10). */
+  escrow_due_to?: "client";
 }
 
 export type EscrowRole = "purchaser" | "performer" | "arbiter";
@@ -226,6 +241,12 @@ export const reject = async (taskId: string, reasons: string) =>
 
 export const appeal = async (taskId: string, reasons: string) =>
   (await ask<{ task: Task }>("appeal_assessment", { task_id: taskId, reasons })).task;
+
+export const claimCause = async (taskId: string, reasons: string) =>
+  (await ask<{ task: Task }>("claim_cause", { task_id: taskId, reasons })).task;
+
+export const decideCause = async (taskId: string, ruling: "upheld" | "rejected", reasons: string) =>
+  (await ask<{ task: Task }>("decide_cause", { task_id: taskId, ruling, reasons })).task;
 
 // ── The offer, and both signatures on it ────────────────────────────────────
 

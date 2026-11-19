@@ -215,6 +215,9 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 .grade-card-head { display: grid; grid-template-columns: minmax(0, 1fr) 8rem auto; gap: 0.5rem; align-items: center; }
 .inline-pct { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .inline-pct .field { width: 4.5rem; }
+.step-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.step-row input.field { width: 4.5rem; }
+.step-row select.field { width: auto; }
 .milestone-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; gap: 0.5rem; align-items: center; }
 @media (max-width: 40rem) {
   .milestone-row { grid-template-columns: 1fr 1fr; }
