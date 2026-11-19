@@ -129,6 +129,7 @@ body { background: var(--page); color: var(--tb-ink); font-family: var(--font-sa
 .row-list { display: grid; }
 .row-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.5rem; border-radius: 0.5rem; }
 .row-card:hover { background: var(--tb-surface-2); }
+.arbiter-line { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding: 0 0.5rem 0.75rem; }
 .row-list li + li .row-card { border-top: 1px solid var(--tb-line); border-radius: 0; }
 .row-yours { box-shadow: inset 3px 0 0 var(--tb-accent); }
 .row-title { font-size: 1.0625rem; font-weight: 650; overflow-wrap: anywhere; }

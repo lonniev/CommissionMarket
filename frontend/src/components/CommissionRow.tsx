@@ -1,5 +1,6 @@
 /** One commission as a row in a list: its title, standing, needed-by day, offer, Project and price. */
 
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { CircleAlert, FileSignature, FolderOpen } from "lucide-react";
 import { say, useT } from "../i18n";
@@ -11,9 +12,12 @@ import { commissionHref } from "./Person";
 import Sats from "./Sats";
 import StandingBadge from "./StandingBadge";
 
-export default function CommissionRow({ task, now, project }: { task: Task; now: number; project?: string }) {
+/** `note` says what is asked of you, in place of the plain "needs you"; `after` is a line under the row, outside its link. */
+export default function CommissionRow({ task, now, project, note, after }: {
+  task: Task; now: number; project?: string; note?: string; after?: ReactNode;
+}) {
   const t = useT();
-  const yours = laneOf(task) === "yours";
+  const yours = Boolean(note) || laneOf(task) === "yours";
   return (
     <li>
       <Link to={commissionHref(task.task_id)} className={yours ? "row-card row-yours" : "row-card"}>
@@ -29,11 +33,12 @@ export default function CommissionRow({ task, now, project }: { task: Task; now:
               </span>
             )}
             {project && <span className="inline-flex items-center gap-1"><FolderOpen size={14} aria-hidden />{project}</span>}
-            {yours && <span className="needs-you"><CircleAlert size={14} aria-hidden />{t("list.needsYou")}</span>}
+            {yours && <span className="needs-you"><CircleAlert size={14} aria-hidden />{note ?? t("list.needsYou")}</span>}
           </span>
         </div>
         <Sats sats={topSats(task.rubric)} />
       </Link>
+      {after}
     </li>
   );
 }
