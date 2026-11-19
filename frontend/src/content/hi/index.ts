@@ -1,5 +1,5 @@
 /**
- * One language's lessons. The words on CommissionMarket's pages are in
+ * One language's lessons and quotations. The words on CommissionMarket's pages are in
  * `src/i18n/<code>.ts`.
  *
  * A new language is this folder copied with every string translated, plus its
@@ -8,7 +8,8 @@
 
 import type { LanguageContent } from "../../lib/content.ts";
 import { lessons } from "./lessons.ts";
+import { quotes } from "./quotes.ts";
 
-const content: LanguageContent = { lessons };
+const content: LanguageContent = { lessons, quotes };
 
 export default content;
