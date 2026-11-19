@@ -187,7 +187,14 @@ async function ask<T>(tool: string, args: Record<string, unknown> = {}): Promise
   return r;
 }
 
-export const listTasks = async () => (await ask<{ tasks: Task[] }>("list_tasks", { site: SITE })).tasks;
+/**
+ * A commission is a task under a cover page: every one this site posts has one. Task Booth
+ * also lists tasks no site stamped (posted before sites stamped them) on every site, and a
+ * ChipIn chore among them has no cover page, so it stays in ChipIn.
+ */
+export const isCommission = (task: Pick<Task, "cover">) => Boolean(task.cover);
+
+export const listTasks = async () => (await ask<{ tasks: Task[] }>("list_tasks", { site: SITE })).tasks.filter(isCommission);
 
 export const getTask = (taskId: string) => ask<{ task: Task; payout?: Invoice }>("get_task", { task_id: taskId });
 
