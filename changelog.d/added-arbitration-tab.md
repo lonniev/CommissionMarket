@@ -1,0 +1,1 @@
+- An **Arbitration** tab (⚖) lists every commission that names you as its arbiter. Its shelves are: Asked to arbitrate (sign the offer, by DM), Waiting on your decision (an appeal, a claim of cause, an escrow split), Watching, and Closed. Each row says what it asks of you and opens the commission, where you sign or decide.

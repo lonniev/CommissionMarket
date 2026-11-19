@@ -11,9 +11,10 @@ import { commissionHref } from "./Person";
 import Sats from "./Sats";
 import StandingBadge from "./StandingBadge";
 
-export default function CommissionRow({ task, now, project }: { task: Task; now: number; project?: string }) {
+/** `note` says what is asked of you, in place of the plain "needs you". */
+export default function CommissionRow({ task, now, project, note }: { task: Task; now: number; project?: string; note?: string }) {
   const t = useT();
-  const yours = laneOf(task) === "yours";
+  const yours = Boolean(note) || laneOf(task) === "yours";
   return (
     <li>
       <Link to={commissionHref(task.task_id)} className={yours ? "row-card row-yours" : "row-card"}>
@@ -29,7 +30,7 @@ export default function CommissionRow({ task, now, project }: { task: Task; now:
               </span>
             )}
             {project && <span className="inline-flex items-center gap-1"><FolderOpen size={14} aria-hidden />{project}</span>}
-            {yours && <span className="needs-you"><CircleAlert size={14} aria-hidden />{t("list.needsYou")}</span>}
+            {yours && <span className="needs-you"><CircleAlert size={14} aria-hidden />{note ?? t("list.needsYou")}</span>}
           </span>
         </div>
         <Sats sats={topSats(task.rubric)} />

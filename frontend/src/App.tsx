@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { BookOpen, BriefcaseBusiness, Building2, CalendarDays, Compass, ScrollText, Wallet as WalletIcon } from "lucide-react";
+import { BookOpen, BriefcaseBusiness, Building2, CalendarDays, Compass, Scale, ScrollText, Wallet as WalletIcon } from "lucide-react";
 import { AppShell, SiteNav, Wallet, matchesPath, useAppShell } from "@tollbooth-dpyc/web/react";
 import Waiting from "./components/Waiting";
 import { useT } from "./i18n";
@@ -8,6 +8,7 @@ import { FiatProvider } from "./lib/FiatContext";
 import { decorateTileWith } from "./lib/tiles";
 
 // Each page is its own chunk, fetched the first time it opens.
+const Arbitration = lazy(() => import("./views/Arbitration"));
 const Calendar = lazy(() => import("./views/Calendar"));
 const Commission = lazy(() => import("./views/Commission"));
 const Commissions = lazy(() => import("./views/Commissions"));
@@ -27,6 +28,7 @@ const PAGES = [
   { href: "/commissions", label: "nav.commissions", icon: <ScrollText size={18} aria-hidden /> },
   { href: "/orgs", label: "nav.orgs", icon: <Building2 size={18} aria-hidden /> },
   { href: "/calendar", label: "nav.calendar", icon: <CalendarDays size={18} aria-hidden /> },
+  { href: "/arbitration", label: "nav.arbitration", icon: <Scale size={18} aria-hidden /> },
   { href: "/learn", label: "nav.learn", icon: <BookOpen size={18} aria-hidden /> },
   { href: "/guide", label: "nav.guide", icon: <Compass size={18} aria-hidden /> },
   { href: "/wallet", label: "nav.wallet", icon: <WalletIcon size={18} aria-hidden /> },
@@ -150,6 +152,7 @@ function Site() {
               <Route path="orgs/:orgId" element={<SignedIn><Org /></SignedIn>} />
               <Route path="orgs/:orgId/projects/:projectId" element={<SignedIn><Project /></SignedIn>} />
               <Route path="calendar" element={<SignedIn><Calendar /></SignedIn>} />
+              <Route path="arbitration" element={<SignedIn><Arbitration /></SignedIn>} />
               <Route path="wallet" element={<SignedIn><WalletPage /></SignedIn>} />
               <Route path="profile" element={<SignedIn><Profile /></SignedIn>} />
               <Route path="terms" element={<Terms />} />
