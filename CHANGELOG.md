@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.4.0] — 2026-11-18
+
+### Added
+
+- An **Arbitration** tab (⚖) for everyone lists the commissions you're part of that name an arbiter, and who that arbiter is, with whether they've signed. As the arbiter you see Asked to arbitrate (sign the offer, by DM), Waiting on your decision (an appeal, a claim of cause, an escrow split) and You arbitrate. As a client you see Your commissions; as a professional, Your work; as an invitee, Open to you. Each row opens the commission, where you sign or decide.
+
 ## [0.3.1] — 2026-11-18
 
 ### Fixed
