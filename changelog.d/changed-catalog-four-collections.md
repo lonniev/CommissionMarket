@@ -1,0 +1,1 @@
+- The Catalog and the café shelf show four collections: MCPs, DPYC, Books and Consultations.

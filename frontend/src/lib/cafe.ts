@@ -7,8 +7,8 @@
 import { useEffect, useState } from "react";
 import { cafeCollections, cafeProducts, type CafeCollection, type CafeProduct } from "@tollbooth-dpyc/web";
 
-/** Machines artisans prefer, consultations, the bookshop, and the network's own goods. */
-export const OFFERED = ["artisan-preferred", "advice", "books", "dpyc-merch"] as const;
+/** MCPs, the network's own goods, the bookshop, and consultations. */
+export const OFFERED = ["mcps", "dpyc-merch", "books", "advice"] as const;
 
 /** The offered collections: null while reading, [] when the café could not be read. */
 export function useCollections(): { found: CafeCollection[] | null; failed: boolean } {
