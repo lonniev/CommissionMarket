@@ -102,7 +102,6 @@ export default function ContractBlocks({ task }: { task: Task }) {
       <dl className="facts">
         <dt>{t("cover.ip")} <Word of="ip_terms" badge align="left" /></dt><dd>{t(`cover.ip.${c.ip_option}`)}{c.ip_custom_text && ` · ${c.ip_custom_text}`}</dd>
         {c.confidential && <><dt>{t("cover.confidentialShort")}</dt><dd>✓</dd></>}
-        {c.client_is_consumer && <><dt>{t("cover.consumerShort")}</dt><dd>✓</dd></>}
         <dt>{t("cover.thirdPartyShort")}</dt><dd>{c.third_party_allowed ? t("cover.allowed") : t("cover.notAllowed")}</dd>
         {c.governing_law && <><dt>{t("cover.law")} <Word of="governing_law" badge align="left" /></dt><dd>{c.governing_law}</dd></>}
         {c.venue && <><dt>{t("cover.venue")}</dt><dd>{c.venue}</dd></>}

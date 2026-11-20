@@ -124,7 +124,6 @@ export interface CoverRows {
   ip: IpOption;
   ipCustom: string;
   confidential: boolean;
-  consumer: boolean;
   thirdParty: boolean;
   law: string;
   venue: string;
@@ -147,7 +146,7 @@ const weekRow = (): WindowRow => ({ after: "7", unit: "days" });
 
 export const blankCover = (): CoverRows => ({
   deliverables: "", specUrl: "", specHash: "", deemedGrade: "", deemedDays: "14", ip: "assign", ipCustom: "",
-  confidential: false, consumer: false, thirdParty: false, law: "", venue: "",
+  confidential: false, thirdParty: false, law: "", venue: "",
   arbiter: "", inspector: "", escrow: false, mint: "", refundDays: "", failAfter: "7", failUnit: "days",
   appeal: weekRow(), ruling: weekRow(), pay: weekRow(),
 });
@@ -206,7 +205,6 @@ export function coverFrom(rows: CoverRows, grades: string[], steps: LateStep[] =
       ip_option: rows.ip,
       ip_custom_text: rows.ip === "custom" ? rows.ipCustom.trim() : "",
       confidential: rows.confidential,
-      client_is_consumer: rows.consumer,
       third_party_allowed: rows.thirdParty,
       governing_law: rows.law.trim().slice(0, 200),
       venue: rows.venue.trim().slice(0, 200),
@@ -227,7 +225,7 @@ export function rowsOf(cover: CoverInput | null): CoverRows {
   return {
     deliverables: cover.deliverables.join("\n"), specUrl: cover.spec_url, specHash: cover.spec_hash,
     deemedGrade: cover.deemed_grade, deemedDays: cover.deemed_acceptance_days ? String(cover.deemed_acceptance_days) : "14",
-    ip: cover.ip_option, ipCustom: cover.ip_custom_text, confidential: cover.confidential, consumer: cover.client_is_consumer,
+    ip: cover.ip_option, ipCustom: cover.ip_custom_text, confidential: cover.confidential,
     thirdParty: cover.third_party_allowed, law: cover.governing_law, venue: cover.venue,
     arbiter: cover.arbiter_npub ?? "", inspector: cover.inspector_npub ?? "", escrow: Boolean(cover.escrow), mint: cover.escrow_mint ?? "",
     refundDays: cover.refund_days ? String(cover.refund_days) : "",

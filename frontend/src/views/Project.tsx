@@ -21,7 +21,6 @@ function Defaults({ project }: { project: ProjectView }) {
     [t("cover.ip"), t(`cover.ip.${d.ip_option ?? "assign"}`)],
     ...(d.deemed_acceptance_days ? [[t("cover.deemedDays"), String(d.deemed_acceptance_days)] as [string, string]] : []),
     ...(d.confidential ? [[t("cover.confidentialShort"), "✓"] as [string, string]] : []),
-    ...(d.client_is_consumer ? [[t("cover.consumerShort"), "✓"] as [string, string]] : []),
     [t("cover.thirdPartyShort"), d.third_party_allowed ? t("cover.allowed") : t("cover.notAllowed")],
     ...(d.governing_law ? [[t("cover.law"), d.governing_law] as [string, string]] : []),
     ...(d.venue ? [[t("cover.venue"), d.venue] as [string, string]] : []),
