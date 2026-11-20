@@ -72,6 +72,10 @@ for (const [code, pack] of Object.entries(packs)) {
     assert.equal(pack.quotes.length, english.quotes.length);
     assert.equal(new Set(pack.quotes.map((q) => q.text)).size, pack.quotes.length);
     for (const q of pack.quotes) assert.ok(q.text.trim() && q.author.trim(), q.text);
+    assert.ok(english.trustQuotes.length > 0);
+    assert.equal(pack.trustQuotes.length, english.trustQuotes.length);
+    assert.equal(new Set(pack.trustQuotes.map((q) => q.text)).size, pack.trustQuotes.length);
+    for (const q of pack.trustQuotes) assert.ok(q.text.trim() && q.author.trim(), q.text);
   });
 }
 

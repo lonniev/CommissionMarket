@@ -19,6 +19,8 @@ export type LanguageContent = {
   glossary: GlossaryText;
   /** Read while a page waits on Task Booth. */
   quotes: QuoteText[];
+  /** Read while mints are found: trust, banks, hoarding, safety. */
+  trustQuotes: QuoteText[];
   /** English always has it; a language without it shows the English. */
   playByPlay?: PlayByPlayText;
 };
@@ -36,6 +38,10 @@ export function usePlayByPlay(): PlayByPlayText {
 
 /** The quotations for a wait. */
 export const useQuotes = (): QuoteText[] => useContent<QuoteText[]>(CONTENT, "quotes") ?? english.quotes;
+
+/** The quotations for finding mints: trust, banks, hoarding, safety. */
+export const useTrustQuotes = (): QuoteText[] =>
+  useContent<QuoteText[]>(CONTENT, "trustQuotes") ?? english.trustQuotes;
 
 /** The site's words and what they mean, in the reader's language. */
 export function useGlossary(): Glossary {

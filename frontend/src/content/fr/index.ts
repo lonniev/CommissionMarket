@@ -10,7 +10,8 @@ import type { LanguageContent } from "../../lib/content.ts";
 import { glossary } from "./glossary.ts";
 import { lessons } from "./lessons.ts";
 import { quotes } from "./quotes.ts";
+import { trustQuotes } from "./trustQuotes.ts";
 
-const content: LanguageContent = { lessons, glossary, quotes };
+const content: LanguageContent = { lessons, glossary, quotes, trustQuotes };
 
 export default content;

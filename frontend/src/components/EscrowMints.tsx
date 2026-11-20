@@ -16,7 +16,9 @@ import { filtered, matching, pageOf, ranked, regionsOf, withMint, type MintFacts
 /** Cards on one page of the search: three rows of three on a wide screen. */
 const PAGE = 9;
 import { findMints, mintFacts, offerMints } from "../lib/tasks";
+import { useTrustQuotes } from "../lib/content";
 import MintCard from "./MintCard";
+import Waiting from "./Waiting";
 import MintTest from "./MintTest";
 
 export default function EscrowMints() {
@@ -34,6 +36,8 @@ export default function EscrowMints() {
   const [page, setPage] = useState(0);
   const [testing, setTesting] = useState("");
   const [busy, setBusy] = useState(false);
+  const [finding, setFinding] = useState(false);
+  const trust = useTrustQuotes();
   const [problem, setProblem] = useState("");
   const now = Math.floor(Date.now() / 1000);
 
@@ -58,10 +62,12 @@ export default function EscrowMints() {
     setBusy(true);
     setProblem("");
     try {
+      setFinding(true);
       setFound((await findMints()).mints);
     } catch (e) {
       setProblem((e as Error).message);
     } finally {
+      setFinding(false);
       setBusy(false);
     }
   }
@@ -130,7 +136,8 @@ export default function EscrowMints() {
           <Search size={18} aria-hidden />{busy && !found ? t("mints.finding") : t("mints.find")}
         </button>
       </div>
-      {found && (
+      {finding && <Waiting heading={t("mints.finding")} quotes={trust} />}
+      {found && !finding && (
         <details open>
           <summary className="panel-title cursor-pointer">{t("mints.found", { count: candidates.length })}</summary>
           <div className="mt-3 grid gap-3">
