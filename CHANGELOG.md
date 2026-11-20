@@ -5,6 +5,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.10.0] — 2026-11-19
+
+### Added
+
+- The **Specification document** field asks for a link to the design document the work must meet (drawings, CAD, requirements, a model) kept under change control. Its link previews on hover, or on a tap of the 👁: the site, the document's title and summary or a file's type and size, and whether a GitHub, GitLab or Bitbucket link is pinned to a commit or tag or follows a branch. A small Pages Function, `/unfurl`, reads a link's head for the preview; it fetches only https links to public sites.
+- **Deliverables** are a numbered list: one row each in the form (Enter adds the next, pasted lines split into rows) and numbered on the commission's cover page.
+
+### Changed
+
+- The Catalog and the café shelf show four collections: MCPs, DPYC, Books and Consultations.
+
+### Fixed
+
+- The Profile page packs its cards into columns, so a short card leaves no gap under it.
+
 ## [0.9.2] — 2026-11-19
 
 ### Changed
