@@ -34,7 +34,7 @@ export const glossary: GlossaryText = {
     tie_breaker: {
       term: "裁决人",
       aka: ["tie-breaker"],
-      said: "委托中没有仲裁人时，由委托方指定来裁决申诉的人。",
+      said: "委托中没有仲裁人时裁决申诉的人：委托方本人，或委托方指定的人。承接方可以提出申诉，由委托方一方的决定确定付款。",
     },
     inspector: {
       term: "检验人",

@@ -35,7 +35,7 @@ export const glossary: GlossaryText = {
     tie_breaker: {
       term: "Départageur",
       aka: ["tiers départiteur"],
-      said: "La personne que le client désigne pour trancher une contestation quand la commande n'a pas d'arbitre.",
+      said: "Qui tranche une contestation quand la commande n'a pas d'arbitre : le client, ou la personne qu'il désigne. Le prestataire peut demander, et la décision du client règle le paiement.",
     },
     inspector: {
       term: "Inspecteur",

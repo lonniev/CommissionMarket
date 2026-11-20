@@ -36,7 +36,7 @@ export const glossary: GlossaryText = {
     tie_breaker: {
       term: "Quien desempata",
       aka: ["desempate", "desempatador"],
-      said: "La persona que el cliente designa para resolver una apelación cuando el encargo no tiene árbitro.",
+      said: "Quién resuelve una apelación cuando el encargo no tiene árbitro: el cliente, o la persona que el cliente designa. El profesional puede pedirlo, y la decisión del cliente fija el pago.",
     },
     inspector: {
       term: "Inspector",

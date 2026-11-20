@@ -36,7 +36,7 @@ export const glossary: GlossaryText = {
     tie_breaker: {
       term: "タイブレーカー",
       aka: ["裁定者", "tie-breaker"],
-      said: "依頼に仲裁者がいないとき、異議を裁定するために依頼者が指名する人です。",
+      said: "依頼に仲裁者がいないとき、異議を裁定する人です。依頼者本人か、依頼者が指名する人がなります。受注者は異議を申し立てられますが、依頼者側の判断で支払いが決まります。",
     },
     inspector: {
       term: "検査人",
