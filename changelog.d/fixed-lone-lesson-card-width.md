@@ -1,0 +1,1 @@
+- On Learn, a section with one lesson (The price) shows it as wide as every other lesson card, so its picture is no longer stretched across the page.
