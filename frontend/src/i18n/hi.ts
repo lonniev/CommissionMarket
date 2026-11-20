@@ -448,6 +448,7 @@ const hi: Translation = {
   "mints.panel.title": "एस्क्रो मिंट",
   "mints.panel.says": "वे Cashu मिंट जहाँ क्लाइंट एस्क्रो रख सकता है। क्लाइंट इन्हीं में से चुनते हैं।",
   "mints.rule": "नियम पर खरा: एस्क्रो के सभी NUT, 30 दिनों में 99% अपटाइम, और ऑडिटर पर 3 महीने बिना किसी विफलता के।",
+  "mints.ruleLink": "पूरा नियम",
   "mints.none": "अभी कोई मिंट नहीं दिया गया है।",
   "mints.find": "मिंट खोजो",
   "mints.finding": "cashumints.space और ऑडिटर से पूछ रहे हैं…",

@@ -448,6 +448,7 @@ const zh: Translation = {
   "mints.panel.title": "托管铸币所",
   "mints.panel.says": "客户可以存放托管款的 Cashu 铸币所。客户只能从这些中选择。",
   "mints.rule": "符合规则：支持全部托管所需的 NUT，30 天可用率达 99%，并在审计中连续 3 个月无失败。",
+  "mints.ruleLink": "规则全文",
   "mints.none": "目前还没有提供任何铸币所。",
   "mints.find": "查找铸币所",
   "mints.finding": "正在询问 cashumints.space 和审计方…",

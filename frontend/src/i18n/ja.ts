@@ -448,6 +448,7 @@ const ja: Translation = {
   "mints.panel.title": "エスクローのミント",
   "mints.panel.says": "クライアントがエスクローを預けられるCashuのミントです。クライアントはこの中からだけ選びます。",
   "mints.rule": "基準：エスクローに必要なNUTをすべて備え、30日間の稼働率が99%以上で、監査で3か月間失敗がないこと。",
+  "mints.ruleLink": "基準の全文",
   "mints.none": "まだ提供しているミントはありません。",
   "mints.find": "ミントを探す",
   "mints.finding": "cashumints.spaceと監査に問い合わせています…",

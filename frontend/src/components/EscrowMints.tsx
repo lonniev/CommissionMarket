@@ -6,6 +6,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Minus, Plus, Search } from "lucide-react";
 import { isOperator, sessionStatus } from "@tollbooth-dpyc/web";
 import { tourTarget, useAppShell, useLanguageLocale } from "@tollbooth-dpyc/web/react";
@@ -104,7 +105,7 @@ export default function EscrowMints() {
     <section className="card panel grid gap-3 account-wide" {...tourTarget("profile.mints")}>
       <h2 className="panel-title">{t("mints.panel.title")}</h2>
       <p className="muted text-sm">{t("mints.panel.says")}</p>
-      <p className="muted text-sm">{t("mints.rule")}</p>
+      <p className="muted text-sm">{t("mints.rule")} <Link to="/glossary#w-mint_rule" className="ent">{t("mints.ruleLink")}</Link></p>
 
       {offered && !offered.length && <p className="muted">{t("mints.none")}</p>}
       <div className="mint-grid">

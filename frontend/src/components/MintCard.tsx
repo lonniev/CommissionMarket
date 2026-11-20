@@ -6,6 +6,7 @@
 
 import type { ReactNode } from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { CircleAlert, CircleCheck, FlaskConical, MapPin, MessageSquare, ShieldCheck, Signal, Zap } from "lucide-react";
 import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
@@ -51,7 +52,11 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
             {isTestMint(facts.url) && <span className="muted text-xs">· {t("cover.testMint")}</span>}
           </div>
         </div>
-        {judged.meets && <span className="badge badge-paid" title={t("mints.rule")}><CircleCheck size={14} aria-hidden />{t("mints.meets")}</span>}
+        {judged.meets && (
+          <Link to="/glossary#w-mint_rule" className="badge badge-paid" title={t("mints.rule")} onClick={(e) => e.stopPropagation()}>
+            <CircleCheck size={14} aria-hidden />{t("mints.meets")}
+          </Link>
+        )}
       </div>
 
       <ul className="mint-facts">

@@ -94,7 +94,8 @@ export default function EscrowFields({ cover, set, onOpen }: {
               )}
             <p className="muted text-sm">
               {t("mints.pick.says")}{" "}
-              <Link to="/glossary#mint" className="ent">{t("mints.pick.what")}</Link>
+              <Link to="/glossary#w-mint" className="ent">{t("mints.pick.what")}</Link>{" · "}
+              <Link to="/glossary#w-mint_rule" className="ent">{t("mints.ruleLink")}</Link>
             </p>
           </div>
           <label className="grid gap-1">

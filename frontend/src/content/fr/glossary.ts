@@ -167,6 +167,11 @@ export const glossary: GlossaryText = {
       aka: ["Cashu", "ecash", "monnaie électronique"],
       said: "Le service Cashu qui détient les sats d'un séquestre sous forme d'ecash verrouillé aux trois clés.",
     },
+    mint_rule: {
+      term: "La règle des mints",
+      aka: ["respecte la règle", "présélection"],
+      said: "Ce qu'il faut à un mint pour que CommissionMarket le marque Respecte la règle : il annonce tous les NUT dont un séquestre a besoin (7, 8, 11, 12 et 20), il a été disponible 99 % ou plus des 30 derniers jours selon cashumints.space, et le Round Robin Auditor l'a vu payer sans échec depuis 3 mois ou plus. Si l'auditeur est injoignable, un mint reste admis, avec une mention. Un test de verrou réel échoué l'exclut.",
+    },
     refund_after: {
       term: "Remboursement après",
       aka: ["jours de remboursement", "verrou temporel"],

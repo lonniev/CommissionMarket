@@ -448,6 +448,7 @@ const fr: Translation = {
   "mints.panel.title": "Mints de séquestre",
   "mints.panel.says": "Les mints Cashu où un client peut placer un séquestre. Les clients choisissent seulement parmi eux.",
   "mints.rule": "Respecte la règle : tous les NUT de séquestre, 99 % de disponibilité sur 30 jours et 3 mois sans échec chez l'auditeur.",
+  "mints.ruleLink": "La règle en entier",
   "mints.none": "Aucun mint n'est encore proposé.",
   "mints.find": "Trouver des mints",
   "mints.finding": "Interrogation de cashumints.space et de l'auditeur…",

@@ -450,6 +450,7 @@ export const en = {
   "mints.panel.title": "Escrow mints",
   "mints.panel.says": "The Cashu mints a client may hold escrow at. Clients choose only from these.",
   "mints.rule": "Meets the rule: every escrow NUT, 99% uptime over 30 days, and 3 months clean on the auditor.",
+  "mints.ruleLink": "The rule, in full",
   "mints.none": "No mint is offered yet.",
   "mints.find": "Find mints",
   "mints.finding": "Asking cashumints.space and the auditor…",

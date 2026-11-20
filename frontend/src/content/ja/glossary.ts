@@ -168,6 +168,11 @@ export const glossary: GlossaryText = {
       aka: ["Cashu", "ecash", "eキャッシュ"],
       said: "エスクローのsatsを、3つの鍵にロックされたecashとして保管するCashuのサービスです。",
     },
+    mint_rule: {
+      term: "ミントの基準",
+      aka: ["基準を満たす", "候補"],
+      said: "CommissionMarketがミントに「基準を満たす」と表示する条件です。エスクローに必要なNUT（7、8、11、12、20）をすべて備え、cashumints.spaceで直近30日の稼働率が99%以上で、Round Robin Auditorが3か月以上失敗なく支払いを確認していること。監査に接続できないときは、その旨を表示したうえで基準を満たすものとします。実際のロックテストに不合格なら外れます。",
+    },
     refund_after: {
       term: "返金までの日数",
       aka: ["返金日", "タイムロック", "refund"],

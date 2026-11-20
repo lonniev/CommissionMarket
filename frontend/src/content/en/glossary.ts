@@ -164,6 +164,11 @@ export const glossary: GlossaryText = {
       aka: ["Cashu", "ecash"],
       said: "The Cashu service that holds an escrow's sats as ecash locked to the three keys.",
     },
+    mint_rule: {
+      term: "The mint rule",
+      aka: ["meets the rule", "shortlist"],
+      said: "What a mint needs before CommissionMarket marks it Meets the rule: it claims every NUT an escrow needs (7, 8, 11, 12 and 20), it was up 99% or more of the last 30 days on cashumints.space, and the Round Robin Auditor has seen it pay without a failure for 3 months or more. If the auditor cannot be reached, a mint still qualifies, marked so. A failed live lock test takes it off.",
+    },
     refund_after: {
       term: "Refund after",
       aka: ["refund days", "time-lock"],

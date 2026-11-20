@@ -448,6 +448,7 @@ const es: Translation = {
   "mints.panel.title": "Mints de depósito en garantía",
   "mints.panel.says": "Los mints de Cashu donde un cliente puede guardar el depósito en garantía. Los clientes eligen solo entre estos.",
   "mints.rule": "Cumple la regla: todos los NUT de depósito en garantía, 99 % de disponibilidad en 30 días y 3 meses sin fallos en el auditor.",
+  "mints.ruleLink": "La regla completa",
   "mints.none": "Aún no se ofrece ningún mint.",
   "mints.find": "Buscar mints",
   "mints.finding": "Consultando cashumints.space y el auditor…",

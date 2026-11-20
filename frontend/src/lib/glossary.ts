@@ -49,6 +49,7 @@ export const GLOSSARY_KEYS = [
   ["balance", "money", "5.7"],
   ["escrow", "money", "6.5"],
   ["mint", "money", "6.15"],
+  ["mint_rule", "money"],
   ["refund_after", "money", "6.6"],
   ["sat", "money", "5.1"],
   ["bitcoin", "money"],
