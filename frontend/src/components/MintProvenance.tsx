@@ -69,6 +69,36 @@ function Panel({ facts }: { facts: MintFacts }) {
           )}
       </Source>
 
+      {facts.node && (
+        <Source title={t("mints.prov.node")} seen={seen(facts.node)}>
+          {facts.node.unreachable ? <span className="muted">{t("mints.prov.noNode")}</span> : (
+            <>
+              {facts.node.pubkey && (
+                <a href={`https://mempool.space/lightning/node/${facts.node.pubkey}`} target="_blank" rel="noopener noreferrer nofollow"
+                  className="ent text-xs break-all">{facts.node.alias || facts.node.pubkey}</a>
+              )}
+              {!facts.node.announced && <span className="muted">{t("mints.nodeUnannounced")}</span>}
+              {facts.node.first_seen && <span>{t("mints.prov.firstSeen", { date: day(facts.node.first_seen) })}</span>}
+              {facts.node.updated_at && <span>{t("mints.prov.announced", { date: day(facts.node.updated_at) })}</span>}
+              {(facts.node.city || facts.node.country_name) && <span>{[facts.node.city, facts.node.country_name].filter(Boolean).join(", ")}</span>}
+              {facts.node.org && <span className="muted text-sm">{facts.node.org}</span>}
+            </>
+          )}
+        </Source>
+      )}
+
+      {facts.located && (
+        <Source title={t("mints.prov.server")} seen={seen(facts.located)}>
+          {facts.located.unreachable ? <span className="muted">{t("mints.prov.noServer")}</span> : (
+            <>
+              <span>{[facts.located.city, facts.located.region, facts.located.country].filter(Boolean).join(", ")}</span>
+              {facts.located.org && <span className="muted text-sm">{facts.located.org}</span>}
+              {facts.located.front && <span className="muted text-sm">{t("mints.prov.front")}</span>}
+            </>
+          )}
+        </Source>
+      )}
+
       {test && (
         <Source title={t("mints.prov.test")}>
           <span>{t(test.verdict === "passed" ? "mints.testPassed" : "mints.testFailed", { date: day(test.finished_at ?? test.started_at) })}</span>
