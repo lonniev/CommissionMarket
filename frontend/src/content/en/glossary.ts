@@ -169,6 +169,11 @@ export const glossary: GlossaryText = {
       aka: ["meets the rule", "shortlist"],
       said: "What a mint needs before CommissionMarket marks it Meets the rule: it claims every NUT an escrow needs (7, 8, 11, 12 and 20), it was up 99% or more of the last 30 days on cashumints.space, and the Round Robin Auditor has seen it pay without a failure for 3 months or more. If the auditor cannot be reached, a mint still qualifies, marked so. A failed live lock test takes it off.",
     },
+    nut: {
+      term: "NUT",
+      aka: ["Cashu NUT", "Notation, Usage and Terminology"],
+      said: "One numbered chapter of the Cashu protocol (Notation, Usage and Terminology). Each mint says which NUTs it supports. An escrow needs five: NUT 7 checks whether ecash is spent, NUT 8 returns a payout's unused Lightning fee, NUT 11 locks sats to keys (the 2-of-3 lock), NUT 12 proves the mint signed honestly, and NUT 20 lets only the key that asked mint a paid invoice.",
+    },
     refund_after: {
       term: "Refund after",
       aka: ["refund days", "time-lock"],

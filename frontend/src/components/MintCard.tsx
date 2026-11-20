@@ -65,7 +65,8 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
             ? <><CircleAlert size={16} aria-hidden className="error" />{t("mints.mark.mintNotReached")}</>
             : mint.missing_escrow_nuts?.length
               ? <><CircleAlert size={16} aria-hidden className="error" />{t("mints.nutsMissing", { nuts: mint.missing_escrow_nuts.join(", ") })}</>
-              : <><ShieldCheck size={16} aria-hidden className="ok" />{t("mints.nutsOk")}</>}
+              : <><ShieldCheck size={16} aria-hidden className="ok" />
+                <Link to="/glossary#w-nut" className="ent" onClick={(e) => e.stopPropagation()}>{t("mints.nutsOk")}</Link></>}
         </li>
         <li title={seen(cm)}>
           <Signal size={16} aria-hidden className={typeof cm.uptime_30d === "number" && cm.uptime_30d >= 0.99 ? "ok" : "muted"} />

@@ -172,6 +172,11 @@ export const glossary: GlossaryText = {
       aka: ["respecte la règle", "présélection"],
       said: "Ce qu'il faut à un mint pour que CommissionMarket le marque Respecte la règle : il annonce tous les NUT dont un séquestre a besoin (7, 8, 11, 12 et 20), il a été disponible 99 % ou plus des 30 derniers jours selon cashumints.space, et le Round Robin Auditor l'a vu payer sans échec depuis 3 mois ou plus. Si l'auditeur est injoignable, un mint reste admis, avec une mention. Un test de verrou réel échoué l'exclut.",
     },
+    nut: {
+      term: "NUT",
+      aka: ["NUT Cashu", "Notation, Usage and Terminology"],
+      said: "Un chapitre numéroté du protocole Cashu (Notation, Usage and Terminology). Chaque mint indique les NUT qu'il prend en charge. Un séquestre en demande cinq : le NUT 7 vérifie si l'ecash est dépensé, le NUT 8 rend les frais Lightning non utilisés d'un paiement, le NUT 11 verrouille les sats à des clés (le verrou 2 sur 3), le NUT 12 prouve que le mint a signé honnêtement, et le NUT 20 ne laisse que la clé qui l'a demandé émettre une facture payée.",
+    },
     refund_after: {
       term: "Remboursement après",
       aka: ["jours de remboursement", "verrou temporel"],

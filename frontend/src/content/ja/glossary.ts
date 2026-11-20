@@ -173,6 +173,11 @@ export const glossary: GlossaryText = {
       aka: ["基準を満たす", "候補"],
       said: "CommissionMarketがミントに「基準を満たす」と表示する条件です。エスクローに必要なNUT（7、8、11、12、20）をすべて備え、cashumints.spaceで直近30日の稼働率が99%以上で、Round Robin Auditorが3か月以上失敗なく支払いを確認していること。監査に接続できないときは、その旨を表示したうえで基準を満たすものとします。実際のロックテストに不合格なら外れます。",
     },
+    nut: {
+      term: "NUT",
+      aka: ["Cashu NUT", "Notation, Usage and Terminology"],
+      said: "Cashuプロトコルの番号付きの章（Notation, Usage and Terminology）です。各ミントは対応するNUTを公表しています。エスクローには5つが必要です。NUT 7はecashが使用済みかを確認し、NUT 8は支払いで使われなかったLightning手数料を返し、NUT 11はsatsを鍵にロックし（2-of-3のロック）、NUT 12はミントが正しく署名したことを証明し、NUT 20は支払済みの請求書を、依頼した鍵だけが発行できるようにします。",
+    },
     refund_after: {
       term: "返金までの日数",
       aka: ["返金日", "タイムロック", "refund"],
