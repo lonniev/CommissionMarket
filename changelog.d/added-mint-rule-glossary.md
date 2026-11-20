@@ -1,1 +1,0 @@
-- The mint rule is in the Glossary, in every language. Every "Meets the rule" badge, the mint picker and the Operator's panel link to it, and a link to one Glossary word now scrolls to it and marks it.
