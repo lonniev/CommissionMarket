@@ -8,6 +8,7 @@ const LOOK = { inputClassName: "field font-mono text-sm", buttonClassName: "chip
 import { defaultsFromCover, coverFromDefaults, saveProject, satsFrom, type Project } from "../lib/orgs";
 import { useT } from "../i18n";
 import TermsFields from "./TermsFields";
+import Word from "./Word";
 
 export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
   orgId: string;
@@ -64,12 +65,12 @@ export default function ProjectForm({ orgId, editing, onSaved, onCancel }: {
         <span className="muted text-sm">{t("project.budgetHelp")}</span>
       </label>
       <div className="grid gap-1">
-        <span className="label">{t("project.circle")}</span>
+        <span className="label">{t("project.circle")} <Word of="audience" badge /></span>
         <NpubListField value={circle} onChange={setCircle} label={t("project.circle")} max={MAX_AUDIENCE} look={LOOK} />
         <span className="muted text-sm">{t("project.circleHelp")}</span>
       </div>
       <fieldset className="form-section">
-        <legend className="section-title">{t("project.defaults")}</legend>
+        <legend className="section-title">{t("project.defaults")} <Word of="project_defaults" badge /></legend>
         <p className="muted text-sm">{t("project.defaultsHelp")}</p>
         <div className="grid gap-1">
           <span className="label">{t("cover.arbiter")}</span>

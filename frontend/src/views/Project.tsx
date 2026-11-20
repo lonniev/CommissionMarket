@@ -13,6 +13,7 @@ import { useT } from "../i18n";
 import { archiveProject, getProject, type Project as ProjectView } from "../lib/orgs";
 import { fileTask, listTasks, type Task } from "../lib/tasks";
 import { useProjectNames } from "../lib/useProjectNames";
+import Word from "../components/Word";
 
 function Defaults({ project }: { project: ProjectView }) {
   const t = useT();
@@ -113,11 +114,11 @@ export default function Project() {
           </section>
           <div className="two-up">
             <section className="card panel grid gap-2" {...tourTarget("project.circle")}>
-              <h2 className="panel-title">{t("project.circle")}</h2>
+              <h2 className="panel-title">{t("project.circle")} <Word of="audience" badge /></h2>
               {project.circle.length ? <People npubs={project.circle} /> : <p className="muted">{t("project.noCircle")}</p>}
             </section>
             <section className="card panel grid gap-2" {...tourTarget("project.defaults")}>
-              <h2 className="panel-title">{t("project.defaults")}</h2>
+              <h2 className="panel-title">{t("project.defaults")} <Word of="project_defaults" badge /></h2>
               <Defaults project={project} />
               <p className="muted text-sm">{t("project.defaultsNote")}</p>
             </section>
