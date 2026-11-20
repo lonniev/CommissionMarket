@@ -1,1 +1,0 @@
-- The Glossary says that with no arbiter the client, or someone the client names, decides an appeal, as the Standard Terms now do (§4.8).
