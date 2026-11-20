@@ -96,7 +96,7 @@ function Members({ org, onChanged }: { org: OrgDetail; onChanged: () => void }) 
 
   return (
     <section className="card panel grid gap-3" {...tourTarget("org.members")}>
-      <h2 className="panel-title">{t("org.members")} <span className="muted num">({org.members.length})</span></h2>
+      <h2 className="panel-title">{t("org.members", { org: org.name })} <span className="muted num">({org.members.length})</span></h2>
       <p className="muted text-sm">{t("org.membersHelp")}</p>
       {org.members.length > 0 && (
         <ul className="member-list">
@@ -161,6 +161,7 @@ export default function Org() {
       {org && (
         <>
           <About key={`${org.name}|${org.about}`} org={org} onChanged={() => void load()} />
+          <Members org={org} onChanged={() => void load()} />
           <section className="grid gap-2" {...tourTarget("org.projects")}>
             <div className="toolbar">
               <h2 className="section-title">{t("org.projects")} <span className="muted num">({org.projects.length})</span></h2>
@@ -186,7 +187,6 @@ export default function Org() {
               ))}
             </ul>
           </section>
-          <Members org={org} onChanged={() => void load()} />
         </>
       )}
     </div>

@@ -45,7 +45,7 @@ export const glossary: GlossaryText = {
     audience: {
       term: "Prestataires invités",
       aka: ["invités", "cercle", "public"],
-      said: "Les prestataires qu'un client invite à faire le travail, par npub. Eux seuls voient la commande et peuvent la prendre en charge.",
+      said: "Les prestataires qu'un client invite à faire le travail, par npub. Eux seuls voient la commande et peuvent la prendre en charge. Un Projet nomme son cercle pour chaque nouvelle commande.",
     },
     offer: {
       term: "Offre",
@@ -250,7 +250,12 @@ export const glossary: GlossaryText = {
     organization: {
       term: "Organisation",
       aka: ["org", "structure"],
-      said: "Un groupe qui réunit des Projets. Ses membres voient chaque Projet et peuvent y publier des commandes.",
+      said: "Un groupe qui réunit des Projets. Ses membres y publient des commandes ; les prestataires invités à faire le travail forment le cercle de chaque Projet.",
+    },
+    member: {
+      term: "Membre",
+      aka: ["membres"],
+      said: "Une personne que le propriétaire ajoute à une Organisation. Un membre voit chaque Projet et ses commandes, et peut y publier des commandes. Un membre est un pair du client, jamais un des prestataires invités.",
     },
     project: {
       term: "Projet",

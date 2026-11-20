@@ -47,7 +47,7 @@ export const glossary: GlossaryText = {
     audience: {
       term: "Invited professionals",
       aka: ["audience", "circle"],
-      said: "The professionals a client invites to do the work, by npub. Only they see the commission and may claim it.",
+      said: "The professionals a client invites to do the work, by npub. Only they see the commission and may claim it. A Project names its circle for every new commission.",
     },
     offer: {
       term: "Offer",
@@ -243,7 +243,12 @@ export const glossary: GlossaryText = {
     organization: {
       term: "Organization",
       aka: ["org"],
-      said: "A group that gathers Projects. Its members see every Project and may post commissions into them.",
+      said: "A group that gathers Projects. Its members post commissions into any of them; the professionals invited to do the work are each Project's circle.",
+    },
+    member: {
+      term: "Member",
+      aka: ["members"],
+      said: "Someone the owner adds to an Organization. A member sees every Project and its commissions, and may post commissions into them. A member is a client's peer, never one of the invited professionals.",
     },
     project: {
       term: "Project",
