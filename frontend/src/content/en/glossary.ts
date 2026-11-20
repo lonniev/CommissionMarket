@@ -37,7 +37,7 @@ export const glossary: GlossaryText = {
     },
     tie_breaker: {
       term: "Tie-breaker",
-      said: "The person the client names to decide an appeal when the commission has no arbiter.",
+      said: "Who decides an appeal when the commission has no arbiter: the client, or someone the client names. The professional may ask, and the client's decision settles the payment.",
     },
     inspector: {
       term: "Inspector",
