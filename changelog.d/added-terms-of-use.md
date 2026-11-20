@@ -1,1 +1,0 @@
-- A **Terms of use** page (`/terms-of-use`, linked in the footer and on the sign-in card). It covers what the site does and never does, that commissions are between their parties under the Standard Terms, escrow and mints, your data and acceptable use, plus the sections every Tollbooth site shares.
