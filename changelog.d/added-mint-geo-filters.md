@@ -1,0 +1,2 @@
+- Each mint card says where its Lightning node is (country, capacity, channels, or private) and where its web server is (city, country, network, or the shared front it sits behind such as Cloudflare). The provenance panel adds both sources: mempool.space with a link to the node, and ipinfo.io.
+- Find mints filters by region (the node's country, and the server's unless it is a shared front), by established (seen a year or more) and by a node announced within 60 days, alongside the rule.

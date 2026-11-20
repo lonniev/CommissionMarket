@@ -6,11 +6,12 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Minus, Plus, Search } from "lucide-react";
 import { isOperator, sessionStatus } from "@tollbooth-dpyc/web";
-import { tourTarget, useAppShell } from "@tollbooth-dpyc/web/react";
+import { tourTarget, useAppShell, useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { matching, pageOf, ranked, withMint, type MintFacts } from "../lib/mints";
+import { filtered, matching, pageOf, ranked, regionsOf, withMint, type MintFacts } from "../lib/mints";
 
 /** Cards on one page of the search: three rows of three on a wide screen. */
 const PAGE = 9;
@@ -24,7 +25,11 @@ export default function EscrowMints() {
   const [mine, setMine] = useState(false);
   const [offered, setOffered] = useState<MintFacts[] | null>(null);
   const [found, setFound] = useState<MintFacts[] | null>(null);
+  const locale = useLanguageLocale();
   const [onlyMeets, setOnlyMeets] = useState(true);
+  const [onlyEstablished, setOnlyEstablished] = useState(false);
+  const [onlyFresh, setOnlyFresh] = useState(false);
+  const [region, setRegion] = useState("");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(0);
   const [testing, setTesting] = useState("");
@@ -77,8 +82,19 @@ export default function EscrowMints() {
   if (!mine) return null;
   const offeredUrls = new Set((offered ?? []).map((f) => f.url));
   const candidates = found
-    ? matching(ranked(found, now).filter((r) => !offeredUrls.has(r.facts.url) && (!onlyMeets || r.judged.meets)), query)
+    ? matching(filtered(ranked(found, now).filter((r) => !offeredUrls.has(r.facts.url)),
+        { meets: onlyMeets, established: onlyEstablished, fresh: onlyFresh, region }, now), query)
     : [];
+  const regions = found ? regionsOf(found) : [];
+  const countryName = (code: string) => {
+    try { return new Intl.DisplayNames([locale], { type: "region" }).of(code) ?? code; } catch { return code; }
+  };
+  const check = (on: boolean, set: (v: boolean) => void, label: string) => (
+    <label className="check text-sm">
+      <input type="checkbox" checked={on} onChange={(e) => { set(e.target.checked); setPage(0); }} />
+      <span>{label}</span>
+    </label>
+  );
   const shown = pageOf(candidates, page, PAGE);
 
   const test = (url: string) => testing === url
@@ -89,7 +105,7 @@ export default function EscrowMints() {
     <section className="card panel grid gap-3 account-wide" {...tourTarget("profile.mints")}>
       <h2 className="panel-title">{t("mints.panel.title")}</h2>
       <p className="muted text-sm">{t("mints.panel.says")}</p>
-      <p className="muted text-sm">{t("mints.rule")}</p>
+      <p className="muted text-sm">{t("mints.rule")} <Link to="/glossary#w-mint_rule" className="ent">{t("mints.ruleLink")}</Link></p>
 
       {offered && !offered.length && <p className="muted">{t("mints.none")}</p>}
       <div className="mint-grid">
@@ -113,10 +129,14 @@ export default function EscrowMints() {
           <>
             <input className="field min-w-0 flex-1" type="search" value={query} placeholder={t("mints.search")}
               aria-label={t("mints.search")} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
-            <label className="check text-sm">
-              <input type="checkbox" checked={onlyMeets} onChange={(e) => { setOnlyMeets(e.target.checked); setPage(0); }} />
-              <span>{t("mints.onlyMeets")}</span>
-            </label>
+            <select className="field" value={region} aria-label={t("mints.region")}
+              onChange={(e) => { setRegion(e.target.value); setPage(0); }}>
+              <option value="">{t("mints.anyRegion")}</option>
+              {regions.map((c) => <option key={c} value={c}>{countryName(c)}</option>)}
+            </select>
+            {check(onlyMeets, setOnlyMeets, t("mints.onlyMeets"))}
+            {check(onlyEstablished, setOnlyEstablished, t("mints.onlyEstablished"))}
+            {check(onlyFresh, setOnlyFresh, t("mints.onlyFresh"))}
           </>
         )}
         <button type="button" className="btn btn-go" disabled={busy} onClick={() => void find()}>

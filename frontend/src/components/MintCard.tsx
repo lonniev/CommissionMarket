@@ -6,11 +6,12 @@
 
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { CircleAlert, CircleCheck, FlaskConical, MessageSquare, ShieldCheck, Signal } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CircleAlert, CircleCheck, FlaskConical, MapPin, MessageSquare, ShieldCheck, Signal, Zap } from "lucide-react";
 import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
-import { judge, mintIcon, mintName, percent, type Judged, type MintFacts } from "../lib/mints";
+import { btc, judge, mintIcon, mintName, percent, type Judged, type MintFacts } from "../lib/mints";
 import { isTestMint } from "../lib/tasks";
 import MintProvenance from "./MintProvenance";
 
@@ -31,7 +32,11 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
   const day = (s: number) => new Date(s * 1000).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
   const seen = (s: { source: string; observed_at: number }) =>
     t("mints.seenAt", { source: s.source, when: new Date(s.observed_at * 1000).toLocaleString(locale) });
-  const { mint, cashumints: cm, auditor: au, live_test: test } = facts;
+  const { mint, cashumints: cm, auditor: au, live_test: test, node, located } = facts;
+  const country = (code?: string) => {
+    if (!code) return "";
+    try { return new Intl.DisplayNames([locale], { type: "region" }).of(code) ?? code; } catch { return code; }
+  };
   const icon = mintIcon(facts);
 
   return (
@@ -47,7 +52,11 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
             {isTestMint(facts.url) && <span className="muted text-xs">· {t("cover.testMint")}</span>}
           </div>
         </div>
-        {judged.meets && <span className="badge badge-paid" title={t("mints.rule")}><CircleCheck size={14} aria-hidden />{t("mints.meets")}</span>}
+        {judged.meets && (
+          <Link to="/glossary#w-mint_rule" className="badge badge-paid" title={t("mints.rule")} onClick={(e) => e.stopPropagation()}>
+            <CircleCheck size={14} aria-hidden />{t("mints.meets")}
+          </Link>
+        )}
       </div>
 
       <ul className="mint-facts">
@@ -56,7 +65,8 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
             ? <><CircleAlert size={16} aria-hidden className="error" />{t("mints.mark.mintNotReached")}</>
             : mint.missing_escrow_nuts?.length
               ? <><CircleAlert size={16} aria-hidden className="error" />{t("mints.nutsMissing", { nuts: mint.missing_escrow_nuts.join(", ") })}</>
-              : <><ShieldCheck size={16} aria-hidden className="ok" />{t("mints.nutsOk")}</>}
+              : <><ShieldCheck size={16} aria-hidden className="ok" />
+                <Link to="/glossary#w-nut" className="ent" onClick={(e) => e.stopPropagation()}>{t("mints.nutsOk")}</Link></>}
         </li>
         <li title={seen(cm)}>
           <Signal size={16} aria-hidden className={typeof cm.uptime_30d === "number" && cm.uptime_30d >= 0.99 ? "ok" : "muted"} />
@@ -72,6 +82,24 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
                 ? t("mints.mark.auditFailing")
                 : t("mints.cleanSince", { date: day(au.clean_since ?? now), swaps: au.swaps })}
         </li>
+        {node && !node.unreachable && (
+          <li title={seen(node)}>
+            <Zap size={16} aria-hidden className={node.announced ? "ok" : "muted"} />
+            {node.announced
+              ? t("mints.node", { where: node.tor_only ? "Tor" : country(node.country) || "—",
+                  capacity: btc(node.capacity_sats ?? 0), channels: node.channels ?? 0 })
+              : t("mints.nodeUnannounced")}
+          </li>
+        )}
+        {located && !located.unreachable && (
+          <li title={seen(located)}>
+            <MapPin size={16} aria-hidden className="muted" />
+            {located.front
+              ? t("mints.serverFront", { org: (located.org ?? "").replace(/^AS\d+\s*/, "") })
+              : t("mints.server", { where: [located.city, country(located.country)].filter(Boolean).join(", "),
+                  org: (located.org ?? "").replace(/^AS\d+\s*/, "") })}
+          </li>
+        )}
         {cm.listed && (
           <li title={seen(cm)}>
             <MessageSquare size={16} aria-hidden className="muted" />

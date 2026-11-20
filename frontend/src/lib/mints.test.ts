@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { judge, matching, mintName, pageOf, percent, ranked, withMint, type MintFacts } from "./mints.ts";
+import { btc, countriesOf, established, filtered, freshNode, judge, matching, mintName, pageOf, percent, ranked, regionsOf, withMint, type MintFacts } from "./mints.ts";
 
 const NOW = 1_800_000_000;
 const DAY = 86_400;
@@ -90,4 +90,32 @@ describe("finding among many", () => {
     assert.equal(pageOf(all, 7, 9).page, 2);
     assert.deepEqual(pageOf([], 0, 9), { rows: [], page: 0, pages: 1, from: 0, to: 0 });
   });
+});
+
+describe("where a mint is, and how settled", () => {
+  const de = { ...facts({}, "https://de.example"), located: { source: "ipinfo.io", observed_at: NOW, country: "DE" },
+    node: { source: "mempool.space", observed_at: NOW, country: "DE", first_seen: NOW - 800 * DAY, updated_at: NOW - 5 * DAY } };
+  const fronted = { ...facts({ cashumints: { first_seen: NOW - 30 * DAY } }, "https://cf.example"),
+    located: { source: "ipinfo.io", observed_at: NOW, country: "US", front: true },
+    node: { source: "mempool.space", observed_at: NOW, country: "CA", first_seen: NOW - 100 * DAY, updated_at: NOW - 200 * DAY } };
+
+  it("places a mint by its node, and by its server unless that is a shared front", () => {
+    assert.deepEqual(countriesOf(de), ["DE"]);
+    assert.deepEqual(countriesOf(fronted), ["CA"]);
+    assert.deepEqual(regionsOf([de, fronted]), ["CA", "DE"]);
+  });
+  it("calls a mint established after a year, and a node fresh within 60 days", () => {
+    assert.equal(established(de, NOW), true);
+    assert.equal(established(fronted, NOW), false);
+    assert.equal(freshNode(de, NOW), true);
+    assert.equal(freshNode(fronted, NOW), false);
+  });
+  it("filters on every chosen test at once", () => {
+    const rows = ranked([de, fronted], NOW);
+    const none = { meets: false, established: false, fresh: false, region: "" };
+    assert.equal(filtered(rows, none, NOW).length, 2);
+    assert.deepEqual(filtered(rows, { ...none, region: "CA" }, NOW).map((r) => r.facts.url), ["https://cf.example"]);
+    assert.deepEqual(filtered(rows, { ...none, established: true, fresh: true }, NOW).map((r) => r.facts.url), ["https://de.example"]);
+  });
+  it("writes sats as BTC", () => assert.equal(btc(297713563), "2.98 BTC"));
 });

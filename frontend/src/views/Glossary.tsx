@@ -1,7 +1,7 @@
 /** The words CommissionMarket uses, grouped, with a search. The contract itself is the Standard Terms. */
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Landmark } from "lucide-react";
 import { tourTarget, useTour } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
@@ -14,6 +14,18 @@ export default function Glossary() {
   const [query, setQuery] = useState("");
   const hits = glossary.search(query);
   useTour("glossary");
+  const { hash } = useLocation();
+
+  // A link to one word (#w-<key>) lands on it, marked for a moment.
+  useEffect(() => {
+    if (!hash.startsWith("#w-")) return;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return;
+    el.scrollIntoView({ block: "center" });
+    el.classList.add("glossary-here");
+    const off = window.setTimeout(() => el.classList.remove("glossary-here"), 2500);
+    return () => window.clearTimeout(off);
+  }, [hash]);
   return (
     <div className="page grid gap-4">
       <header className="card panel flex flex-wrap items-center gap-3">

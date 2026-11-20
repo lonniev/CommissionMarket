@@ -166,6 +166,16 @@ export const glossary: GlossaryText = {
       aka: ["Cashu", "电子现金", "ecash", "mint"],
       said: "以锁定到三把密钥的电子现金形式，保管托管 sats 的 Cashu 服务。",
     },
+    mint_rule: {
+      term: "铸币所规则",
+      aka: ["符合规则", "候选名单"],
+      said: "CommissionMarket 标注铸币所“符合规则”的条件：它声明支持托管所需的全部 NUT（7、8、11、12 和 20），在 cashumints.space 上最近 30 天的可用率达 99% 或以上，并且 Round Robin Auditor 已连续 3 个月或更久看到它付款无失败。若无法连接审计方，铸币所仍可符合规则，但会标注。真实锁定测试未通过则被排除。",
+    },
+    nut: {
+      term: "NUT",
+      aka: ["Cashu NUT", "Notation, Usage and Terminology"],
+      said: "Cashu 协议中带编号的一章（Notation, Usage and Terminology）。每个铸币所都会说明它支持哪些 NUT。托管需要其中五项：NUT 7 检查电子现金是否已花费，NUT 8 退回付款中未用掉的闪电手续费，NUT 11 把 sats 锁定到密钥（三选二锁），NUT 12 证明铸币所诚实签名，NUT 20 只允许提出请求的那把密钥用已付发票铸币。",
+    },
     refund_after: {
       term: "退款日",
       aka: ["退款天数", "时间锁", "refund"],

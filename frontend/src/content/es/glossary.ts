@@ -168,6 +168,16 @@ export const glossary: GlossaryText = {
       aka: ["Cashu", "ecash", "efectivo electrónico"],
       said: "El servicio de Cashu que guarda los sats de un depósito en garantía como ecash bloqueado con las tres llaves.",
     },
+    mint_rule: {
+      term: "La regla de los mints",
+      aka: ["cumple la regla", "preselección"],
+      said: "Lo que un mint necesita para que CommissionMarket lo marque Cumple la regla: declara todos los NUT que necesita un depósito en garantía (7, 8, 11, 12 y 20), estuvo disponible el 99 % o más de los últimos 30 días según cashumints.space, y el Round Robin Auditor lo ha visto pagar sin fallos durante 3 meses o más. Si no se puede contactar con el auditor, el mint sigue calificando, con una marca. Una prueba de bloqueo real fallida lo excluye.",
+    },
+    nut: {
+      term: "NUT",
+      aka: ["NUT de Cashu", "Notation, Usage and Terminology"],
+      said: "Un capítulo numerado del protocolo Cashu (Notation, Usage and Terminology). Cada mint indica qué NUT admite. Un depósito en garantía necesita cinco: el NUT 7 comprueba si el ecash está gastado, el NUT 8 devuelve la comisión de Lightning no usada de un pago, el NUT 11 bloquea los sats con llaves (el bloqueo 2 de 3), el NUT 12 prueba que el mint firmó con honestidad, y el NUT 20 deja que solo la llave que lo pidió emita una factura pagada.",
+    },
     refund_after: {
       term: "Reembolso tras",
       aka: ["días de reembolso", "bloqueo temporal"],

@@ -1,0 +1,1 @@
+- The Glossary explains NUT (a numbered chapter of the Cashu protocol) and the five an escrow needs, in every language; each mint card's escrow NUT line links to it.

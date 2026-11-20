@@ -60,6 +60,23 @@ export interface MintFacts {
     last_failure_at?: number | null;
     last_error?: string;
   };
+  /** Where the web server is (ipinfo.io). `front` when the address is a shared front like Cloudflare. */
+  located?: Seen & { ip?: string; city?: string; region?: string; country?: string; org?: string; front?: boolean };
+  /** The Lightning node its invoices pay (mempool.space). */
+  node?: Seen & {
+    pubkey?: string;
+    announced?: boolean;
+    alias?: string;
+    capacity_sats?: number | null;
+    channels?: number | null;
+    first_seen?: number | null;
+    updated_at?: number | null;
+    country?: string;
+    country_name?: string;
+    city?: string;
+    org?: string;
+    tor_only?: boolean;
+  };
   live_test: (MintTest & { verdict: Verdict }) | null;
 }
 
@@ -184,3 +201,49 @@ export function pageOf<T>(rows: T[], page: number, size: number): { rows: T[]; p
   const slice = rows.slice(at * size, at * size + size);
   return { rows: slice, page: at, pages, from: slice.length ? at * size + 1 : 0, to: at * size + slice.length };
 }
+
+/** A year: a mint or its node seen this long ago is established. */
+export const ESTABLISHED_DAYS = 365;
+/** A node that announced itself within this many days is kept up to date. */
+export const FRESH_NODE_DAYS = 60;
+
+/** The countries a mint is in: its Lightning node's, and its web server's unless that is a shared front. */
+export function countriesOf(f: MintFacts): string[] {
+  const out = new Set<string>();
+  if (f.node?.country) out.add(f.node.country);
+  if (f.located?.country && !f.located.front) out.add(f.located.country);
+  return [...out];
+}
+
+/** Every country among these mints, sorted. */
+export const regionsOf = (all: MintFacts[]): string[] => [...new Set(all.flatMap(countriesOf))].sort();
+
+/** Seen a year or more ago, by cashumints.space or as a Lightning node. */
+export function established(f: MintFacts, now: number): boolean {
+  const since = Math.min(f.cashumints.first_seen ?? now, f.node?.first_seen ?? now);
+  return now - since >= ESTABLISHED_DAYS * DAY;
+}
+
+/** Its Lightning node announced itself within the last 60 days. */
+export const freshNode = (f: MintFacts, now: number): boolean =>
+  Boolean(f.node?.updated_at && now - f.node.updated_at <= FRESH_NODE_DAYS * DAY);
+
+export interface MintFilter {
+  meets: boolean;
+  established: boolean;
+  fresh: boolean;
+  /** A country code; "" for any. */
+  region: string;
+}
+
+/** The rows that pass every chosen filter. */
+export function filtered<T extends { facts: MintFacts; judged: Judged }>(rows: T[], f: MintFilter, now: number): T[] {
+  return rows.filter(({ facts, judged }) =>
+    (!f.meets || judged.meets)
+    && (!f.established || established(facts, now))
+    && (!f.fresh || freshNode(facts, now))
+    && (!f.region || countriesOf(facts).includes(f.region)));
+}
+
+/** Sats as BTC with two decimals: 297713563 → "2.98 BTC". */
+export const btc = (sats: number): string => `${(sats / 1e8).toFixed(2)} BTC`;
