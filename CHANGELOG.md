@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.14.1] — 2026-11-20
+
+### Added
+
+- While Find mints runs, quotations on trust, banks, hoarding and keeping wealth safe scroll by, in every language. Satoshi Nakamoto, Bagehot, Hayek, Mises, J. P. Morgan, Szabo, scripture and Buffett are each quoted from their source.
+
 ## [0.14.0] — 2026-11-20
 
 ### Changed

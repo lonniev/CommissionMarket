@@ -1,1 +1,0 @@
-- While Find mints runs, quotations on trust, banks, hoarding and keeping wealth safe scroll by, in every language. Satoshi Nakamoto, Bagehot, Hayek, Mises, J. P. Morgan, Szabo, scripture and Buffett are each quoted from their source.
