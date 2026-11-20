@@ -30,7 +30,7 @@ export default function TermsFields({ cover, set, tour = false }: {
         )}
       </div>
       <div className="grid gap-1" {...(tour ? tourTarget("compose.flags") : {})}>
-        {(["confidential", "consumer", "thirdParty"] as const).map((flag) => (
+        {(["confidential", "thirdParty"] as const).map((flag) => (
           <label key={flag} className="check">
             <input type="checkbox" checked={cover[flag]} onChange={(e) => set(flag, e.target.checked)} />
             <span>{t(`cover.${flag}`)}</span>

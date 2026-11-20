@@ -39,7 +39,6 @@ export interface Cover {
   ip_option: IpOption;
   ip_custom_text: string;
   confidential: boolean;
-  client_is_consumer: boolean;
   third_party_allowed: boolean;
   governing_law: string;
   venue: string;

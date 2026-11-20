@@ -1,0 +1,1 @@
+- The cover page and Project defaults no longer ask whether the client commissions as a consumer.

@@ -38,7 +38,6 @@ export interface Defaults {
   ip_option?: IpOption;
   ip_custom_text?: string;
   confidential?: boolean;
-  client_is_consumer?: boolean;
   third_party_allowed?: boolean;
   governing_law?: string;
   venue?: string;
@@ -119,7 +118,6 @@ export function coverFromDefaults(blank: CoverRows, d: Defaults): CoverRows {
     ip: d.ip_option ?? blank.ip,
     ipCustom: d.ip_custom_text ?? blank.ipCustom,
     confidential: d.confidential ?? blank.confidential,
-    consumer: d.client_is_consumer ?? blank.consumer,
     thirdParty: d.third_party_allowed ?? blank.thirdParty,
     law: d.governing_law ?? blank.law,
     venue: d.venue ?? blank.venue,
@@ -135,7 +133,6 @@ export function defaultsFromCover(rows: CoverRows, blank: CoverRows): Defaults {
   if (rows.ip !== blank.ip) d.ip_option = rows.ip;
   if (rows.ip === "custom" && rows.ipCustom.trim()) d.ip_custom_text = rows.ipCustom.trim();
   if (rows.confidential) d.confidential = true;
-  if (rows.consumer) d.client_is_consumer = true;
   if (rows.thirdParty) d.third_party_allowed = true;
   if (rows.law.trim()) d.governing_law = rows.law.trim();
   if (rows.venue.trim()) d.venue = rows.venue.trim();
