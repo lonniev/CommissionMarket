@@ -124,49 +124,54 @@ export default function EscrowMints() {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        {found && (
-          <>
-            <input className="field min-w-0 flex-1" type="search" value={query} placeholder={t("mints.search")}
-              aria-label={t("mints.search")} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
-            <select className="field" value={region} aria-label={t("mints.region")}
-              onChange={(e) => { setRegion(e.target.value); setPage(0); }}>
-              <option value="">{t("mints.anyRegion")}</option>
-              {regions.map((c) => <option key={c} value={c}>{countryName(c)}</option>)}
-            </select>
-            {check(onlyMeets, setOnlyMeets, t("mints.onlyMeets"))}
-            {check(onlyEstablished, setOnlyEstablished, t("mints.onlyEstablished"))}
-            {check(onlyFresh, setOnlyFresh, t("mints.onlyFresh"))}
-          </>
-        )}
+      <div className="flex justify-end">
         <button type="button" className="btn btn-go" disabled={busy} onClick={() => void find()}>
           <Search size={18} aria-hidden />{busy && !found ? t("mints.finding") : t("mints.find")}
         </button>
       </div>
-      {found && !candidates.length && <p className="muted text-right">{t("mints.noneFound")}</p>}
-      <div className="mint-grid">
-        {shown.rows.map(({ facts }) => (
-          <div key={facts.url} className="grid gap-2">
-            <MintCard facts={facts} now={now} showShort>
-              <button type="button" className="chip" disabled={busy} onClick={() => setTesting(testing === facts.url ? "" : facts.url)}>
-                {t("mints.test.open")}
-              </button>
-              <button type="button" className="chip chip-accent" disabled={busy} onClick={() => void offer(facts.url, true)}>
-                <Plus size={16} aria-hidden />{t("mints.add")}
-              </button>
-            </MintCard>
-            {test(facts.url)}
+      {found && (
+        <details open className="grid gap-3">
+          <summary className="panel-title cursor-pointer">{t("mints.found", { count: candidates.length })}</summary>
+          <div className="mt-3 grid gap-3">
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <input className="field min-w-0 flex-1" type="search" value={query} placeholder={t("mints.search")}
+                aria-label={t("mints.search")} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
+              <select className="field" value={region} aria-label={t("mints.region")}
+                onChange={(e) => { setRegion(e.target.value); setPage(0); }}>
+                <option value="">{t("mints.anyRegion")}</option>
+                {regions.map((c) => <option key={c} value={c}>{countryName(c)}</option>)}
+              </select>
+              {check(onlyMeets, setOnlyMeets, t("mints.onlyMeets"))}
+              {check(onlyEstablished, setOnlyEstablished, t("mints.onlyEstablished"))}
+              {check(onlyFresh, setOnlyFresh, t("mints.onlyFresh"))}
+            </div>
+            {!candidates.length && <p className="muted text-right">{t("mints.noneFound")}</p>}
+            <div className="mint-grid">
+              {shown.rows.map(({ facts }) => (
+                <div key={facts.url} className="grid gap-2">
+                  <MintCard facts={facts} now={now} showShort>
+                    <button type="button" className="chip" disabled={busy} onClick={() => setTesting(testing === facts.url ? "" : facts.url)}>
+                      {t("mints.test.open")}
+                    </button>
+                    <button type="button" className="chip chip-accent" disabled={busy} onClick={() => void offer(facts.url, true)}>
+                      <Plus size={16} aria-hidden />{t("mints.add")}
+                    </button>
+                  </MintCard>
+                  {test(facts.url)}
+                </div>
+              ))}
+            </div>
+            {shown.pages > 1 && (
+              <nav className="flex flex-wrap items-center justify-end gap-2" aria-label={t("mints.pages")}>
+                <span className="muted text-sm">{t("mints.page", { from: shown.from, to: shown.to, count: candidates.length })}</span>
+                <button type="button" className="chip" disabled={shown.page === 0} onClick={() => setPage(shown.page - 1)}
+                  aria-label={t("mints.prev")}><ChevronLeft size={16} aria-hidden /></button>
+                <button type="button" className="chip" disabled={shown.page >= shown.pages - 1} onClick={() => setPage(shown.page + 1)}
+                  aria-label={t("mints.next")}><ChevronRight size={16} aria-hidden /></button>
+              </nav>
+            )}
           </div>
-        ))}
-      </div>
-      {shown.pages > 1 && (
-        <nav className="flex flex-wrap items-center justify-end gap-2" aria-label={t("mints.pages")}>
-          <span className="muted text-sm">{t("mints.page", { from: shown.from, to: shown.to, count: candidates.length })}</span>
-          <button type="button" className="chip" disabled={shown.page === 0} onClick={() => setPage(shown.page - 1)}
-            aria-label={t("mints.prev")}><ChevronLeft size={16} aria-hidden /></button>
-          <button type="button" className="chip" disabled={shown.page >= shown.pages - 1} onClick={() => setPage(shown.page + 1)}
-            aria-label={t("mints.next")}><ChevronRight size={16} aria-hidden /></button>
-        </nav>
+        </details>
       )}
       {problem && <p className="error text-right">{problem}</p>}
     </section>

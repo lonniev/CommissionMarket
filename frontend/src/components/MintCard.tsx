@@ -94,10 +94,10 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
         {located && !located.unreachable && (
           <li title={seen(located)}>
             <MapPin size={16} aria-hidden className="muted" />
-            {located.front
+            <span>{located.front
               ? t("mints.serverFront", { org: (located.org ?? "").replace(/^AS\d+\s*/, "") })
               : t("mints.server", { where: [located.city, country(located.country)].filter(Boolean).join(", "),
-                  org: (located.org ?? "").replace(/^AS\d+\s*/, "") })}
+                  org: (located.org ?? "").replace(/^AS\d+\s*/, "") })}</span>
           </li>
         )}
         {cm.listed && (
