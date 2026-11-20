@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.14.2] — 2026-11-20
+
+### Changed
+
+- An Organization's members now sit under its name, above its Projects, titled "Members of <Organization>". The help and the Glossary say what a member is: a peer who posts commissions into any of its Projects, apart from the professionals each Project's circle invites.
+
 ## [0.14.1] — 2026-11-20
 
 ### Added
