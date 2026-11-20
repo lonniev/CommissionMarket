@@ -84,10 +84,11 @@ export default function EscrowFields({ cover, set, onOpen }: {
               : (
                 <div className="mint-grid" role="radiogroup" aria-label={t("cover.mint")} {...tourTarget("compose.mint")}>
                   {(facts ?? []).map((f) => (
-                    <button key={f.url} type="button" role="radio" aria-checked={cover.mint === f.url}
-                      className="mint-pick" onClick={() => set("mint", f.url)}>
+                    <div key={f.url} role="radio" tabIndex={0} aria-checked={cover.mint === f.url} className="mint-pick"
+                      onClick={() => set("mint", f.url)}
+                      onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); set("mint", f.url); } }}>
                       <MintCard facts={f} now={now} chosen={cover.mint === f.url} />
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}

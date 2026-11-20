@@ -27,9 +27,22 @@ interface Seen {
 
 export interface MintFacts {
   url: string;
-  mint: Seen & { name?: string; version?: string; icon_url?: string; nuts?: string[]; missing_escrow_nuts?: string[] };
+  mint: Seen & {
+    name?: string;
+    version?: string;
+    icon_url?: string;
+    nuts?: string[];
+    missing_escrow_nuts?: string[];
+    description?: string;
+    description_long?: string;
+    motd?: string;
+    pubkey?: string;
+    tos_url?: string;
+    contact?: { method: string; info: string }[];
+  };
   cashumints: Seen & {
     listed?: boolean;
+    page_url?: string;
     status?: string;
     uptime_30d?: number | null;
     first_seen?: number | null;
@@ -155,4 +168,19 @@ export const percent = (fraction: number): string => `${(Math.floor(fraction * 1
 export function withMint(offered: string[], url: string, on: boolean): string[] {
   const rest = offered.filter((m) => m !== url);
   return on ? [...rest, url] : rest;
+}
+
+/** Mints whose name or address holds `query`, ignoring case; all of them for an empty query. */
+export function matching<T extends { facts: Pick<MintFacts, "url" | "mint"> }>(rows: T[], query: string): T[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return rows;
+  return rows.filter(({ facts }) => facts.url.toLowerCase().includes(q) || (facts.mint.name ?? "").toLowerCase().includes(q));
+}
+
+/** One page of `rows`: `page` counts from 0 and is held inside the rows there are. */
+export function pageOf<T>(rows: T[], page: number, size: number): { rows: T[]; page: number; pages: number; from: number; to: number } {
+  const pages = Math.max(1, Math.ceil(rows.length / size));
+  const at = Math.min(Math.max(0, page), pages - 1);
+  const slice = rows.slice(at * size, at * size + size);
+  return { rows: slice, page: at, pages, from: slice.length ? at * size + 1 : 0, to: at * size + slice.length };
 }

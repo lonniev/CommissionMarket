@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { judge, mintName, percent, ranked, withMint, type MintFacts } from "./mints.ts";
+import { judge, matching, mintName, pageOf, percent, ranked, withMint, type MintFacts } from "./mints.ts";
 
 const NOW = 1_800_000_000;
 const DAY = 86_400;
@@ -73,5 +73,21 @@ describe("small helpers", () => {
     assert.deepEqual(withMint(["a", "b"], "c", true), ["a", "b", "c"]);
     assert.deepEqual(withMint(["a", "b"], "a", false), ["b"]);
     assert.deepEqual(withMint(["a"], "a", true), ["a"]);
+  });
+});
+
+describe("finding among many", () => {
+  const rows = ["https://a.example", "https://mint.minibits.cash/Bitcoin", "https://b.example"].map((u) => ({ facts: facts({ mint: { name: u.includes("minibits") ? "Minibits mint" : "" } }, u) }));
+  it("matches a name or an address, ignoring case", () => {
+    assert.deepEqual(matching(rows, "MINIBITS").map((r) => r.facts.url), ["https://mint.minibits.cash/Bitcoin"]);
+    assert.deepEqual(matching(rows, "b.example").map((r) => r.facts.url), ["https://b.example"]);
+    assert.equal(matching(rows, "  ").length, 3);
+  });
+  it("pages, holding the page inside the rows", () => {
+    const all = Array.from({ length: 20 }, (_, i) => i);
+    assert.deepEqual(pageOf(all, 0, 9), { rows: [0, 1, 2, 3, 4, 5, 6, 7, 8], page: 0, pages: 3, from: 1, to: 9 });
+    assert.deepEqual(pageOf(all, 2, 9).rows, [18, 19]);
+    assert.equal(pageOf(all, 7, 9).page, 2);
+    assert.deepEqual(pageOf([], 0, 9), { rows: [], page: 0, pages: 1, from: 0, to: 0 });
   });
 });
