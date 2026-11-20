@@ -945,6 +945,7 @@ const es: Translation = {
   "profile.payout.notSaved": "No se guardó la dirección.",
   "profile.currency.title": "Moneda",
   "profile.currency.says": "Los precios están en sats. Aquí se muestra cuánto valen hoy.",
+  "profile.ranks": "Rangos de reputación",
 
   "language.title": "Idioma",
 };

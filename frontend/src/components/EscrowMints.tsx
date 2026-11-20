@@ -102,8 +102,9 @@ export default function EscrowMints() {
     : null;
 
   return (
-    <section className="card panel grid gap-3 account-wide" {...tourTarget("profile.mints")}>
-      <h2 className="panel-title">{t("mints.panel.title")}</h2>
+    <details open className="card panel account-wide" {...tourTarget("profile.mints")}>
+      <summary className="panel-title cursor-pointer">{t("mints.panel.title")}</summary>
+      <div className="mt-3 grid gap-3">
       <p className="muted text-sm">{t("mints.panel.says")}</p>
       <p className="muted text-sm">{t("mints.rule")} <Link to="/glossary#w-mint_rule" className="ent">{t("mints.ruleLink")}</Link></p>
 
@@ -130,7 +131,7 @@ export default function EscrowMints() {
         </button>
       </div>
       {found && (
-        <details open className="grid gap-3">
+        <details open>
           <summary className="panel-title cursor-pointer">{t("mints.found", { count: candidates.length })}</summary>
           <div className="mt-3 grid gap-3">
             <div className="flex flex-wrap items-center justify-end gap-2">
@@ -174,6 +175,7 @@ export default function EscrowMints() {
         </details>
       )}
       {problem && <p className="error text-right">{problem}</p>}
-    </section>
+      </div>
+    </details>
   );
 }

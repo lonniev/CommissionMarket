@@ -947,6 +947,7 @@ export const en = {
   "profile.payout.notSaved": "The address was not saved.",
   "profile.currency.title": "Currency",
   "profile.currency.says": "Prices are in sats. This shows what they are worth today.",
+  "profile.ranks": "Reputation ranks",
 
   "language.title": "Language",
 } as const;

@@ -1,4 +1,4 @@
-/** Your account: where you are paid, the currency you think in, your language, then the package's panels. */
+/** Your account, in the package's groups: You (and your language), Money (where you are paid, your currency), This site (your calendar), Operator. */
 
 import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
@@ -105,14 +105,20 @@ function LanguageChoice() {
 
 export default function Profile() {
   const { session, status } = useAppShell();
+  const t = useT();
   useTour("account");
   return (
     <div className="page">
       <AccountPage
         npub={session.npub}
         heading={null}
-        before={<><PayoutAddress /><Currency /><LanguageChoice /><CalendarFeed /><EscrowMints /></>}
-        operator={{ classNames: OPERATOR, omit: ["escrow_mints"] }}
+        panels={{
+          you: <LanguageChoice />,
+          money: <><PayoutAddress /><Currency /></>,
+          site: <CalendarFeed />,
+          operator: <EscrowMints />,
+        }}
+        operator={{ classNames: OPERATOR, omit: ["escrow_mints"], heading: t("profile.ranks") }}
         usage={{ classNames: USAGE }}
         theme={{ classNames: { chip: "chip", active: "chip chip-on" } }}
         timezone={{ classNames: { select: "field" } }}
@@ -123,8 +129,9 @@ export default function Profile() {
         }}
         onSignOut={session.signOut}
         classNames={{
-          root: "account-grid", section: "card panel", sectionHeading: "panel-title mb-1", sectionIntro: "muted mb-2 text-sm",
-          sectionNote: "muted mt-2 text-sm", actions: "card panel flex gap-2 account-wide", signOut: "chip",
+          root: "account-groups", group: "account-group", groupSummary: "account-group-title", groupBody: "account-grid",
+          section: "card panel", sectionHeading: "panel-title mb-1", sectionIntro: "muted mb-2 text-sm",
+          sectionNote: "muted mt-2 text-sm", actions: "card panel flex justify-end gap-2", signOut: "chip",
         }}
       />
     </div>

@@ -945,6 +945,7 @@ const ja: Translation = {
   "profile.payout.notSaved": "アドレスを保存できませんでした。",
   "profile.currency.title": "通貨",
   "profile.currency.says": "価格はsatsで表示されます。ここには本日の価値が表示されます。",
+  "profile.ranks": "評判のランク",
 
   "language.title": "言語",
 };

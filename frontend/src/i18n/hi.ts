@@ -945,6 +945,7 @@ const hi: Translation = {
   "profile.payout.notSaved": "एड्रेस सहेजा नहीं गया।",
   "profile.currency.title": "मुद्रा",
   "profile.currency.says": "कीमतें sats में हैं। यहाँ दिखता है कि आज उनका मूल्य कितना है।",
+  "profile.ranks": "साख के दर्जे",
 
   "language.title": "भाषा",
 };
