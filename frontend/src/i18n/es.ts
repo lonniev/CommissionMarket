@@ -118,6 +118,8 @@ const es: Translation = {
 
   "footer.monetizedWith": "Monetizado con",
   "footer.patentPending": "Patente en trámite (US Prov. 64/045,999)",
+  "termsOfUse.title": "Condiciones de uso",
+  "termsOfUse.standardTerms": "El contrato de cada encargo está en las Condiciones generales.",
 
   "waiting.openingPage": "Abriendo la página…",
   "waiting.fetchingOne": "Obteniendo el encargo…",

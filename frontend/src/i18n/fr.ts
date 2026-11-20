@@ -118,6 +118,8 @@ const fr: Translation = {
 
   "footer.monetizedWith": "Monétisé avec",
   "footer.patentPending": "Brevet en instance (US Prov. 64/045,999)",
+  "termsOfUse.title": "Conditions d'utilisation",
+  "termsOfUse.standardTerms": "Le contrat de chaque commande figure dans les Conditions générales.",
 
   "waiting.openingPage": "Ouverture de la page…",
   "waiting.fetchingOne": "Récupération de la commande…",
