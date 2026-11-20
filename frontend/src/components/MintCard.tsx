@@ -10,8 +10,9 @@ import { CircleAlert, CircleCheck, FlaskConical, MessageSquare, ShieldCheck, Sig
 import { useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
-import { hostOf, judge, mintIcon, mintName, percent, type Judged, type MintFacts } from "../lib/mints";
+import { judge, mintIcon, mintName, percent, type Judged, type MintFacts } from "../lib/mints";
 import { isTestMint } from "../lib/tasks";
+import MintProvenance from "./MintProvenance";
 
 export default function MintCard({ facts, now, chosen, children, showShort = false }: {
   facts: MintFacts;
@@ -41,7 +42,10 @@ export default function MintCard({ facts, now, chosen, children, showShort = fal
           : <span className="mint-icon mint-icon-blank" aria-hidden>🪙</span>}
         <div className="min-w-0 flex-1">
           <div className="font-semibold">{mintName(facts)}</div>
-          <div className="muted text-xs break-all">{hostOf(facts.url)}{isTestMint(facts.url) && ` · ${t("cover.testMint")}`}</div>
+          <div className="flex flex-wrap items-center gap-x-1">
+            <MintProvenance facts={facts} />
+            {isTestMint(facts.url) && <span className="muted text-xs">· {t("cover.testMint")}</span>}
+          </div>
         </div>
         {judged.meets && <span className="badge badge-paid" title={t("mints.rule")}><CircleCheck size={14} aria-hidden />{t("mints.meets")}</span>}
       </div>

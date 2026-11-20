@@ -1,0 +1,3 @@
+- Find mints has a search by name or address and pages of nine, with the count shown.
+- Each mint's address opens its provenance, on a mouse hover or the eye on a tablet. It shows what the mint says of itself (description, key, contacts, terms), what cashumints.space has seen and its page there, the Round Robin Auditor's record with its last failure, and the live lock test, each with when it was seen.
+- A lock test on a test mint shows no invoice: a test mint marks its own invoices paid, so there is nothing to pay.

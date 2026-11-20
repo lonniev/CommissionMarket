@@ -15,7 +15,7 @@ import { signEscrow, type EscrowSignable } from "@tollbooth-dpyc/web";
 import { useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
 import type { MintTest as Test, MintTestItem } from "../lib/mints";
-import { mintTestList, mintTestSign, mintTestStart } from "../lib/tasks";
+import { isTestMint, mintTestList, mintTestSign, mintTestStart } from "../lib/tasks";
 import InvoicePanel from "./InvoicePanel";
 
 const STORE = "cm.minttest.";
@@ -137,7 +137,8 @@ export default function MintTest({ mint, now, onDone }: { mint: string; now: num
           </div>
         </>
       )}
-      {test?.state === "invoiced" && test.invoice && (
+      {test?.state === "invoiced" && isTestMint(mint) && <p className="text-sm">{t("mints.test.testMintNote")}</p>}
+      {test?.state === "invoiced" && test.invoice && !isTestMint(mint) && (
         <>
           <p className="text-sm">{t("mints.test.pay")}</p>
           <InvoicePanel now={now} invoice={{ sats: test.sats, invoice: test.invoice, lightning_uri: `lightning:${test.invoice}`,

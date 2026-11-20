@@ -6,11 +6,14 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { Minus, Plus, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, Search } from "lucide-react";
 import { isOperator, sessionStatus } from "@tollbooth-dpyc/web";
 import { tourTarget, useAppShell } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { ranked, withMint, type MintFacts } from "../lib/mints";
+import { matching, pageOf, ranked, withMint, type MintFacts } from "../lib/mints";
+
+/** Cards on one page of the search: three rows of three on a wide screen. */
+const PAGE = 9;
 import { findMints, mintFacts, offerMints } from "../lib/tasks";
 import MintCard from "./MintCard";
 import MintTest from "./MintTest";
@@ -22,6 +25,8 @@ export default function EscrowMints() {
   const [offered, setOffered] = useState<MintFacts[] | null>(null);
   const [found, setFound] = useState<MintFacts[] | null>(null);
   const [onlyMeets, setOnlyMeets] = useState(true);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(0);
   const [testing, setTesting] = useState("");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState("");
@@ -71,7 +76,10 @@ export default function EscrowMints() {
 
   if (!mine) return null;
   const offeredUrls = new Set((offered ?? []).map((f) => f.url));
-  const candidates = found ? ranked(found, now).filter((r) => !offeredUrls.has(r.facts.url) && (!onlyMeets || r.judged.meets)) : [];
+  const candidates = found
+    ? matching(ranked(found, now).filter((r) => !offeredUrls.has(r.facts.url) && (!onlyMeets || r.judged.meets)), query)
+    : [];
+  const shown = pageOf(candidates, page, PAGE);
 
   const test = (url: string) => testing === url
     ? <div className="mint-test-box"><MintTest mint={url} now={now} onDone={() => void load()} /></div>
@@ -102,10 +110,14 @@ export default function EscrowMints() {
 
       <div className="flex flex-wrap items-center justify-end gap-2">
         {found && (
-          <label className="check text-sm">
-            <input type="checkbox" checked={onlyMeets} onChange={(e) => setOnlyMeets(e.target.checked)} />
-            <span>{t("mints.onlyMeets")}</span>
-          </label>
+          <>
+            <input className="field min-w-0 flex-1" type="search" value={query} placeholder={t("mints.search")}
+              aria-label={t("mints.search")} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
+            <label className="check text-sm">
+              <input type="checkbox" checked={onlyMeets} onChange={(e) => { setOnlyMeets(e.target.checked); setPage(0); }} />
+              <span>{t("mints.onlyMeets")}</span>
+            </label>
+          </>
         )}
         <button type="button" className="btn btn-go" disabled={busy} onClick={() => void find()}>
           <Search size={18} aria-hidden />{busy && !found ? t("mints.finding") : t("mints.find")}
@@ -113,7 +125,7 @@ export default function EscrowMints() {
       </div>
       {found && !candidates.length && <p className="muted text-right">{t("mints.noneFound")}</p>}
       <div className="mint-grid">
-        {candidates.map(({ facts }) => (
+        {shown.rows.map(({ facts }) => (
           <div key={facts.url} className="grid gap-2">
             <MintCard facts={facts} now={now} showShort>
               <button type="button" className="chip" disabled={busy} onClick={() => setTesting(testing === facts.url ? "" : facts.url)}>
@@ -127,6 +139,15 @@ export default function EscrowMints() {
           </div>
         ))}
       </div>
+      {shown.pages > 1 && (
+        <nav className="flex flex-wrap items-center justify-end gap-2" aria-label={t("mints.pages")}>
+          <span className="muted text-sm">{t("mints.page", { from: shown.from, to: shown.to, count: candidates.length })}</span>
+          <button type="button" className="chip" disabled={shown.page === 0} onClick={() => setPage(shown.page - 1)}
+            aria-label={t("mints.prev")}><ChevronLeft size={16} aria-hidden /></button>
+          <button type="button" className="chip" disabled={shown.page >= shown.pages - 1} onClick={() => setPage(shown.page + 1)}
+            aria-label={t("mints.next")}><ChevronRight size={16} aria-hidden /></button>
+        </nav>
+      )}
       {problem && <p className="error text-right">{problem}</p>}
     </section>
   );
