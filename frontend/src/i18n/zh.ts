@@ -118,6 +118,8 @@ const zh: Translation = {
 
   "footer.monetizedWith": "变现方案由",
   "footer.patentPending": "专利申请中 (US Prov. 64/045,999)",
+  "termsOfUse.title": "使用条款",
+  "termsOfUse.standardTerms": "每项委托的合同见标准条款。",
 
   "waiting.openingPage": "正在打开页面…",
   "waiting.fetchingOne": "正在获取委托…",

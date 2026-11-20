@@ -120,6 +120,8 @@ export const en = {
 
   "footer.monetizedWith": "Monetized with",
   "footer.patentPending": "Patent Pending (US Prov. 64/045,999)",
+  "termsOfUse.title": "Terms of use",
+  "termsOfUse.standardTerms": "The contract for each commission is in the Standard Terms.",
 
   "waiting.openingPage": "Opening the page…",
   "waiting.fetchingOne": "Fetching the commission…",

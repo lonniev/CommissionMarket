@@ -118,6 +118,8 @@ const hi: Translation = {
 
   "footer.monetizedWith": "मुद्रीकरण का साधन",
   "footer.patentPending": "पेटेंट लंबित (US Prov. 64/045,999)",
+  "termsOfUse.title": "उपयोग की शर्तें",
+  "termsOfUse.standardTerms": "हर कमीशन का अनुबंध मानक शर्तों में है।",
 
   "waiting.openingPage": "पेज खुल रहा है…",
   "waiting.fetchingOne": "कमीशन लाया जा रहा है…",

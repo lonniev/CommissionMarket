@@ -28,6 +28,7 @@ const Orgs = lazy(() => import("./views/Orgs"));
 const Project = lazy(() => import("./views/Project"));
 const Profile = lazy(() => import("./views/Profile"));
 const Terms = lazy(() => import("./views/Terms"));
+const TermsOfUse = lazy(() => import("./views/TermsOfUse"));
 
 const PAGES = [
   { href: "/orgs", label: "nav.orgs", icon: <Building2 size={18} aria-hidden /> },
@@ -117,6 +118,7 @@ function Footer() {
         {t("footer.monetizedWith")}{" "}
         <a href="https://tollbooth-dpyc.com" target="_blank" rel="noopener noreferrer" className="underline">Tollbooth DPYC™</a>
         {" · "}Apache-2.0 · {t("footer.patentPending")}
+        {" · "}<Link to="/terms-of-use" className="underline">{t("termsOfUse.title")}</Link>
       </div>
     </footer>
   );
@@ -175,6 +177,7 @@ function Site() {
               <Route path="profile" element={<SignedIn><Profile /></SignedIn>} />
               <Route path="people/:npub" element={<PersonPage />} />
               <Route path="terms" element={<Terms />} />
+              <Route path="terms-of-use" element={<TermsOfUse />} />
               <Route path="guide" element={<Guide />} />
               <Route path="learn" element={<Learn />} />
               <Route path="glossary" element={<Glossary />} />
@@ -195,7 +198,7 @@ function Site() {
 export default function App() {
   const t = useT();
   return (
-    <AppShell theme="system" gateOptions={{ welcome: t("app.tagline") }} signedOut={() => <Site />}>
+    <AppShell theme="system" gateOptions={{ welcome: t("app.tagline"), termsHref: "/terms-of-use" }} signedOut={() => <Site />}>
       {() => <Site />}
     </AppShell>
   );

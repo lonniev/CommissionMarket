@@ -118,6 +118,8 @@ const ja: Translation = {
 
   "footer.monetizedWith": "収益化基盤:",
   "footer.patentPending": "特許出願中 (US Prov. 64/045,999)",
+  "termsOfUse.title": "利用規約",
+  "termsOfUse.standardTerms": "各依頼の契約は標準条項にあります。",
 
   "waiting.openingPage": "ページを開いています…",
   "waiting.fetchingOne": "依頼を取得しています…",
