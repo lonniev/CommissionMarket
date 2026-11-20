@@ -5,6 +5,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.13.0] — 2026-11-20
+
+### Added
+
+- Each mint card says where its Lightning node is (country, capacity, channels, or private) and where its web server is (city, country, network, or the shared front it sits behind such as Cloudflare). The provenance panel adds both sources: mempool.space with a link to the node, and ipinfo.io.
+- Find mints filters by region (the node's country, and the server's unless it is a shared front), by established (seen a year or more) and by a node announced within 60 days, alongside the rule.
+
+- The mint rule is in the Glossary, in every language. Every "Meets the rule" badge, the mint picker and the Operator's panel link to it, and a link to one Glossary word now scrolls to it and marks it.
+
+- The Glossary explains NUT (a numbered chapter of the Cashu protocol) and the five an escrow needs, in every language; each mint card's escrow NUT line links to it.
+
 ## [0.12.1] — 2026-11-20
 
 ### Added
