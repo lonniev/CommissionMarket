@@ -44,7 +44,7 @@ export const glossary: GlossaryText = {
     audience: {
       term: "受邀承接方",
       aka: ["圈子", "受邀者", "audience"],
-      said: "委托方邀请来做这项工作的承接方的 npub。只有他们能看到并承接该委托。",
+      said: "委托方邀请来做这项工作的承接方的 npub。只有他们能看到并承接该委托。 项目为每项新委托指定它的圈子。",
     },
     offer: {
       term: "要约",
@@ -249,7 +249,12 @@ export const glossary: GlossaryText = {
     organization: {
       term: "组织",
       aka: ["机构", "团队", "organization"],
-      said: "汇集项目的团体。其成员可以查看每个项目，并在其中发布委托。",
+      said: "汇集项目的团体。其成员在这些项目中发布委托；受邀做这项工作的专业人士是每个项目的圈子。",
+    },
+    member: {
+      term: "成员",
+      aka: ["members"],
+      said: "所有者加入组织的人。成员可以查看每个项目及其委托，并在其中发布委托。成员是委托人的同伴，而不是受邀的专业人士。",
     },
     project: {
       term: "项目",

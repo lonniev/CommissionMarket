@@ -1,0 +1,1 @@
+- An Organization's members now sit under its name, above its Projects, titled "Members of <Organization>". The help and the Glossary say what a member is: a peer who posts commissions into any of its Projects, apart from the professionals each Project's circle invites.

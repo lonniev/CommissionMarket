@@ -24,7 +24,7 @@ type Row = [step: string, opts?: { before?: BlockId; side?: Side }];
 export const OWN: Record<string, Row[]> = {
   commissions: [["new"], ["tabs"], ["browse"], ["list", { side: "top" }], ["refresh"]],
   orgs: [["new"], ["list", { side: "top" }]],
-  org: [["projects", { side: "top" }], ["newProject"], ["members", { side: "top" }]],
+  org: [["members", { side: "top" }], ["projects", { side: "top" }], ["newProject"]],
   project: [["budget"], ["circle", { side: "top" }], ["defaults", { side: "top" }], ["commissions", { side: "top" }], ["moveHere"], ["post"]],
   pick: [["projects"]],
   compose: [

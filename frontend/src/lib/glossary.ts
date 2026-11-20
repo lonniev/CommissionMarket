@@ -69,6 +69,7 @@ export const GLOSSARY_KEYS = [
   ["claim_of_cause", "standing", "14.8"],
 
   ["organization", "filing"],
+  ["member", "filing"],
   ["project", "filing"],
   ["project_defaults", "filing"],
 ] as const satisfies ReadonlyArray<readonly [key: string, group: GlossaryGroup, clause?: string]>;
