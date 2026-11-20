@@ -10,6 +10,8 @@
  */
 
 import { Fragment, useCallback, useEffect, useState } from "react";
+import type { MintFacts } from "../lib/mints";
+import MintCard from "./MintCard";
 import { Link } from "react-router-dom";
 import { Check, Copy, KeyRound, Lock, PenLine, Smartphone, Vault } from "lucide-react";
 import {
@@ -18,7 +20,7 @@ import {
 import { useAppShell, useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
 import {
-  escrowCollect, escrowInvoice, escrowPropose, escrowSign, escrowStatus, isTestMint,
+  escrowCollect, escrowInvoice, escrowPropose, escrowSign, escrowStatus, isTestMint, mintFacts,
   type Escrow, type EscrowPending, type EscrowReading, type EscrowRole, type Invoice, type Task,
 } from "../lib/tasks";
 import InvoicePanel from "./InvoicePanel";
@@ -131,6 +133,7 @@ export default function EscrowPanel({ task, now, onChanged }: { task: Task; now:
   const t = useT();
   const locale = useLanguageLocale();
   const [reading, setReading] = useState<EscrowReading | null>(null);
+  const [mintSeen, setMintSeen] = useState<MintFacts | null>(null);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [ruling, setRuling] = useState("");
   const [busy, setBusy] = useState(false);
@@ -166,6 +169,14 @@ export default function EscrowPanel({ task, now, onChanged }: { task: Task; now:
       setBusy(false);
     }
   }
+
+  const mintUrl = reading?.escrow?.mint ?? cover?.escrow_mint ?? "";
+  useEffect(() => {
+    if (!cover?.escrow || !mintUrl) return;
+    let live = true;
+    mintFacts([mintUrl]).then((r) => live && setMintSeen(r.mints[0] ?? null)).catch(() => undefined);
+    return () => { live = false; };
+  }, [cover?.escrow, mintUrl]);
 
   if (!cover?.escrow) return null;
 
@@ -214,6 +225,8 @@ export default function EscrowPanel({ task, now, onChanged }: { task: Task; now:
           <Fragment key={r}><dt>{roleName(r)}</dt><dd><Person npub={escrow.parties[r]} /></dd></Fragment>
         ))}
       </dl>
+
+      {mintSeen && <MintCard facts={mintSeen} now={now} />}
 
       {task.escrow_due_to === "client" && divisible && (
         <p className="gate">{t("escrow.dueToClient")} <Link to="/terms?version=v1#t-14-10" className="ent">§14.10</Link></p>

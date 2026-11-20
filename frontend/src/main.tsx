@@ -11,8 +11,8 @@ configureTollbooth({
   appName: "CommissionMarket",
   mcpUrl: import.meta.env.VITE_MCP_URL || "/mcp",
   operatorUrl: "https://taskbooth-mcp.fastmcp.app",
-  // Public reading takes no npub, so none is sent: Bitcoin's price, and the Standard Terms.
-  extraBootstrapTools: ["btc_price", "standard_terms", "reputation"],
+  // Public reading takes no npub, so none is sent: Bitcoin's price, the Standard Terms, standing, and mint facts.
+  extraBootstrapTools: ["btc_price", "standard_terms", "reputation", "mint_facts", "find_mints"],
 });
 
 void registerCommission();

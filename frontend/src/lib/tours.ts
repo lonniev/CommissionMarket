@@ -33,7 +33,7 @@ export const OWN: Record<string, Row[]> = {
     ["audience", { before: "people" }], ["arbiter", { before: "people" }], ["inspector", { before: "people" }],
     ["grade", { before: "grades" }], ["addGrade", { before: "grades" }], ["top", { before: "grades" }],
     ["neededBy", { before: "schedule" }], ["late", { before: "schedule" }], ["failure", { before: "schedule" }],
-    ["deposit", { before: "payments" }], ["milestones", { before: "payments" }], ["escrow", { before: "payments" }],
+    ["deposit", { before: "payments" }], ["milestones", { before: "payments" }], ["escrow", { before: "payments" }], ["mint", { before: "payments" }],
     ["deemed", { before: "conclusion" }], ["appeal", { before: "conclusion" }], ["ruling", { before: "conclusion" }], ["pay", { before: "conclusion" }],
     ["ip", { before: "legal" }], ["flags", { before: "legal" }], ["law", { before: "legal" }],
     ["post", { side: "top" }],
@@ -47,8 +47,8 @@ export const OWN: Record<string, Row[]> = {
   catalog: [["shelves", { side: "top" }], ["visit"]],
 };
 
-/** The Profile page's own panels, after the package's; the rank sliders show for the Operator only. */
-const ACCOUNT_OWN: Row[] = [["payout"], ["currency"], ["language"]];
+/** The Profile page's own panels, after the package's; the escrow mints and the rank sliders show for the Operator only. */
+const ACCOUNT_OWN: Row[] = [["payout"], ["currency"], ["language"], ["mints", { side: "top" }]];
 
 function stepsOf(page: string, rows: Row[], t: Translate, prefix = page): TourStep[] {
   return rows.map(([step, opts = {}]) => ({

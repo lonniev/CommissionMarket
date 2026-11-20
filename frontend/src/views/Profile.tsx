@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { getMyProperties, setMyProperty } from "@tollbooth-dpyc/web";
 import { AccountPage, LanguageChooser, tourTarget, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
 import CalendarFeed from "../components/CalendarFeed";
+import EscrowMints from "../components/EscrowMints";
 import { useT } from "../i18n";
 import { FIATS, useFiat } from "../lib/FiatContext";
 
@@ -110,8 +111,8 @@ export default function Profile() {
       <AccountPage
         npub={session.npub}
         heading={null}
-        before={<><PayoutAddress /><Currency /><LanguageChoice /><CalendarFeed /></>}
-        operator={{ classNames: OPERATOR }}
+        before={<><PayoutAddress /><Currency /><LanguageChoice /><CalendarFeed /><EscrowMints /></>}
+        operator={{ classNames: OPERATOR, omit: ["escrow_mints"] }}
         usage={{ classNames: USAGE }}
         theme={{ classNames: { chip: "chip", active: "chip chip-on" } }}
         timezone={{ classNames: { select: "field" } }}

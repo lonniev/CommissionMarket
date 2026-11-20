@@ -2,6 +2,7 @@
 
 import { callTool, type EscrowSignable } from "@tollbooth-dpyc/web";
 import type { Ahead } from "./money.ts";
+import type { MintFacts, MintTest } from "./mints.ts";
 import type { Role, Standing } from "./moves.ts";
 import type { LateChoice, Rubric } from "./rubric.ts";
 
@@ -410,6 +411,30 @@ export async function escrowMints(): Promise<string[]> {
   const value = typeof row?.value === "string" ? row.value : "";
   return [...new Set(value.split(/[\s,]+/).map((w) => w.trim()).filter((w) => w.startsWith("https://")))];
 }
+
+// ── Choosing escrow mints ────────────────────────────────────────────────────
+
+/** Facts about mints (empty: the ones the Operator offers), each from its source, with the Operator's offer. */
+export const mintFacts = (mints: string[] = []) =>
+  ask<{ offered: string[]; mints: MintFacts[] }>("mint_facts", mints.length ? { mints } : {});
+
+/** Online mints that claim every escrow NUT, with their facts. */
+export const findMints = () => ask<{ offered: string[]; mints: MintFacts[] }>("find_mints");
+
+/** The Operator's choice of escrow mints, stored as their property. */
+export async function offerMints(urls: string[]): Promise<void> {
+  const r = await callTool<{ success?: boolean; error?: string }>("set_operator_property",
+    { name: "escrow_mints", value: urls.join(" ") });
+  if (r.success === false) throw new Error(r.error ?? "The mints were not saved.");
+}
+
+export const mintTestStart = (mint: string, keys: string[], sats: number) =>
+  ask<{ test: MintTest }>("mint_test_start", { mint, keys, sats });
+
+export const mintTestSign = (testId: string, signatures: Record<string, string>) =>
+  ask<{ test: MintTest }>("mint_test_sign", { test_id: testId, signatures });
+
+export const mintTestList = () => ask<{ tests: MintTest[] }>("mint_test_list");
 
 /** A test mint: its sats are not real. */
 export const isTestMint = (url: string) => /^https:\/\/([a-z0-9-]+\.)*testnut\.cashu\.space(\/|$)/i.test(url);
