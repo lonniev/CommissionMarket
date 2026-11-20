@@ -11,7 +11,7 @@ import { formatSats } from "@tollbooth-dpyc/web";
 import { NpubField, NpubListField, tourTarget, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
 import { say, useT } from "../i18n";
 import { BLOCKS, blockOf, summaryOf, type BlockId, type Shape } from "../lib/formBlocks";
-import { aheadFrom, audienceFrom, blankCover, coverFrom, failHoursOf, MAX_AUDIENCE, rowsOf, windowHoursOf, type CoverRows, type MilestoneRow } from "../lib/cover";
+import { aheadFrom, audienceFrom, blankCover, coverFrom, failHoursOf, MAX_AUDIENCE, MAX_DELIVERABLES, rowsOf, windowHoursOf, type CoverRows, type MilestoneRow } from "../lib/cover";
 import { aheadPct, MAX_AHEAD_PCT, MAX_MILESTONES, shareOf } from "../lib/money";
 import { lateFrom, MAX_GRADES, rubricFrom, starterRows, type GradeRow, type LateKind } from "../lib/rubric";
 import { MAX_LATE_STEPS, spanSaid, starterSteps, stepRowsOf, type StepRow, type Unit } from "../lib/late";
@@ -25,6 +25,9 @@ import RankLine from "./RankLine";
 import FormBlock, { blockAnchor } from "./FormBlock";
 import TermsFields from "./TermsFields";
 import Word from "./Word";
+import DeliverableList from "./DeliverableList";
+import SpecLink from "./SpecLink";
+import { reachable } from "../lib/unfurl";
 import type { GlossaryKey } from "../lib/glossary";
 
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
@@ -165,16 +168,19 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
               </Suspense>
             )}
           </div>
-          <label className="grid gap-1" {...tourTarget("compose.deliverables")}>
+          <div className="grid gap-1" {...tourTarget("compose.deliverables")}>
             <span className="label">{t("cover.deliverables")}</span>
-            <textarea className="field" rows={3} value={cover.deliverables} onChange={(e) => setCoverField("deliverables", e.target.value)}
-              placeholder={t("cover.deliverablesPlaceholder")} />
-          </label>
-          <div className="two-up" {...tourTarget("compose.spec")}>
-            <label className="grid gap-1">
-              <span className="label">{t("cover.specUrl")}</span>
-              <input className="field" value={cover.specUrl} onChange={(e) => setCoverField("specUrl", e.target.value)} placeholder="https://…" inputMode="url" autoCapitalize="none" />
-            </label>
+            <DeliverableList value={cover.deliverables} onChange={(v) => setCoverField("deliverables", v)}
+              placeholder={t("cover.deliverablesPlaceholder")} max={MAX_DELIVERABLES} />
+          </div>
+          <div className="grid gap-3" {...tourTarget("compose.spec")}>
+            <div className="grid gap-1">
+              <label htmlFor="spec-url" className="label">{t("cover.specUrl")} <Word of="spec_link" badge /></label>
+              <input id="spec-url" className="field" value={cover.specUrl} onChange={(e) => setCoverField("specUrl", e.target.value)}
+                placeholder="https://github.com/…/blob/v1.0/bracket-requirements.pdf" inputMode="url" autoCapitalize="none" spellCheck={false} />
+              <span className="muted text-sm">{t("cover.specHelp")}</span>
+              {reachable(cover.specUrl.trim()) && <span className="text-sm">{t("preview.label")} <SpecLink url={cover.specUrl.trim()} /></span>}
+            </div>
             <label className="grid gap-1">
               <span className="label">{t("cover.specHash")} <Word of="spec_hash" badge /></span>
               <input className="field font-mono text-sm" value={cover.specHash} onChange={(e) => setCoverField("specHash", e.target.value)} placeholder="sha256" autoCapitalize="none" spellCheck={false} />

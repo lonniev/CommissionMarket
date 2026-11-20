@@ -75,8 +75,8 @@ export const glossary: GlossaryText = {
     },
     spec_link: {
       term: "Specification",
-      aka: ["spec", "brief"],
-      said: "A link to the full description of the work, for anything longer than the brief.",
+      aka: ["spec", "brief", "design document", "CAD", "requirements", "model", "drawing"],
+      said: "A link to the design document the work must meet, such as drawings, CAD, requirements or a model, kept under change control so the signed version stays fixed.",
     },
     spec_hash: {
       term: "Specification sha256",

@@ -1,0 +1,1 @@
+- The Profile page packs its cards into columns, so a short card leaves no gap under it.

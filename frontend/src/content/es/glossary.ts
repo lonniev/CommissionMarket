@@ -75,8 +75,8 @@ export const glossary: GlossaryText = {
     },
     spec_link: {
       term: "Especificaciones",
-      aka: ["especificación", "pliego", "descripción"],
-      said: "Un enlace a la descripción completa del trabajo, para todo lo que no quepa en la descripción general.",
+      aka: ["spec", "pliego", "documento de diseño", "CAD", "requisitos", "modelo", "plano"],
+      said: "Un enlace al documento de diseño que el trabajo debe cumplir, como planos, CAD, requisitos o un modelo, bajo control de versiones para que la versión firmada no cambie.",
     },
     spec_hash: {
       term: "sha256 de las especificaciones",
