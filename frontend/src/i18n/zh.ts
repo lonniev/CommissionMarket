@@ -945,6 +945,7 @@ const zh: Translation = {
   "profile.payout.notSaved": "地址未能保存。",
   "profile.currency.title": "货币",
   "profile.currency.says": "价格以 sats 计。此处显示它们今日的价值。",
+  "profile.ranks": "信誉等级",
 
   "language.title": "语言",
 };

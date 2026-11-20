@@ -945,6 +945,7 @@ const fr: Translation = {
   "profile.payout.notSaved": "L'adresse n'a pas été enregistrée.",
   "profile.currency.title": "Devise",
   "profile.currency.says": "Les prix sont en sats. Ceci montre ce qu'ils valent aujourd'hui.",
+  "profile.ranks": "Rangs de réputation",
 
   "language.title": "Langue",
 };
