@@ -112,7 +112,7 @@ export default function Profile() {
         npub={session.npub}
         heading={null}
         before={<><PayoutAddress /><Currency /><LanguageChoice /><CalendarFeed /><EscrowMints /></>}
-        operator={{ classNames: OPERATOR }}
+        operator={{ classNames: OPERATOR, omit: ["escrow_mints"] }}
         usage={{ classNames: USAGE }}
         theme={{ classNames: { chip: "chip", active: "chip chip-on" } }}
         timezone={{ classNames: { select: "field" } }}
