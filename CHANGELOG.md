@@ -5,6 +5,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.14.3] — 2026-11-20
+
+### Added
+
+- A Project's Circle and Default terms each carry an ⓘ that opens their Glossary meaning, on the Project page and in its form.
+
+### Fixed
+
+- The café's tiles each show the first four lines of their description, right under the title, so every tile is the same modest length.
+
+- On Learn, a section with one lesson (The price) shows it as wide as every other lesson card, so its picture is no longer stretched across the page.
+
 ## [0.14.2] — 2026-11-20
 
 ### Changed

@@ -1,1 +1,0 @@
-- The café's tiles each show the first four lines of their description, right under the title, so every tile is the same modest length.

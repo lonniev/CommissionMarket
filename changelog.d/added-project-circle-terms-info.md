@@ -1,1 +1,0 @@
-- A Project's Circle and Default terms each carry an ⓘ that opens their Glossary meaning, on the Project page and in its form.
