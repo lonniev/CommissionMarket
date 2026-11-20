@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.11.0] — 2026-11-19
+
+### Added
+
+- A **Terms of use** page (`/terms-of-use`, linked in the footer and on the sign-in card). It covers what the site does and never does, that commissions are between their parties under the Standard Terms, escrow and mints, your data and acceptable use, plus the sections every Tollbooth site shares.
+
 ## [0.10.1] — 2026-11-19
 
 ### Changed
