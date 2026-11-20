@@ -5,6 +5,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.14.0] — 2026-11-20
+
+### Changed
+
+- The Profile page sits in folding groups:
+  - **You:** profile, language, appearance, time zone, Log out.
+  - **Money:** payout address, currency, balance.
+  - **This site:** calendar.
+  - **Operator:** reputation ranks and Escrow mints, which folds too.
+
+  Each group's panels sit in a grid, so no pane overlaps or repeats. The rank sliders show what each does and read with their units.
+
 ## [0.13.1] — 2026-11-20
 
 ### Changed
