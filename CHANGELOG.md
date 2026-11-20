@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.12.0] — 2026-11-20
+
+### Added
+
+- Choosing an escrow mint shows each mint as a card: its escrow NUTs, its uptime over 30 days, the Round Robin Auditor's record and its review count with the latest date (never stars), each from a named source with when it was seen. The commission's escrow panel shows its mint's card too.
+- The Operator gets an Escrow mints panel on the Profile page: the mints on offer, a search of every mint that claims the escrow NUTs (best record first, with a filter for the rule: 99% uptime and 3 months clean on the auditor), and a live lock test that locks a few of their own sats with throwaway keys this browser makes, checks the mint refuses one signature, takes two and takes the refund key after its date, then returns the sats.
+
 ## [0.11.0] — 2026-11-19
 
 ### Added
