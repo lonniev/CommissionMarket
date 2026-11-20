@@ -1,3 +1,0 @@
-- The found mints sit in a section that folds open and shut, titled with how many were found.
-- The freshness filter says "Node updated within 60 days", and the provenance panel says "Last updated".
-- A long line on a mint card (such as its server) wraps beside its icon instead of dropping below it.

@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.13.1] — 2026-11-20
+
+### Changed
+
+- The found mints sit in a section that folds open and shut, titled with how many were found.
+- The freshness filter says "Node updated within 60 days", and the provenance panel says "Last updated".
+- A long line on a mint card (such as its server) wraps beside its icon instead of dropping below it.
+
 ## [0.13.0] — 2026-11-20
 
 ### Added
