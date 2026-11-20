@@ -538,3 +538,17 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 
 /* A tour's wrapper around a panel that drew nothing leaves no gap in the page's grid. */
 div[data-tour]:empty { display: none; }
+
+/* Cashu escrow mints: a card per mint, its facts one per line. */
+.mint-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
+.mint-card { display: grid; gap: 0.5rem; padding: 0.75rem; border: 1px solid var(--tb-line); border-radius: 0.75rem; background: var(--tb-surface); text-align: left; }
+.mint-card-chosen { border-color: var(--tb-accent); box-shadow: 0 0 0 2px var(--tb-accent); }
+.mint-head { display: flex; align-items: center; gap: 0.625rem; }
+.mint-icon { width: 2rem; height: 2rem; flex: none; border-radius: 0.5rem; object-fit: cover; }
+.mint-icon-blank { display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; background: var(--tb-surface-2); }
+.mint-facts { display: grid; gap: 0.25rem; font-size: 0.9375rem; }
+.mint-facts li { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.mint-facts li > svg { flex: none; }
+.mint-pick { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; border-radius: 0.75rem; }
+.mint-pick:focus-visible { outline: 2px solid var(--tb-accent); outline-offset: 2px; }
+.mint-test-box { padding: 0.75rem; border: 1px dashed var(--tb-line); border-radius: 0.75rem; }

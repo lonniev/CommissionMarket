@@ -9,8 +9,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { tourTarget } from "@tollbooth-dpyc/web/react";
 import { leastRefundOf, MAX_REFUND_DAYS, type CoverRows } from "../lib/cover";
-import { escrowMints, isTestMint } from "../lib/tasks";
+import { mintFacts } from "../lib/tasks";
+import type { MintFacts } from "../lib/mints";
+import MintCard from "./MintCard";
 import { useT } from "../i18n";
 import type { BlockId } from "../lib/formBlocks";
 
@@ -21,18 +24,20 @@ export default function EscrowFields({ cover, set, onOpen }: {
   onOpen: (block: BlockId) => void;
 }) {
   const t = useT();
-  const [mints, setMints] = useState<string[] | null>(null);
+  const [facts, setFacts] = useState<MintFacts[] | null>(null);
+  const mints = facts?.map((f) => f.url) ?? null;
+  const now = Math.floor(Date.now() / 1000);
   const least = leastRefundOf(cover);
 
   useEffect(() => {
     let live = true;
-    escrowMints().then((m) => live && setMints(m)).catch(() => live && setMints([]));
+    mintFacts().then((r) => live && setFacts(r.mints)).catch(() => live && setFacts([]));
     return () => { live = false; };
   }, []);
 
   useEffect(() => {
-    if (cover.escrow && !cover.mint && mints?.length) set("mint", mints[0]);
-  }, [cover.escrow, cover.mint, mints, set]);
+    if (cover.escrow && !cover.mint && facts?.length) set("mint", facts[0].url);
+  }, [cover.escrow, cover.mint, facts, set]);
 
   // The refund date can never fall inside an appeal: as the deemed days grow, the floor does too.
   // Applied when escrow is ticked or the floor moves, never while the days are typed.
@@ -71,18 +76,26 @@ export default function EscrowFields({ cover, set, onOpen }: {
       )}
 
       {cover.escrow && (
-        <div className="two-up">
-          <label className="grid gap-1">
+        <div className="grid gap-2">
+          <div className="grid gap-1">
             <span className="label">{t("cover.mint")}</span>
             {mints && !mints.length
               ? <span className="error">{t("cover.noMints")}</span>
               : (
-                <select className="field" value={cover.mint} onChange={(e) => set("mint", e.target.value)}>
-                  {(mints ?? (cover.mint ? [cover.mint] : [])).map((m) => <option key={m} value={m}>{m}</option>)}
-                </select>
+                <div className="mint-grid" role="radiogroup" aria-label={t("cover.mint")} {...tourTarget("compose.mint")}>
+                  {(facts ?? []).map((f) => (
+                    <button key={f.url} type="button" role="radio" aria-checked={cover.mint === f.url}
+                      className="mint-pick" onClick={() => set("mint", f.url)}>
+                      <MintCard facts={f} now={now} chosen={cover.mint === f.url} />
+                    </button>
+                  ))}
+                </div>
               )}
-            {cover.mint && isTestMint(cover.mint) && <span className="muted text-sm">{t("cover.testMint")}</span>}
-          </label>
+            <p className="muted text-sm">
+              {t("mints.pick.says")}{" "}
+              <Link to="/glossary#mint" className="ent">{t("mints.pick.what")}</Link>
+            </p>
+          </div>
           <label className="grid gap-1">
             <span className="label">{t("cover.refundDays")}</span>
             <input className="field num text-right" inputMode="numeric" maxLength={2} value={cover.refundDays}
