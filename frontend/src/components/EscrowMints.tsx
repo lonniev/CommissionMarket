@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Minus, Plus, Search } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Minus, Plus, Search } from "lucide-react";
 import { isOperator, sessionStatus } from "@tollbooth-dpyc/web";
 import { tourTarget, useAppShell, useLanguageLocale } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
@@ -31,6 +31,7 @@ export default function EscrowMints() {
   const [onlyFresh, setOnlyFresh] = useState(false);
   const [region, setRegion] = useState("");
   const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(true);
   const [page, setPage] = useState(0);
   const [testing, setTesting] = useState("");
   const [busy, setBusy] = useState(false);
@@ -59,6 +60,7 @@ export default function EscrowMints() {
     setProblem("");
     try {
       setFound((await findMints()).mints);
+      setOpen(true);
     } catch (e) {
       setProblem((e as Error).message);
     } finally {
@@ -125,7 +127,7 @@ export default function EscrowMints() {
       </div>
 
       <div className="flex flex-wrap items-center justify-end gap-2">
-        {found && (
+        {found && open && (
           <>
             <input className="field min-w-0 flex-1" type="search" value={query} placeholder={t("mints.search")}
               aria-label={t("mints.search")} onChange={(e) => { setQuery(e.target.value); setPage(0); }} />
@@ -139,10 +141,17 @@ export default function EscrowMints() {
             {check(onlyFresh, setOnlyFresh, t("mints.onlyFresh"))}
           </>
         )}
+        {found && (
+          <button type="button" className="chip" aria-expanded={open} onClick={() => setOpen(!open)}>
+            {open ? <ChevronUp size={16} aria-hidden /> : <ChevronDown size={16} aria-hidden />}
+            {t(open ? "mints.hideFound" : "mints.showFound", { count: candidates.length })}
+          </button>
+        )}
         <button type="button" className="btn btn-go" disabled={busy} onClick={() => void find()}>
           <Search size={18} aria-hidden />{busy && !found ? t("mints.finding") : t("mints.find")}
         </button>
       </div>
+      {open && <>
       {found && !candidates.length && <p className="muted text-right">{t("mints.noneFound")}</p>}
       <div className="mint-grid">
         {shown.rows.map(({ facts }) => (
@@ -168,6 +177,7 @@ export default function EscrowMints() {
             aria-label={t("mints.next")}><ChevronRight size={16} aria-hidden /></button>
         </nav>
       )}
+      </>}
       {problem && <p className="error text-right">{problem}</p>}
     </section>
   );
