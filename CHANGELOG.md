@@ -5,6 +5,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.10.1] — 2026-11-19
+
+### Changed
+
+- The Glossary says that with no arbiter the client, or someone the client names, decides an appeal, as the Standard Terms now do (§4.8).
+
+### Removed
+
+- The cover page and Project defaults no longer ask whether the client commissions as a consumer.
+
 ## [0.10.0] — 2026-11-19
 
 ### Added
