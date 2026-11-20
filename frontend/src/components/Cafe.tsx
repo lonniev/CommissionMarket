@@ -12,9 +12,9 @@ export function CollectionTile({ c }: { c: CafeCollection }) {
       {c.image
         ? <img src={c.image} alt="" loading="lazy" referrerPolicy="no-referrer" className="cafe-tile-image" />
         : <span className="cafe-tile-image cafe-tile-blank"><Coffee size={40} aria-hidden /></span>}
-      <span className="grid gap-1 p-4">
+      <span className="grid content-start gap-1 p-4">
         <span className="panel-title">{c.title}</span>
-        {c.says && <span className="muted text-sm">{c.says}</span>}
+        {c.says && <span className="muted text-sm cafe-tile-says">{c.says}</span>}
       </span>
     </Link>
   );
