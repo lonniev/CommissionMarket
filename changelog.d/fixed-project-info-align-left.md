@@ -1,0 +1,1 @@
+- The ⓘ beside a Project's Circle and Default terms opens toward the card, not off the left of the screen.
