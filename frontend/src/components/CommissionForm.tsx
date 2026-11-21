@@ -29,7 +29,7 @@ import DeliverableList from "./DeliverableList";
 import SpecLink from "./SpecLink";
 import { reachable } from "../lib/unfurl";
 import type { GlossaryKey } from "../lib/glossary";
-import { gradeRowsOf, milestoneRowsOf, type Draft } from "../lib/draft";
+import { gradeRowsOf, milestoneRowsOf, type Draft, withAnswers } from "../lib/draft";
 import type { Proposal } from "./DraftAssist";
 
 const DraftAssist = lazy(() => import("./DraftAssist"));
@@ -451,7 +451,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
 
         {!editing && (
           <Suspense fallback={null}>
-            <DraftAssist onSaid={fromSaid} onApply={applyProposal} onOpenPoints={setOpenPoints} />
+            <DraftAssist onSaid={fromSaid} onApply={applyProposal} onOpenPoints={setOpenPoints}
+              onAnswers={(answered) => setDescription((d) => withAnswers(d, answered, t("draft.details")))} />
           </Suspense>
         )}
 

@@ -3,16 +3,19 @@
  *
  * What the person said fills the form at once. Everything the AI suggests (grades,
  * a deposit, milestones, deemed acceptance, who owns the work) is a proposal they
- * apply by choice. Its questions and assumptions are points to settle: the form
- * keeps Post shut until each is ticked, so nobody signs terms they never chose.
+ * apply by choice. Its questions and assumptions are points to settle, each in
+ * place: a question is answered in the box under it (or skipped), an assumption is
+ * ticked as right or corrected under it. Answers and corrections go into the brief.
+ * The form keeps Post shut until every point is settled, so nobody signs terms they
+ * never chose.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Sparkles } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { tourTarget } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { draftCommission, draftFare, IDEA_MAX, openPointsOf, proposalsOf, type Draft } from "../lib/draft";
+import { draftCommission, draftFare, IDEA_MAX, openPointsOf, proposalsOf, type Answered, type Draft } from "../lib/draft";
 import { useFiat } from "../lib/FiatContext";
 
 export type Proposal = ReturnType<typeof proposalsOf>[number];
@@ -24,9 +27,13 @@ export interface DraftAssistProps {
   onApply: (which: Proposal, draft: Draft) => void;
   /** How many points are still unsettled; the form shuts Post while any are. */
   onOpenPoints: (count: number) => void;
+  /** The answers and corrections so far, for the brief. */
+  onAnswers: (answered: Answered[]) => void;
 }
 
-export default function DraftAssist({ onSaid, onApply, onOpenPoints }: DraftAssistProps) {
+const ANSWER_MAX = 300;
+
+export default function DraftAssist({ onSaid, onApply, onOpenPoints, onAnswers }: DraftAssistProps) {
   const t = useT();
   const { fiat } = useFiat();
   const [idea, setIdea] = useState("");
@@ -35,11 +42,13 @@ export default function DraftAssist({ onSaid, onApply, onOpenPoints }: DraftAssi
   const [problem, setProblem] = useState("");
   const [draft, setDraft] = useState<Draft | null>(null);
   const [applied, setApplied] = useState<Set<Proposal>>(new Set());
-  const [settled, setSettled] = useState<Set<number>>(new Set());
+  const [ticked, setTicked] = useState<Set<number>>(new Set());
+  const [answers, setAnswers] = useState<string[]>([]);
 
   useEffect(() => { void draftFare().then(setFare); }, []);
-  const points = draft ? openPointsOf(draft) : [];
-  useEffect(() => { onOpenPoints(points.length - settled.size); }, [points.length, settled, onOpenPoints]);
+  const points = useMemo(() => (draft ? openPointsOf(draft) : []), [draft]);
+  const open = points.filter((_, i) => !ticked.has(i) && !answers[i]?.trim()).length;
+  useEffect(() => { onOpenPoints(open); }, [open, onOpenPoints]);
 
   async function go() {
     setProblem("");
@@ -48,7 +57,8 @@ export default function DraftAssist({ onSaid, onApply, onOpenPoints }: DraftAssi
       const d = await draftCommission(idea.trim(), fiat);
       setDraft(d);
       setApplied(new Set());
-      setSettled(new Set());
+      setTicked(new Set());
+      setAnswers([]);
       onSaid(d.said);
     } catch (e) {
       setProblem((e as Error).message);
@@ -63,12 +73,18 @@ export default function DraftAssist({ onSaid, onApply, onOpenPoints }: DraftAssi
     setApplied((s) => new Set(s).add(which));
   }
 
-  const toggle = (i: number) => setSettled((s) => {
+  const toggle = (i: number) => setTicked((s) => {
     const next = new Set(s);
     if (next.has(i)) next.delete(i);
     else next.add(i);
     return next;
   });
+
+  function answer(i: number, text: string) {
+    const next = points.map((_, j) => (j === i ? text : answers[j] ?? ""));
+    setAnswers(next);
+    onAnswers(points.map((p, j) => ({ point: p.text, answer: next[j] })));
+  }
 
   const describe = (which: Proposal, d: Draft): string => {
     const p = d.proposed;
@@ -118,15 +134,24 @@ export default function DraftAssist({ onSaid, onApply, onOpenPoints }: DraftAssi
             <div className="grid gap-2">
               <h3 className="label">{t("draft.pointsTitle")}</h3>
               <p className="muted text-sm">{t("draft.pointsSays")}</p>
-              <ul className="grid gap-2">
-                {points.map((p, i) => (
-                  <li key={i} className="draft-row">
-                    <label className="flex items-start gap-2">
-                      <input type="checkbox" checked={settled.has(i)} onChange={() => toggle(i)} />
-                      <span><span className="badge">{t(p.kind === "question" ? "draft.question" : "draft.assumption")}</span> {p.text}</span>
-                    </label>
-                  </li>
-                ))}
+              <ul className="grid gap-3">
+                {points.map((p, i) => {
+                  const said = answers[i]?.trim() ?? "";
+                  return (
+                    <li key={i} className={said || ticked.has(i) ? "draft-point draft-point-done" : "draft-point"}>
+                      <p><span className="badge">{t(p.kind === "question" ? "draft.question" : "draft.assumption")}</span> {p.text}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <input className="field grow" maxLength={ANSWER_MAX} value={answers[i] ?? ""} onChange={(e) => answer(i, e.target.value)}
+                          placeholder={t(p.kind === "question" ? "draft.answerPlaceholder" : "draft.correctPlaceholder")}
+                          aria-label={p.text} />
+                        <label className="flex items-center gap-1 text-sm">
+                          <input type="checkbox" checked={ticked.has(i)} disabled={!!said} onChange={() => toggle(i)} />
+                          {t(p.kind === "question" ? "draft.skip" : "draft.right")}
+                        </label>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}

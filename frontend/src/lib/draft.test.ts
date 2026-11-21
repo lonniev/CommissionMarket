@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { gradeRowsOf, milestoneRowsOf, openPointsOf, proposalsOf, type Draft } from "./draft.ts";
+import { gradeRowsOf, milestoneRowsOf, openPointsOf, proposalsOf, withAnswers, type Draft } from "./draft.ts";
 import { dayFrom } from "./when.ts";
 
 const NOW = Math.floor(new Date(2026, 10, 21, 9).getTime() / 1000);
@@ -35,4 +35,13 @@ test("only the proposals a draft carries are offered", () => {
   assert.deepEqual(proposalsOf(draft({ deposit_pct: 0, milestones: [], deemed_days: 14, ip_option: "assign" })),
     ["grades", "deposit", "deemed", "ip"]);
   assert.deepEqual(proposalsOf(draft({ grades: [], deposit_pct: null, ip_option: null })), []);
+});
+
+test("answers become the brief's last section, rewritten whole", () => {
+  const once = withAnswers("A walnut table.", [{ point: "What size?", answer: "6 ft by 3 ft" }], "Details");
+  assert.equal(once, "A walnut table.\n\n### Details\n\n- What size? **6 ft by 3 ft**\n");
+  const edited = once.replace("A walnut table.", "A walnut dining table.");
+  assert.equal(withAnswers(edited, [{ point: "What size?", answer: "7 ft" }, { point: "Finish?", answer: "" }], "Details"),
+    "A walnut dining table.\n\n### Details\n\n- What size? **7 ft**\n");
+  assert.equal(withAnswers(once, [], "Details"), "A walnut table.");
 });

@@ -78,3 +78,25 @@ export function proposalsOf(d: Draft): ("grades" | "deposit" | "milestones" | "d
     ...(p.ip_option ? ["ip" as const] : []),
   ];
 }
+
+/** One settled point that carries words for the brief: a question's answer or an assumption's correction. */
+export interface Answered {
+  point: string;
+  answer: string;
+}
+
+/**
+ * `brief` with its answers section set to `answered`, under `heading`.
+ *
+ * The section is the brief's last part, from its heading to the end, and is rewritten whole each
+ * time an answer changes; whatever the person wrote above it is kept as it is. No answers, no section.
+ */
+export function withAnswers(brief: string, answered: Answered[], heading: string): string {
+  const marker = `\n\n### ${heading}\n`;
+  const at = brief.indexOf(marker);
+  const above = (at === -1 ? brief : brief.slice(0, at)).trimEnd();
+  const lines = answered
+    .filter((a) => a.answer.trim())
+    .map((a) => `- ${a.point.trim()} **${a.answer.trim()}**`);
+  return lines.length ? `${above}${marker}\n${lines.join("\n")}\n` : above;
+}
