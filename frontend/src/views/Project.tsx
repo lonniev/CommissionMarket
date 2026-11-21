@@ -114,11 +114,11 @@ export default function Project() {
           </section>
           <div className="two-up">
             <section className="card panel grid gap-2" {...tourTarget("project.circle")}>
-              <h2 className="panel-title">{t("project.circle")} <Word of="audience" badge /></h2>
+              <h2 className="panel-title">{t("project.circle")} <Word of="audience" badge align="left" /></h2>
               {project.circle.length ? <People npubs={project.circle} /> : <p className="muted">{t("project.noCircle")}</p>}
             </section>
             <section className="card panel grid gap-2" {...tourTarget("project.defaults")}>
-              <h2 className="panel-title">{t("project.defaults")} <Word of="project_defaults" badge /></h2>
+              <h2 className="panel-title">{t("project.defaults")} <Word of="project_defaults" badge align="left" /></h2>
               <Defaults project={project} />
               <p className="muted text-sm">{t("project.defaultsNote")}</p>
             </section>
