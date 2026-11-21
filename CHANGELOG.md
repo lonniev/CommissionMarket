@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.16.2] — 2026-11-21
+
+### Changed
+
+- A draft's "When do you need it?" is answered with a day, and that day becomes the commission's needed-by date.
+- Applying a proposal or answering a question changes the form in place; the page no longer jumps to the block it changed.
+
 ## [0.16.1] — 2026-11-21
 
 ### Changed
