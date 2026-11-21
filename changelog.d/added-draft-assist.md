@@ -1,1 +1,0 @@
-- Draft it from your idea: say what you need in your own words, and the AI fills in only what you said. Grades, a deposit, milestones, deemed acceptance and who owns the work come back as suggestions you apply by choice, and its questions are ticked off before you can post.
