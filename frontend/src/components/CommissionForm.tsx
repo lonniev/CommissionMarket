@@ -120,26 +120,26 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     if (said.brief) setDescription(said.brief);
     if (said.deliverables?.length) setCoverField("deliverables", said.deliverables.join("\n"));
     if (said.needed_by) setDue(said.needed_by);
-    show("spec");
+    toggle("spec", true);
   }
 
-  /** Apply one proposal the person chose, and open the block it lands in. */
+  /** Apply one proposal the person chose, and open the block it lands in, in place: the page stays where they are. */
   function applyProposal(which: Proposal, d: Draft) {
     const p = d.proposed;
     if (which === "grades") {
       setRows(gradeRowsOf(p.grades));
-      return show("grades");
+      return toggle("grades", true);
     }
     if (which === "deposit") setDeposit(String(p.deposit_pct ?? 0));
     if (which === "milestones") setMilestones(milestoneRowsOf(p.milestones ?? [], now));
-    if (which === "deposit" || which === "milestones") return show("payments");
+    if (which === "deposit" || which === "milestones") return toggle("payments", true);
     if (which === "deemed") {
       setCover((c) => ({ ...c, deemedDays: String(p.deemed_days ?? ""), deemedGrade: c.deemedGrade || (p.grades[0]?.name ?? "") }));
-      return show("conclusion");
+      return toggle("conclusion", true);
     }
     if (which === "ip" && p.ip_option) {
       setCoverField("ip", p.ip_option);
-      show("legal");
+      toggle("legal", true);
     }
   }
 
@@ -452,7 +452,7 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
         {!editing && (
           <Suspense fallback={null}>
             <DraftAssist onSaid={fromSaid} onApply={applyProposal} onOpenPoints={setOpenPoints}
-              onAnswers={(answered) => setDescription((d) => withAnswers(d, answered, t("draft.details")))} />
+              onAnswers={(answered) => setDescription((d) => withAnswers(d, answered, t("draft.details")))} onDue={setDue} />
           </Suspense>
         )}
 

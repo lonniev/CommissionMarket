@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { gradeRowsOf, milestoneRowsOf, openPointsOf, proposalsOf, withAnswers, type Draft } from "./draft.ts";
+import { asksWhen, gradeRowsOf, milestoneRowsOf, openPointsOf, proposalsOf, withAnswers, type Draft } from "./draft.ts";
 import { dayFrom } from "./when.ts";
 
 const NOW = Math.floor(new Date(2026, 10, 21, 9).getTime() / 1000);
@@ -44,4 +44,11 @@ test("answers become the brief's last section, rewritten whole", () => {
   assert.equal(withAnswers(edited, [{ point: "What size?", answer: "7 ft" }, { point: "Finish?", answer: "" }], "Details"),
     "A walnut dining table.\n\n### Details\n\n- What size? **7 ft**\n");
   assert.equal(withAnswers(once, [], "Details"), "A walnut table.");
+});
+
+test("only a question that begins with When asks for the due date", () => {
+  assert.ok(asksWhen("When do you need it?"));
+  assert.ok(asksWhen("when should it be done?"));
+  assert.ok(!asksWhen("Whenever is fine?"));
+  assert.ok(!asksWhen("Do you need it delivered, and when?"));
 });

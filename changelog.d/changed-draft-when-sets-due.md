@@ -1,0 +1,2 @@
+- A draft's "When do you need it?" is answered with a day, and that day becomes the commission's needed-by date.
+- Applying a proposal or answering a question changes the form in place; the page no longer jumps to the block it changed.
