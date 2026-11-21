@@ -571,3 +571,5 @@ div[data-tour]:empty { display: none; }
 /* Drafting from an idea: a panel set apart from the form it fills. */
 .draft-assist { border: 1px dashed var(--tb-accent); border-radius: 0.75rem; padding: 1rem; }
 .draft-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.draft-point { display: grid; gap: 0.375rem; padding-left: 0.75rem; border-left: 3px solid var(--tb-accent); }
+.draft-point-done { border-left-color: var(--tb-ok); }

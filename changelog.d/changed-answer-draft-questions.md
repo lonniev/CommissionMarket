@@ -1,0 +1,1 @@
+- The draft's questions are answered right under each one, and an assumption is corrected under it or ticked as right. Answers go into the description under "Details", and a question can still be skipped. Post opens once every point is answered, corrected, skipped or ticked.
