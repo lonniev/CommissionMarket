@@ -29,7 +29,10 @@ import DeliverableList from "./DeliverableList";
 import SpecLink from "./SpecLink";
 import { reachable } from "../lib/unfurl";
 import type { GlossaryKey } from "../lib/glossary";
+import { gradeRowsOf, milestoneRowsOf, type Draft } from "../lib/draft";
+import type { Proposal } from "./DraftAssist";
 
+const DraftAssist = lazy(() => import("./DraftAssist"));
 const MarkdownEditor = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownEditor })));
 const BRIEF_MAX = 4000;
 
@@ -70,6 +73,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     : coverFromDefaults(blankCover(), filing.project.defaults)));
   const [problem, setProblem] = useState("");
   const [busy, setBusy] = useState(false);
+  // Points a draft left to settle; Post stays shut while any are.
+  const [openPoints, setOpenPoints] = useState(0);
   // `?open=payments` opens that block and brings it into view: the Escrow card's "Change the mint" lands here.
   const [params] = useSearchParams();
   const asked = BLOCKS.find((id) => id === params.get("open"));
@@ -109,8 +114,38 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     setMilestones((list) => list.map((m, j) => (j === i ? { ...m, ...change } : m)));
   const setCoverField = <K extends keyof CoverRows>(key: K, value: CoverRows[K]) => setCover((c) => ({ ...c, [key]: value }));
 
+  /** Fill the form from what the person said in their idea; nothing else. */
+  function fromSaid(said: Draft["said"]) {
+    if (said.title) setTitle(said.title);
+    if (said.brief) setDescription(said.brief);
+    if (said.deliverables?.length) setCoverField("deliverables", said.deliverables.join("\n"));
+    if (said.needed_by) setDue(said.needed_by);
+    show("spec");
+  }
+
+  /** Apply one proposal the person chose, and open the block it lands in. */
+  function applyProposal(which: Proposal, d: Draft) {
+    const p = d.proposed;
+    if (which === "grades") {
+      setRows(gradeRowsOf(p.grades));
+      return show("grades");
+    }
+    if (which === "deposit") setDeposit(String(p.deposit_pct ?? 0));
+    if (which === "milestones") setMilestones(milestoneRowsOf(p.milestones ?? [], now));
+    if (which === "deposit" || which === "milestones") return show("payments");
+    if (which === "deemed") {
+      setCover((c) => ({ ...c, deemedDays: String(p.deemed_days ?? ""), deemedGrade: c.deemedGrade || (p.grades[0]?.name ?? "") }));
+      return show("conclusion");
+    }
+    if (which === "ip" && p.ip_option) {
+      setCoverField("ip", p.ip_option);
+      show("legal");
+    }
+  }
+
   async function save() {
     setProblem("");
+    if (openPoints > 0) return setProblem(t("draft.gate", { count: openPoints }));
     if (!title.trim()) return refuse("form.needTitle", t("form.needTitle"));
     const who = audienceFrom(audience.join("\n"));
     if ("problem" in who) return refuse(who.problem.key, t(who.problem.key, who.problem.vars));
@@ -414,6 +449,12 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
           </p>
         )}
 
+        {!editing && (
+          <Suspense fallback={null}>
+            <DraftAssist onSaid={fromSaid} onApply={applyProposal} onOpenPoints={setOpenPoints} />
+          </Suspense>
+        )}
+
         {BLOCKS.map((id) => (
           <FormBlock key={id} id={id} summary={summaryOf(id, shape)} open={open.has(id)} onToggle={(on) => toggle(id, on)}
             help={HELP[id]}>
@@ -422,10 +463,11 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
         ))}
 
         {problem && <p className="error text-right">{problem}</p>}
+        {openPoints > 0 && <p className="gate">{t("draft.gate", { count: openPoints })}</p>}
         <div className="flex flex-wrap items-center justify-end gap-2">
           <span className="muted text-sm">{t("form.youSignNext", { sats: formatSats(top) })}</span>
           <Link to={editing ? commissionHref(editing.task_id) : "/commissions"} className="btn btn-quiet">{t("actions.cancel")}</Link>
-          <button type="submit" className="btn btn-go" disabled={busy} {...tourTarget("compose.post")}>
+          <button type="submit" className="btn btn-go" disabled={busy || openPoints > 0} {...tourTarget("compose.post")}>
             {editing ? (busy ? t("form.saving") : t("form.save")) : (busy ? t("form.posting") : t("form.post"))}
           </button>
         </div>
