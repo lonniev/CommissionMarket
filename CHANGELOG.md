@@ -5,6 +5,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.15.0] — 2026-11-20
+
+### Added
+
+- Every commission has **Ask someone to review it**: pick anyone it names, or anyone else by npub or name@domain, and send them a Nostr message from you with a link to it (NIP-17, signed in your browser by your session key or NIP-07 extension).
+- The Escrow card's mint has **Change the mint** while the commission is unclaimed; it opens the editor at Payment stages, and you sign the changed offer again.
+
+### Changed
+
+- Composing a commission, Schedule sits in two columns: when it is needed and when late becomes failure on one side, what lateness costs on the wider other. One column on a phone.
+
+### Fixed
+
+- The ⓘ beside a Project's Circle and Default terms opens toward the card, not off the left of the screen.
+
 ## [0.14.3] — 2026-11-20
 
 ### Added
