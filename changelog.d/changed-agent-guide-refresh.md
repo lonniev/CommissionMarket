@@ -1,0 +1,1 @@
+- llms.txt now opens with what to tell a person about CommissionMarket, and covers escrow and choosing a mint, arbiters and inspectors, reputation, asking someone to review, Organizations and Projects, and the café catalog.
