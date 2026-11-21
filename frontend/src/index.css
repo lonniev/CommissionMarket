@@ -379,6 +379,8 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
 
 /* Organizations and Projects. */
 .card-list { display: grid; gap: 0.5rem; }
+/* Ask to review: one row per person, the radio, their part and their chip. */
+.review-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .org-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem; }
 .org-card:hover { border-color: var(--tb-accent); }
 .org-mark { color: var(--tb-accent); }

@@ -13,7 +13,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import type { MintFacts } from "../lib/mints";
 import MintCard from "./MintCard";
 import { Link } from "react-router-dom";
-import { Check, Copy, KeyRound, Lock, PenLine, Smartphone, Vault } from "lucide-react";
+import { Check, Copy, KeyRound, Lock, Pencil, PenLine, Smartphone, Vault } from "lucide-react";
 import {
   checkedEscrowMessage, isSignatureHex, pricingStudioEscrowLink, signEscrowWithSessionKey, tollboothConfig,
 } from "@tollbooth-dpyc/web";
@@ -24,7 +24,8 @@ import {
   type Escrow, type EscrowPending, type EscrowReading, type EscrowRole, type Invoice, type Task,
 } from "../lib/tasks";
 import InvoicePanel from "./InvoicePanel";
-import { Person } from "./Person";
+import { commissionHref, Person } from "./Person";
+import { mayEdit } from "../lib/moves";
 import Sats from "./Sats";
 
 const STEPS = ["invoiced", "funded", "proposed", "split", "settled"] as const;
@@ -214,7 +215,16 @@ export default function EscrowPanel({ task, now, onChanged }: { task: Task; now:
         <dt>{t("escrow.balance")}</dt><dd><Sats sats={escrow?.sats ?? reading?.sats ?? 0} /></dd>
         {escrow?.funded_at !== undefined && <><dt>{t("escrow.held")}</dt><dd><Sats sats={held} /> · {when(escrow.funded_at)}</dd></>}
         <dt>{t("escrow.mint")}</dt>
-        <dd>{escrow?.mint ?? cover.escrow_mint}{isTestMint(escrow?.mint ?? cover.escrow_mint) && <span className="muted"> · {t("cover.testMint")}</span>}</dd>
+        <dd>
+          {escrow?.mint ?? cover.escrow_mint}{isTestMint(escrow?.mint ?? cover.escrow_mint) && <span className="muted"> · {t("cover.testMint")}</span>}
+          {mayEdit(task) && (
+            <span className="block mt-1">
+              <Link to={`${commissionHref(task.task_id)}/edit?open=payments`} className="chip" title={t("escrow.changeMintSays")}>
+                <Pencil size={16} aria-hidden />{t("escrow.changeMint")}
+              </Link>
+            </span>
+          )}
+        </dd>
         <dt>{t("escrow.refundAt")}</dt>
         <dd>
           {escrow ? when(escrow.refund_at) : t("escrow.refundAfter", { days: cover.refund_days })}{" "}

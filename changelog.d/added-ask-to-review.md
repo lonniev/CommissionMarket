@@ -1,0 +1,2 @@
+- Every commission has **Ask someone to review it**: pick anyone it names, or anyone else by npub or name@domain, and send them a Nostr message from you with a link to it (NIP-17, signed in your browser by your session key or NIP-07 extension).
+- The Escrow card's mint has **Change the mint** while the commission is unclaimed; it opens the editor at Payment stages, and you sign the changed offer again.

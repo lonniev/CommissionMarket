@@ -20,6 +20,7 @@ import { getTask, taskHistory, type Invoice, type Task, type TaskEvent } from ".
 import { dueText, lateRuleText, lateText } from "../lib/when";
 
 const EscrowPanel = lazy(() => import("../components/EscrowPanel"));
+const AskToReview = lazy(() => import("../components/AskToReview"));
 const MarkdownText = lazy(() => import("@tollbooth-dpyc/web/markdown").then((m) => ({ default: m.MarkdownText })));
 
 function History({ taskId }: { taskId: string }) {
@@ -134,6 +135,7 @@ export default function Commission() {
       </section>
 
       {task.cover && <div {...tourTarget("commission.offer")}><OfferPanel task={task} onChanged={setTask} /></div>}
+      <Suspense fallback={null}><AskToReview task={task} /></Suspense>
       {task.cover?.inspector_npub && <div {...tourTarget("commission.inspection")}><InspectionPanel task={task} onChanged={setTask} /></div>}
       {task.cover?.escrow && (
         <Suspense fallback={null}>
