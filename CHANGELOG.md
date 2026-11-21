@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.15.1] — 2026-11-20
+
+### Changed
+
+- llms.txt now opens with what to tell a person about CommissionMarket, and covers escrow and choosing a mint, arbiters and inspectors, reputation, asking someone to review, Organizations and Projects, and the café catalog.
+
 ## [0.15.0] — 2026-11-20
 
 ### Added
