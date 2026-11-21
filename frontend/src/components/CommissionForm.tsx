@@ -4,8 +4,8 @@
  * the cover page under the Standard Terms.
  */
 
-import { lazy, Suspense, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FolderOpen, Maximize2, Plus, Trash2 } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { NpubField, NpubListField, tourTarget, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
@@ -70,7 +70,13 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
     : coverFromDefaults(blankCover(), filing.project.defaults)));
   const [problem, setProblem] = useState("");
   const [busy, setBusy] = useState(false);
-  const [open, setOpen] = useState<Set<BlockId>>(() => new Set(editing ? [] : ["spec"]));
+  // `?open=payments` opens that block and brings it into view: the Escrow card's "Change the mint" lands here.
+  const [params] = useSearchParams();
+  const asked = BLOCKS.find((id) => id === params.get("open"));
+  const [open, setOpen] = useState<Set<BlockId>>(() => new Set(asked ? [asked] : editing ? [] : ["spec"]));
+  useEffect(() => {
+    if (asked) requestAnimationFrame(() => document.getElementById(blockAnchor(asked))?.scrollIntoView({ block: "start" }));
+  }, [asked]);
   const toggle = (id: BlockId, on: boolean) => setOpen((o) => {
     const next = new Set(o);
     if (on) next.add(id);

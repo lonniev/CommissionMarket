@@ -38,7 +38,7 @@ export const OWN: Record<string, Row[]> = {
     ["ip", { before: "legal" }], ["flags", { before: "legal" }], ["law", { before: "legal" }],
     ["post", { side: "top" }],
   ],
-  commission: [["facts"], ["project"], ["actions", { side: "top" }], ["offer", { side: "top" }], ["inspection", { side: "top" }],
+  commission: [["facts"], ["project"], ["actions", { side: "top" }], ["askReview", { side: "top" }], ["offer", { side: "top" }], ["inspection", { side: "top" }],
     ["escrow", { side: "top" }], ["money", { side: "top" }], ["contract", { side: "top" }], ["refresh"]],
   calendar: [["month", { side: "top" }], ["refresh"]],
   arbitration: [["says"], ["shelf", { side: "top" }]],
