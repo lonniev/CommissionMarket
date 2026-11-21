@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.16.0] — 2026-11-21
+
+### Added
+
+- Draft it from your idea: say what you need in your own words, and the AI fills in only what you said. Grades, a deposit, milestones, deemed acceptance and who owns the work come back as suggestions you apply by choice, and its questions are ticked off before you can post.
+
 ## [0.15.2] — 2026-11-21
 
 ### Changed
