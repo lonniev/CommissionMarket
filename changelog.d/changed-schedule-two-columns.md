@@ -1,0 +1,1 @@
+- Composing a commission, Schedule sits in two columns: when it is needed and when late becomes failure on one side, what lateness costs on the wider other. One column on a phone.

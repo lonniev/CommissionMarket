@@ -262,6 +262,8 @@ table.ledger tr.grade-given td { background: color-mix(in srgb, var(--gold) 18%,
   .grade-card-head > :first-child { grid-column: 1 / -1; }
 }
 .two-up { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+/* Schedule: the dates beside the late terms, which take the wider side; one column where there is no room. */
+@media (min-width: 56rem) { .schedule-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); column-gap: 2rem; } }
 
 /* Home. */
 .hero { padding: 1.5rem 1.5rem; }
