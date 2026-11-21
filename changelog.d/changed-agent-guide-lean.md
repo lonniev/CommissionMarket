@@ -1,1 +1,0 @@
-- llms.txt is a pitch and the shape of a commission; tool arguments come from the server's own tool list.
