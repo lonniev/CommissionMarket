@@ -28,7 +28,7 @@ export const OWN: Record<string, Row[]> = {
   project: [["budget"], ["circle", { side: "top" }], ["defaults", { side: "top" }], ["commissions", { side: "top" }], ["moveHere"], ["post"]],
   pick: [["projects"]],
   compose: [
-    ["filing"],
+    ["filing"], ["assist"],
     ["title", { before: "spec" }], ["brief", { before: "spec" }], ["deliverables", { before: "spec" }], ["spec", { before: "spec" }],
     ["audience", { before: "people" }], ["arbiter", { before: "people" }], ["inspector", { before: "people" }],
     ["grade", { before: "grades" }], ["addGrade", { before: "grades" }], ["top", { before: "grades" }],
