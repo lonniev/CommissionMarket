@@ -62,6 +62,13 @@ export const milestoneRowsOf = (list: NonNullable<Draft["proposed"]["milestones"
   list.map((m) => ({ name: m.name, day: dayFrom(now, m.after_days), pct: String(m.pct) }));
 
 /** The points a person must settle before posting: every question, then every assumption. */
+/** The question that asks for a day: Task Booth words it "When …?". Its answer is the due date. */
+export const asksWhen = (question: string): boolean => /^\s*when\b/i.test(question);
+
+/** A day ("YYYY-MM-DD") as the brief says it. */
+export const sayDay = (day: string): string =>
+  new Date(`${day}T12:00:00`).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
+
 export const openPointsOf = (d: Draft): { kind: "question" | "assumption"; text: string }[] => [
   ...d.questions.map((text) => ({ kind: "question" as const, text })),
   ...d.assumptions.map((text) => ({ kind: "assumption" as const, text })),

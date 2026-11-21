@@ -5,7 +5,9 @@
  * a deposit, milestones, deemed acceptance, who owns the work) is a proposal they
  * apply by choice. Its questions and assumptions are points to settle, each in
  * place: a question is answered in the box under it (or skipped), an assumption is
- * ticked as right or corrected under it. Answers and corrections go into the brief.
+ * ticked as right or corrected under it. "When …?" is answered with a day, which
+ * becomes the due date. Answers and corrections go into the brief. Nothing here
+ * scrolls the page: the form behind changes in place.
  * The form keeps Post shut until every point is settled, so nobody signs terms they
  * never chose.
  */
@@ -15,7 +17,8 @@ import { Check, Sparkles } from "lucide-react";
 import { formatSats } from "@tollbooth-dpyc/web";
 import { tourTarget } from "@tollbooth-dpyc/web/react";
 import { useT } from "../i18n";
-import { draftCommission, draftFare, IDEA_MAX, openPointsOf, proposalsOf, type Answered, type Draft } from "../lib/draft";
+import { asksWhen, draftCommission, draftFare, IDEA_MAX, openPointsOf, proposalsOf, sayDay, type Answered, type Draft } from "../lib/draft";
+import { dayFrom } from "../lib/when";
 import { useFiat } from "../lib/FiatContext";
 
 export type Proposal = ReturnType<typeof proposalsOf>[number];
@@ -29,11 +32,13 @@ export interface DraftAssistProps {
   onOpenPoints: (count: number) => void;
   /** The answers and corrections so far, for the brief. */
   onAnswers: (answered: Answered[]) => void;
+  /** The day a "When …?" question was answered with. */
+  onDue: (day: string) => void;
 }
 
 const ANSWER_MAX = 300;
 
-export default function DraftAssist({ onSaid, onApply, onOpenPoints, onAnswers }: DraftAssistProps) {
+export default function DraftAssist({ onSaid, onApply, onOpenPoints, onAnswers, onDue }: DraftAssistProps) {
   const t = useT();
   const { fiat } = useFiat();
   const [idea, setIdea] = useState("");
@@ -80,10 +85,13 @@ export default function DraftAssist({ onSaid, onApply, onOpenPoints, onAnswers }
     return next;
   });
 
+  const isWhen = (i: number) => points[i]?.kind === "question" && asksWhen(points[i].text);
+
   function answer(i: number, text: string) {
     const next = points.map((_, j) => (j === i ? text : answers[j] ?? ""));
     setAnswers(next);
-    onAnswers(points.map((p, j) => ({ point: p.text, answer: next[j] })));
+    if (isWhen(i) && text) onDue(text);
+    onAnswers(points.map((p, j) => ({ point: p.text, answer: isWhen(j) && next[j] ? sayDay(next[j]) : next[j] })));
   }
 
   const describe = (which: Proposal, d: Draft): string => {
@@ -141,9 +149,14 @@ export default function DraftAssist({ onSaid, onApply, onOpenPoints, onAnswers }
                     <li key={i} className={said || ticked.has(i) ? "draft-point draft-point-done" : "draft-point"}>
                       <p><span className="badge">{t(p.kind === "question" ? "draft.question" : "draft.assumption")}</span> {p.text}</p>
                       <div className="flex flex-wrap items-center gap-2">
-                        <input className="field grow" maxLength={ANSWER_MAX} value={answers[i] ?? ""} onChange={(e) => answer(i, e.target.value)}
-                          placeholder={t(p.kind === "question" ? "draft.answerPlaceholder" : "draft.correctPlaceholder")}
-                          aria-label={p.text} />
+                        {isWhen(i) ? (
+                          <input type="date" className="field" value={answers[i] ?? ""} min={dayFrom(Math.floor(Date.now() / 1000), 1)}
+                            onChange={(e) => answer(i, e.target.value)} aria-label={p.text} />
+                        ) : (
+                          <input className="field grow" maxLength={ANSWER_MAX} value={answers[i] ?? ""} onChange={(e) => answer(i, e.target.value)}
+                            placeholder={t(p.kind === "question" ? "draft.answerPlaceholder" : "draft.correctPlaceholder")}
+                            aria-label={p.text} />
+                        )}
                         <label className="flex items-center gap-1 text-sm">
                           <input type="checkbox" checked={ticked.has(i)} disabled={!!said} onChange={() => toggle(i)} />
                           {t(p.kind === "question" ? "draft.skip" : "draft.right")}
