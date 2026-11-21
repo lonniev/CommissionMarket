@@ -32,7 +32,7 @@ export const OWN: Record<string, Row[]> = {
     ["title", { before: "spec" }], ["brief", { before: "spec" }], ["deliverables", { before: "spec" }], ["spec", { before: "spec" }],
     ["audience", { before: "people" }], ["arbiter", { before: "people" }], ["inspector", { before: "people" }],
     ["grade", { before: "grades" }], ["addGrade", { before: "grades" }], ["top", { before: "grades" }],
-    ["neededBy", { before: "schedule" }], ["late", { before: "schedule" }], ["failure", { before: "schedule" }],
+    ["neededBy", { before: "schedule" }], ["failure", { before: "schedule" }], ["late", { before: "schedule" }],
     ["deposit", { before: "payments" }], ["milestones", { before: "payments" }], ["escrow", { before: "payments" }], ["mint", { before: "payments" }],
     ["deemed", { before: "conclusion" }], ["appeal", { before: "conclusion" }], ["ruling", { before: "conclusion" }], ["pay", { before: "conclusion" }],
     ["ip", { before: "legal" }], ["flags", { before: "legal" }], ["law", { before: "legal" }],

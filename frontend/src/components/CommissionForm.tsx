@@ -242,11 +242,24 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
       </>
     ),
     schedule: (
-      <>
+      <div className="two-up schedule-cols">
+        <div className="grid content-start gap-3">
           <label className="grid gap-1 w-fit" {...tourTarget("compose.neededBy")}>
             <span className="label">{t("form.neededBy")}</span>
             <input type="date" className="field" value={due} min={dayFrom(now, 1)} onChange={(e) => setDue(e.target.value)} />
           </label>
+          <div className="step-row" {...tourTarget("compose.failure")}>
+            <span className="label">{t("late.fail")} <Word of="failure_point" badge align="left" /></span>
+            <input className="field num text-right" inputMode="numeric" value={cover.failAfter} maxLength={4}
+              onChange={(e) => setCoverField("failAfter", e.target.value)} aria-label={t("late.fail")} />
+            <select className="field" value={cover.failUnit} onChange={(e) => setCoverField("failUnit", e.target.value as Unit)} aria-label={t("late.unitLabel")}>
+              {UNITS.map((u) => <option key={u} value={u}>{t(`late.unit.${u}`)}</option>)}
+            </select>
+            <span>{t("late.failLate")}</span>
+          </div>
+          <p className="muted text-sm">{t("late.failHelp")} <Link to="/terms?version=v1#t-14-7" className="ent">§14</Link></p>
+        </div>
+        <div className="grid content-start gap-3">
           <div className="flex flex-wrap gap-2" role="group" aria-label={t("late.title")} {...tourTarget("compose.late")}>
             <span className="label w-full">{t("late.title")} <Word of="late_terms" badge align="left" /></span>
             {LATE_KINDS.map((k) => (
@@ -291,17 +304,8 @@ export default function CommissionForm({ editing, filing }: { editing?: Task; fi
             </div>
           )}
           <p className="muted text-sm">{t(`late.pickHelp.${lateKind}`)}</p>
-          <div className="step-row" {...tourTarget("compose.failure")}>
-            <span className="label">{t("late.fail")} <Word of="failure_point" badge align="left" /></span>
-            <input className="field num text-right" inputMode="numeric" value={cover.failAfter} maxLength={4}
-              onChange={(e) => setCoverField("failAfter", e.target.value)} aria-label={t("late.fail")} />
-            <select className="field" value={cover.failUnit} onChange={(e) => setCoverField("failUnit", e.target.value as Unit)} aria-label={t("late.unitLabel")}>
-              {UNITS.map((u) => <option key={u} value={u}>{t(`late.unit.${u}`)}</option>)}
-            </select>
-            <span>{t("late.failLate")}</span>
-          </div>
-          <p className="muted text-sm">{t("late.failHelp")} <Link to="/terms?version=v1#t-14-7" className="ent">§14</Link></p>
-      </>
+        </div>
+      </div>
     ),
     payments: (
       <>
