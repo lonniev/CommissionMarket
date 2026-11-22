@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.16.3] — 2026-11-22
+
+### Changed
+
+- The month calendar now comes from the shared `@tollbooth-dpyc/web` 4.2.0, the same one eXcalibur uses. The page looks and works as before.
+
 ## [0.16.2] — 2026-11-21
 
 ### Changed
