@@ -4,7 +4,7 @@
  * month and a day's list are both made from the same events.
  */
 
-import { dayKey } from "./browse.ts";
+import { eventsByDay as byDayOf } from "@tollbooth-dpyc/web";
 import { isFinished } from "./moves.ts";
 import type { Task } from "./tasks.ts";
 
@@ -71,7 +71,5 @@ export function eventsOf(tasks: Task[]): CommissionEvent[] {
 
 /** The events on each day, keyed `YYYY-MM-DD`. */
 export function eventsByDay(events: CommissionEvent[]): Map<string, CommissionEvent[]> {
-  const days = new Map<string, CommissionEvent[]>();
-  for (const e of events) days.set(dayKey(e.at), [...(days.get(dayKey(e.at)) ?? []), e]);
-  return days;
+  return byDayOf(events, (e) => e.at);
 }

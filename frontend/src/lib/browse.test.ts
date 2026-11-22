@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayKey, grouped, matches, monthWeeks, shiftMonth, type Browsable } from "./browse.ts";
+import { grouped, matches, type Browsable } from "./browse.ts";
 
 const job = (over: Partial<Browsable>): Browsable => ({
   task_id: "t", title: "A portrait", description: "", purchaser: "npub1client", performer: null, standing: "posted", needed_by: 100, ...over,
@@ -26,14 +26,4 @@ test("by due is one section, soonest first; by person and by state, a section ea
     [["npub1painter", ["c", "a"]], ["npub1client", ["b"]]].sort((x, y) => name(x[0] as string).localeCompare(name(y[0] as string))));
   assert.deepEqual(grouped([a, b, c], "state", said).map((g) => g.key), ["claimed", "posted"]);
   assert.deepEqual(grouped([], "due", name), []);
-});
-
-test("a month is whole weeks from Sunday, and months step across years", () => {
-  const weeks = monthWeeks(2026, 10); // November 2026 starts on a Sunday
-  assert.equal(weeks[0][0].key, "2026-11-01");
-  assert.ok(weeks.every((w) => w.length === 7));
-  assert.ok(weeks.flat().filter((d) => d.inMonth).length === 30);
-  assert.deepEqual(shiftMonth(2026, 11, 1), { year: 2027, month: 0 });
-  assert.deepEqual(shiftMonth(2026, 0, -1), { year: 2025, month: 11 });
-  assert.equal(dayKey(new Date(2026, 10, 17, 12).getTime() / 1000), "2026-11-17");
 });
