@@ -701,6 +701,7 @@ const es: Translation = {
   "guide.know.learn": "¿Eres nuevo en los sats o las firmas? Empieza por <learn/>.",
   "nav.glossary": "Glosario",
   "nav.catalog": "Catálogo",
+  "nav.prices": "Precios",
   "guide.know.glossary": "¿Una palabra que no conoces? El <glossary/> explica qué significa cada una.",
   "guide.know.catalog": "El café Good Brew tiene MCP, artículos DPYC, libros y consultas, en su <catalog/>.",
   "guide.tutorial.title": "Tutorial en vivo",

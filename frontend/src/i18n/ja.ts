@@ -699,6 +699,7 @@ const ja: Translation = {
   "guide.know.learn": "satsや署名は初めてですか？まずは<learn/>からどうぞ。",
   "nav.glossary": "用語集",
   "nav.catalog": "カタログ",
+  "nav.prices": "料金",
   "guide.know.glossary": "初めて見る言葉がありますか？<glossary/>で、それぞれの意味を確かめられます。",
   "guide.know.catalog": "Good Brewカフェの<catalog/>には、MCP、DPYCグッズ、本、相談サービスがあります。",
   "guide.tutorial.title": "ライブチュートリアル",

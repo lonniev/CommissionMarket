@@ -703,6 +703,7 @@ export const en = {
   "guide.know.learn": "New to sats or signatures? Start with <learn/>.",
   "nav.glossary": "Glossary",
   "nav.catalog": "Catalog",
+  "nav.prices": "Prices",
   "guide.know.glossary": "A word you have not met? The <glossary/> says what each one means.",
   "guide.know.catalog": "The Good Brew café has MCPs, DPYC goods, books and consultations, in the <catalog/>.",
   "lesson.words": "Words in this lesson",

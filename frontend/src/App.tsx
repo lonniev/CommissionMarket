@@ -1,6 +1,6 @@
 import { lazy, Suspense, useMemo, type ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { BookA, BookOpen, BriefcaseBusiness, Building2, CalendarDays, Coffee, Compass, Scale, ScrollText, Wallet as WalletIcon } from "lucide-react";
+import { BookA, BookOpen, BriefcaseBusiness, Building2, CalendarDays, Coffee, Compass, Receipt, Scale, ScrollText, Wallet as WalletIcon } from "lucide-react";
 import { AppShell, SiteNav, TourProvider, Wallet, matchesPath, useAppShell, useTour } from "@tollbooth-dpyc/web/react";
 import Waiting from "./components/Waiting";
 import { useT } from "./i18n";
@@ -25,6 +25,7 @@ const NewCommission = lazy(() => import("./views/NewCommission"));
 const PersonPage = lazy(() => import("./views/PersonPage"));
 const Org = lazy(() => import("./views/Org"));
 const Orgs = lazy(() => import("./views/Orgs"));
+const Prices = lazy(() => import("./views/Prices"));
 const Project = lazy(() => import("./views/Project"));
 const Profile = lazy(() => import("./views/Profile"));
 const Terms = lazy(() => import("./views/Terms"));
@@ -39,6 +40,7 @@ const PAGES = [
   { href: "/glossary", label: "nav.glossary", icon: <BookA size={18} aria-hidden /> },
   { href: "/guide", label: "nav.guide", icon: <Compass size={18} aria-hidden /> },
   { href: "/catalog", label: "nav.catalog", icon: <Coffee size={18} aria-hidden /> },
+  { href: "/prices", label: "nav.prices", icon: <Receipt size={18} aria-hidden /> },
   { href: "/wallet", label: "nav.wallet", icon: <WalletIcon size={18} aria-hidden /> },
 ] as const;
 
@@ -85,6 +87,7 @@ function Nav() {
           <Link to="/learn" className="chip">{t("nav.learn")}</Link>
           <Link to="/glossary" className="chip">{t("nav.glossary")}</Link>
           <Link to="/catalog" className="chip">{t("nav.catalog")}</Link>
+          <Link to="/prices" className="chip">{t("nav.prices")}</Link>
         </span>
         <Link to="/signin" className="chip chip-accent">{t("nav.signIn")}</Link>
       </header>
@@ -182,6 +185,7 @@ function Site() {
               <Route path="learn" element={<Learn />} />
               <Route path="glossary" element={<Glossary />} />
               <Route path="catalog" element={<Catalog />} />
+              <Route path="prices" element={<Prices />} />
               <Route path="catalog/:handle" element={<CatalogCollection />} />
               <Route path="learn/:slug" element={<LessonPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
