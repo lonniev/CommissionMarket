@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.17.0] — 2026-11-27
+
+### Added
+
+- A public Prices page lists every tool and its live fare, linked from the top bar whether or not you are signed in.
+
 ## [0.16.4] — 2026-11-26
 
 ### Fixed
