@@ -701,6 +701,7 @@ const hi: Translation = {
   "guide.know.learn": "sats या हस्ताक्षरों के बारे में नए हैं? <learn/> से शुरू करो।",
   "nav.glossary": "शब्दावली",
   "nav.catalog": "कैटलॉग",
+  "nav.prices": "दाम",
   "guide.know.glossary": "कोई अनजान शब्द मिला? <glossary/> बताती है कि हर शब्द का अर्थ क्या है।",
   "guide.know.catalog": "Good Brew कैफ़े के <catalog/> में MCP, DPYC का सामान, किताबें और परामर्श हैं।",
   "guide.tutorial.title": "लाइव ट्यूटोरियल",

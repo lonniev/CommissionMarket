@@ -699,6 +699,7 @@ const zh: Translation = {
   "guide.know.learn": "初次接触 sats 或签名？请从<learn/>开始。",
   "nav.glossary": "术语表",
   "nav.catalog": "商品目录",
+  "nav.prices": "价格",
   "guide.know.glossary": "遇到陌生的词？<glossary/>解释了每个词的含义。",
   "guide.know.catalog": "Good Brew 咖啡馆有 MCP、DPYC 周边、书籍和咨询服务，见<catalog/>。",
   "guide.tutorial.title": "实时教程",
